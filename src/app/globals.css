@@ -8,7 +8,8 @@
   /* Brand */
   --primary: #2563eb;
   --primary-foreground: #f8fafc;
-  --accent: #fb923c;
+  /* 青绿辅助色：科技感、与蓝主色协调 */
+  --accent: #2dd4bf;
   --accent-foreground: #0b1220;
 
   /* Surfaces */
@@ -52,7 +53,7 @@ body {
     ),
     radial-gradient(
       ellipse 90% 70% at 95% 5%,
-      rgba(251, 146, 60, 0.12),
+      rgba(45, 212, 191, 0.14),
       transparent 52%
     ),
     radial-gradient(

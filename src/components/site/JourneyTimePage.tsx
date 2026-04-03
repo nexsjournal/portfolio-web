@@ -68,7 +68,7 @@ export function JourneyTimePage({ logo, screens, marketing }: Props) {
                 <p className="font-display text-xs tracking-[0.35em] text-muted">
                   {copy.hero.kicker}
                 </p>
-                <h1 className="mt-4 font-display text-4xl text-foreground sm:text-6xl">
+                <h1 className="mt-4 font-display text-4xl font-semibold text-foreground sm:text-6xl">
                   {copy.hero.name}
                 </h1>
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
@@ -81,7 +81,7 @@ export function JourneyTimePage({ logo, screens, marketing }: Props) {
 
         <section className="mt-16 md:mt-20">
           <Reveal>
-            <h2 className="font-display text-2xl text-foreground sm:text-3xl">
+            <h2 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
               {copy.story.title}
             </h2>
             <div className="mt-6 space-y-5 text-base leading-relaxed text-muted sm:text-lg">
@@ -94,7 +94,22 @@ export function JourneyTimePage({ logo, screens, marketing }: Props) {
 
         <section className="mt-16 md:mt-20">
           <Reveal>
-            <h2 className="font-display text-2xl text-foreground sm:text-3xl">
+            <h2 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
+              {copy.whoFor.title}
+            </h2>
+            <ul className="mt-6 flex max-w-2xl flex-col gap-3 text-base leading-relaxed text-muted sm:text-lg">
+              {copy.whoFor.bullets.map((line) => (
+                <li key={line} className="flex gap-3 border-l-2 border-primary/25 pl-4">
+                  {line}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        </section>
+
+        <section className="mt-16 md:mt-20">
+          <Reveal>
+            <h2 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
               {copy.features.title}
             </h2>
           </Reveal>
@@ -103,7 +118,9 @@ export function JourneyTimePage({ logo, screens, marketing }: Props) {
             {copy.features.items.map((item) => (
               <Reveal key={item.title}>
                 <div className="h-full rounded-3xl border border-white/[0.08] bg-background/25 p-6 backdrop-blur-sm">
-                  <p className="font-display text-lg text-foreground">{item.title}</p>
+                  <p className="font-display text-lg font-semibold text-foreground">
+                    {item.title}
+                  </p>
                   <p className="mt-3 text-sm leading-relaxed text-muted">{item.body}</p>
                 </div>
               </Reveal>
@@ -115,7 +132,7 @@ export function JourneyTimePage({ logo, screens, marketing }: Props) {
           <Reveal>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <h2 className="font-display text-2xl text-foreground sm:text-3xl">
+                <h2 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
                   {copy.gallery.title}
                 </h2>
                 <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
@@ -130,16 +147,14 @@ export function JourneyTimePage({ logo, screens, marketing }: Props) {
 
           {gallery.length === 0 ? (
             <div className="mt-8 rounded-3xl border border-dashed border-white/[0.12] bg-background/20 p-8 text-sm text-muted">
-              {language === "zh"
-                ? "还没有检测到图片：把竖版素材放进 `screens/` 或 `marketing/`（Logo 放 `logo/`），保存后刷新即可。"
-                : "No images yet. Add portrait assets to `screens/` or `marketing/` (logo in `logo/`), then refresh."}
+              {copy.gallery.emptyHint}
             </div>
           ) : (
             <div className="scrollbar-hide mt-8 flex gap-4 overflow-x-auto">
               {gallery.map((src) => (
                 <div
                   key={src}
-                  className="relative aspect-[9/16] w-[min(92vw,340px)] shrink-0 overflow-hidden rounded-[2rem] border border-white/[0.08] bg-slate-950/30"
+                  className="relative aspect-[1284/2778] w-[min(92vw,340px)] shrink-0 overflow-hidden rounded-[2rem] border border-white/[0.08] bg-slate-950/30"
                 >
                   <Image
                     src={src}
@@ -158,7 +173,7 @@ export function JourneyTimePage({ logo, screens, marketing }: Props) {
 
         <section className="mt-16 md:mt-20">
           <Reveal>
-            <h2 className="font-display text-2xl text-foreground sm:text-3xl">
+            <h2 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
               {copy.download.title}
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted">

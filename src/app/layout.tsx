@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     template: "%s · Lex",
   },
   description:
-    "Lex（独立开发者）的个人作品集：独立 App、产品叙事与联系方式。深色科技风、蓝橙撞色。",
+    "Lex（独立开发者）的个人作品集：独立 App、产品叙事与联系方式。深色科技风、蓝青撞色。",
   alternates: {
     canonical: "/",
     languages: {
@@ -43,13 +43,13 @@ export const metadata: Metadata = {
     siteName: "Lex",
     title: "Lex · Indie Developer",
     description:
-      "Indie developer portfolio: apps, story, and contact. Dark futuristic UI with blue/orange accents.",
+      "Indie developer portfolio: apps, story, and contact. Dark futuristic UI with blue/teal accents.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Lex · Indie Developer",
     description:
-      "Indie developer portfolio: apps, story, and contact. Dark futuristic UI with blue/orange accents.",
+      "Indie developer portfolio: apps, story, and contact. Dark futuristic UI with blue/teal accents.",
   },
   robots: {
     index: true,

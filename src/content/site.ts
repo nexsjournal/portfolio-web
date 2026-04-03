@@ -64,6 +64,10 @@ export type JourneyTimeCopy = {
     title: string;
     body: string[];
   };
+  whoFor: {
+    title: string;
+    bullets: string[];
+  };
   features: {
     title: string;
     items: { title: string; body: string }[];
@@ -71,6 +75,7 @@ export type JourneyTimeCopy = {
   gallery: {
     title: string;
     hint: string;
+    emptyHint: string;
   };
   download: {
     title: string;
@@ -84,10 +89,10 @@ export type JourneyTimeCopy = {
 export const siteConfig = {
   name: "Lex",
   domain: "lextellsyou.asia",
-  email: "hello@lextellsyou.asia",
+  email: "tenthproducts@zohomail.cn",
   social: {
-    github: "https://github.com/",
-    x: "https://x.com/",
+    github: "https://github.com/nexsjournal",
+    x: "https://x.com/justraylex",
   },
 };
 
@@ -96,7 +101,7 @@ export const SITE_COPY: Record<Language, SiteCopy> = {
     meta: {
       title: "Lex · 独立开发者 · 产品作品集",
       description:
-        "Lex（独立开发者）的个人网站：展示产品、理念与联系方式。深色科技风、蓝橙撞色、偏叙事与交互体验。",
+        "Lex（独立开发者）的个人网站：展示产品、理念与联系方式。深色科技风、蓝青撞色、偏叙事与交互体验。",
     },
     nav: {
       home: "首页",
@@ -107,9 +112,9 @@ export const SITE_COPY: Record<Language, SiteCopy> = {
     },
     hero: {
       kicker: "INDIE APP MAKER · LEX",
-      headline: "把工具做成可感知的体验。",
+      headline: "于细微处，为生活作序",
       subhead:
-        "我专注做 iOS/Android 上的小而强工具：更快、更干净、更“顺手”。这里是我的作品集、产品叙事与持续更新。",
+        "独立开发、产品叙事与持续迭代。这里集中展示我当前在做的工具型应用，以及我如何打磨交互与信息结构。",
       primaryCta: "查看旅迹时光",
       secondaryCta: "联系合作",
       micro: [],
@@ -117,12 +122,13 @@ export const SITE_COPY: Record<Language, SiteCopy> = {
     about: {
       title: "关于我",
       body: [
-        "我是 Lex，一名独立开发者。我喜欢把复杂问题拆解成可复用的结构，把“好用”变成“愿意天天打开”。",
-        "我的产品通常以体验为先：动效、反馈、节奏、空状态，都不是“装饰”，而是让用户更确定自己在做什么。",
+        "我是 Lex，一名独立开发者。工作方式偏「小而完整」：从问题定义、信息架构到动效与反馈，尽量让每一步都可被理解，而不是堆功能清单。",
+        "我主要面向 iOS（以及后续会考虑的 Android）做工具型产品：关注路径是否更短、状态是否更清晰、错误是否可恢复。旅迹时光是我当前投入最多的一款——把真实路线、预览与回忆组织成一段可观看、可分享的旅程叙事。",
+        "这个站点本身是静态作品集：用来集中呈现产品说明、截图与联系方式。若你有合作、定制工具或想交流独立开发流程，欢迎通过页面底部的邮件与我联系。",
       ],
       stats: [
-        { label: "当前产品", value: "1 款上架准备中" },
-        { label: "平台", value: "iOS / Android" },
+        { label: "当前产品", value: "旅迹时光（上架准备中）" },
+        { label: "平台", value: "iOS 优先" },
         { label: "协作方式", value: "独立交付" },
       ],
     },
@@ -130,17 +136,16 @@ export const SITE_COPY: Record<Language, SiteCopy> = {
       title: "旅迹时光",
       badge: "FEATURED APP",
       body:
-        "一款面向旅行记录与路线回忆的工具型 App：把旅程组织成可浏览的时间线，让照片、地点与故事更容易被重新看见。",
+        "旅迹时光是一款在 iPhone 上使用的旅行路线创作工具：在地图上规划起点、终点与途经点，基于 Apple MapKit 计算道路级路径，搭配多种交通方式与 3D 动画预览，把旅程变成可观看、可导出的短视频；标记点可绑定相册照片，在预览与成片里「到点出图」，让路线成为带记忆的叙事。",
       bullets: [
-        "时间线串联旅程：关键节点清晰，回忆有顺序与节奏",
-        "轻量化记录路径：减少「为了记录而记录」的额外负担",
-        "深色界面配合蓝橙强调：夜景、路线与地图信息更易读",
-        "照片、地点与文字组合呈现，便于日后回顾与分享",
-        "交互与反馈优先：空状态、加载与转场都可被理解",
-        "下载与商店入口将随 App Store / Google Play 上架状态更新",
+        "真实路线：用系统地图能力计算路段，路线贴近道路与分段逻辑",
+        "可观看的旅程：多交通工具、相机运动与 3D 呈现，预览即「小成片」",
+        "点点回忆：标记点绑定相册图片（每点最多 3 张），在对应位置展示",
+        "可分享产出：多比例导出视频至相册，并用系统分享面板转发",
+        "资产可管理：路线可保存、载入、重命名、删除；示例路线降低上手门槛",
       ],
       cta: "进入详情页",
-      mockSubtitle: "时间线 · 旅行记录",
+      mockSubtitle: "路线 · 预览 · 成片",
     },
     philosophy: {
       title: "我的构建方式",
@@ -174,7 +179,7 @@ export const SITE_COPY: Record<Language, SiteCopy> = {
     meta: {
       title: "Lex · Indie Developer · Product Portfolio",
       description:
-        "Lex is an indie developer building focused iOS/Android utilities. Dark, futuristic portfolio with blue/orange accents and narrative-first layouts.",
+        "Lex is an indie developer building focused iOS/Android utilities. Dark, futuristic portfolio with blue/teal accents and narrative-first layouts.",
     },
     nav: {
       home: "Home",
@@ -185,9 +190,9 @@ export const SITE_COPY: Record<Language, SiteCopy> = {
     },
     hero: {
       kicker: "INDIE APP MAKER · LEX",
-      headline: "Tools that feel like experiences.",
+      headline: "Order life in the small moments.",
       subhead:
-        "I build small, sharp utilities for iOS/Android—fast, clean, and satisfying to use. This site is my portfolio, product story, and changelog hub.",
+        "Indie development, product storytelling, and steady iteration. This site highlights the utilities I’m building and how I shape interaction and information architecture.",
       primaryCta: "View Journey Time",
       secondaryCta: "Contact",
       micro: [],
@@ -195,12 +200,13 @@ export const SITE_COPY: Record<Language, SiteCopy> = {
     about: {
       title: "About",
       body: [
-        "I’m Lex—an indie developer who likes turning messy problems into reusable structure, and turning “usable” into “open-every-day”.",
-        "My work is usually experience-first: motion, feedback, pacing, and empty states aren’t decoration—they help users stay oriented.",
+        "I’m Lex—an indie developer who prefers small, complete slices of work: from problem framing and IA to motion and feedback, I aim for clarity at every step—not a pile of features.",
+        "I build tool-style apps primarily for iOS (with Android in mind later). I care whether paths are shorter, states are clearer, and errors are recoverable. Journey Time is my current focus—turning real routes, previews, and memories into a watchable, shareable trip story.",
+        "This portfolio is a static site: product notes, screenshots, and contact. If you’d like to collaborate, commission a utility, or chat indie workflows, email me via the footer.",
       ],
       stats: [
-        { label: "Shipping", value: "1 app in review" },
-        { label: "Platforms", value: "iOS / Android" },
+        { label: "Shipping", value: "Journey Time (in review)" },
+        { label: "Platforms", value: "iOS-first" },
         { label: "Mode", value: "Indie / solo" },
       ],
     },
@@ -208,17 +214,16 @@ export const SITE_COPY: Record<Language, SiteCopy> = {
       title: "旅迹时光 · Journey Time",
       badge: "FEATURED APP",
       body:
-        "A travel journal utility focused on timelines and routes—making trips easier to revisit without turning logging into a chore.",
+        "Journey Time is a route-creation tool for iPhone: plan start, end, and stops on the map, compute road-level paths with Apple MapKit, preview with multiple transport modes and 3D motion, and export a shareable short video. Bind photos from your library to stops so images appear at the right moments—routes become memory-rich stories.",
       bullets: [
-        "Timeline-first trips: ordered key moments with a clear rhythm",
-        "Lightweight capture: fewer steps, less “logging for logging’s sake”",
-        "Dark UI + blue/orange accents: night shots, routes, and maps read cleaner",
-        "Photos, places, and notes together—easier to revisit and share",
-        "Feedback-first UX: empty states, loading, and transitions stay understandable",
-        "Store links will update as App Store / Google Play listings go live",
+        "Real routes: MapKit-powered segments that follow roads and logical legs—not freehand scribbles",
+        "Watchable journeys: transport modes, camera motion, and 3D—preview feels like a mini film",
+        "Moments at stops: up to 3 photos per pin, shown in preview and export",
+        "Shareable output: export video to Photos and share via the system sheet",
+        "Manageable library: save, load, rename, delete; sample routes lower the learning curve",
       ],
       cta: "Open details",
-      mockSubtitle: "Timeline · Travel memories",
+      mockSubtitle: "Route · Preview · Export",
     },
     philosophy: {
       title: "How I build",
@@ -255,41 +260,58 @@ export const JOURNEY_TIME_COPY: Record<Language, JourneyTimeCopy> = {
     meta: {
       title: "旅迹时光 · Journey Time",
       description:
-        "旅迹时光：旅行记录与路线回忆的工具型 App。深色主题、清晰时间线、强调轻量记录与可回看体验。",
+        "旅迹时光：在 iPhone 上用地图规划旅行路线，基于 MapKit 计算道路级路径，3D 预览与视频导出，标记点可绑定相册照片，让旅程成为可分享的叙事。",
     },
     hero: {
       kicker: "APP",
       name: "旅迹时光",
-      tagline: "把旅程整理成可浏览的时间线。",
+      tagline: "记录旅途轨迹，一键导出视频",
       status: "App Store 审核中（页面会随上架状态更新）",
     },
     story: {
-      title: "产品故事",
+      title: "产品是什么",
       body: [
-        "旅行最容易被“遗忘在相册里”。旅迹时光希望把路线、地点与故事组织成一条可回看的旅程，而不是一堆散点。",
-        "我尽量让记录变轻：少一点表单，多一点“当下就能完成”的动作；把复杂留给后台结构，而不是用户界面。",
+        "旅迹时光是一款在 iPhone 上使用的旅行路线创作工具。你可以在地图上规划起点、终点与途经点，应用基于 Apple MapKit 计算道路级路径，搭配多种交通工具与 3D 动画预览，把整条旅程变成一段可观看、可导出的短视频；同时支持在标记点绑定相册中的旅行照片，在预览与成片里「到点出图」，让路线不仅是轨迹，更是带记忆的旅程叙事。",
+        "它尽量在本地完成创作闭环：从编辑路线、切换预览方式，到导出与整理路线资产，减少「必须登录某服务器才能用」的门槛，更适合把工具当作随身创作箱的用户。",
+      ],
+    },
+    whoFor: {
+      title: "为谁而做",
+      bullets: [
+        "喜欢把旅行、出差、自驾、打卡路线整理成可视化作品的人",
+        "希望发社交内容时不仅有图，还有动态路线与节奏感的人",
+        "需要一款不依赖服务器账号也能完成创作与导出的工具型用户",
       ],
     },
     features: {
-      title: "核心体验",
+      title: "核心价值",
       items: [
         {
-          title: "旅程时间线",
-          body: "把关键节点串起来，让回忆有顺序、有节奏。",
+          title: "真实路线",
+          body: "使用系统地图能力计算路段，路线贴近道路与分段逻辑，而非随手画线。",
         },
         {
-          title: "轻量记录",
-          body: "减少“为了记录而记录”的路径，让完成更自然。",
+          title: "可观看的旅程",
+          body: "多交通工具、相机运动与 3D 呈现，预览即「小成片」体验。",
         },
         {
-          title: "深色界面",
-          body: "夜景照片与地图信息更耐看，强调色用于关键状态与引导。",
+          title: "点点回忆",
+          body: "标记点可绑定相册图片（每点最多 3 张），预览与导出时在对应位置展示。",
+        },
+        {
+          title: "可分享产出",
+          body: "支持多比例导出视频至相册，并通过系统分享面板转发。",
+        },
+        {
+          title: "资产可管理",
+          body: "路线可保存、载入、重命名、删除；提供示例路线降低上手门槛。",
         },
       ],
     },
     gallery: {
       title: "宣传与截图",
-      hint: "Logo（1:1）放 `logo/`，竖版宣传图与截图（建议 9:16）放 `marketing/` 与 `screens/`（见 README）。",
+      hint: "以下为竖屏比例下的界面与宣传预览（与常见 iPhone 全屏截图比例一致），可左右滑动浏览。",
+      emptyHint: "预览素材就绪后，将在此处展示。",
     },
     download: {
       title: "下载",
@@ -303,41 +325,58 @@ export const JOURNEY_TIME_COPY: Record<Language, JourneyTimeCopy> = {
     meta: {
       title: "Journey Time · 旅迹时光",
       description:
-        "Journey Time: a travel journal utility focused on timelines and revisiting trips—dark UI, crisp structure, lightweight capture.",
+        "Journey Time: plan travel routes on iPhone with MapKit road paths, 3D previews, video export, and photos bound to stops—stories you can watch and share.",
     },
     hero: {
       kicker: "APP",
       name: "Journey Time",
-      tagline: "Turn your trip into a browsable timeline.",
+      tagline: "Record your route, export video in one tap.",
       status: "App Store review in progress (this page updates as status changes)",
     },
     story: {
-      title: "Story",
+      title: "What it is",
       body: [
-        "Trips often get lost in camera rolls. Journey Time organizes routes, places, and moments into a timeline you can revisit.",
-        "I keep capture lightweight: fewer forms, more “finish in the moment” flows—complexity hides in structure, not UI.",
+        "Journey Time is a route-creation app for iPhone. Plan start, end, and stops on the map; MapKit computes road-level paths across transport modes with 3D animated previews, turning the whole trip into a short video you can export. Bind photos from your library to pins so images appear at the right moments—routes become memory-rich stories, not just lines on a map.",
+        "The workflow stays local-first: edit, preview, export, and organize routes without tying you to a server account—built for people who want a portable creation toolbox.",
+      ],
+    },
+    whoFor: {
+      title: "Who it’s for",
+      bullets: [
+        "People who turn trips, drives, and check-ins into visual stories",
+        "Creators who want motion and rhythm—not only stills—when posting",
+        "Users who prefer finishing and exporting without a mandatory cloud login",
       ],
     },
     features: {
-      title: "Core experience",
+      title: "Core value",
       items: [
         {
-          title: "Trip timeline",
-          body: "Connect key moments so memories have order and rhythm.",
+          title: "Real routes",
+          body: "MapKit-backed legs that follow roads and sensible segments—not freehand doodles.",
         },
         {
-          title: "Lightweight logging",
-          body: "Reduce friction—make completion feel natural.",
+          title: "Watchable journeys",
+          body: "Transport modes, camera motion, and 3D—preview feels like a mini film.",
         },
         {
-          title: "Dark UI",
-          body: "Night shots and map details read better; accents guide state.",
+          title: "Memories at stops",
+          body: "Up to 3 photos per pin, shown in preview and export where it matters.",
+        },
+        {
+          title: "Shareable output",
+          body: "Export video to Photos and share through the system share sheet.",
+        },
+        {
+          title: "Manageable assets",
+          body: "Save, load, rename, delete; sample routes help you get started fast.",
         },
       ],
     },
     gallery: {
-      title: "Screens & marketing",
-      hint: "Logo (1:1) in `logo/`; portrait promos & screenshots (9:16 recommended) in `marketing/` and `screens/` (see README).",
+      title: "Promos & screenshots",
+      hint: "Portrait previews below match common full-screen iPhone capture proportions—scroll horizontally to browse.",
+      emptyHint: "Previews will appear here once assets are ready.",
     },
     download: {
       title: "Download",

@@ -17,7 +17,7 @@ export function createBrandOgImage() {
           justifyContent: "space-between",
           padding: 72,
           background:
-            "radial-gradient(900px 700px at 20% 0%, rgba(37,99,235,0.45), transparent 60%), radial-gradient(900px 700px at 90% 20%, rgba(251,146,60,0.35), transparent 55%), #070a12",
+            "radial-gradient(900px 700px at 20% 0%, rgba(37,99,235,0.45), transparent 60%), radial-gradient(900px 700px at 90% 20%, rgba(45,212,191,0.32), transparent 55%), #070a12",
           color: "#e8eefc",
           fontFamily:
             "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
@@ -29,7 +29,7 @@ export function createBrandOgImage() {
               width: 18,
               height: 18,
               borderRadius: 6,
-              background: "linear-gradient(135deg, #2563eb, #fb923c)",
+              background: "linear-gradient(135deg, #2563eb, #2dd4bf)",
             }}
           />
           <div style={{ fontSize: 18, letterSpacing: 6, opacity: 0.75 }}>
@@ -42,7 +42,7 @@ export function createBrandOgImage() {
           <div
             style={{ fontSize: 34, opacity: 0.78, maxWidth: 900, lineHeight: 1.25 }}
           >
-            Indie developer portfolio · dark futuristic UI · blue-orange accents
+            Indie developer portfolio · dark futuristic UI · blue-teal accents
           </div>
         </div>
 

@@ -1,22 +1,32 @@
 "use client";
 
 import Image from "next/image";
+import { useRef, useState } from "react";
+import { m, useReducedMotion } from "framer-motion";
 
 import { SITE_COPY, siteConfig } from "@/content/site";
 import { useLanguage } from "@/i18n/language";
 
+import { HeroFluidBackdrop } from "./HeroFluidBackdrop";
+import { HeroLightBeams } from "./HeroLightBeams";
 import { MagneticButton } from "./MagneticButton";
 import { PageShell } from "./PageShell";
 import { Reveal } from "./Reveal";
+import { TiltCard } from "./TiltCard";
 
 export type HomePageProps = {
-  /** `public/assets/apps/journey-time/logo/`，建议 1:1 */
   journeyTimeLogo?: string | null;
 };
+
+const heroEase = [0.22, 1, 0.36, 1] as const;
 
 export function HomePage({ journeyTimeLogo = null }: HomePageProps = {}) {
   const { language } = useLanguage();
   const copy = SITE_COPY[language];
+  const reduceMotion = useReducedMotion();
+  const [heroBeamsOn, setHeroBeamsOn] = useState(false);
+  const heroBeamsScheduled = useRef(false);
+  const heroBeamsVisible = reduceMotion === true || heroBeamsOn;
 
   const sectionLabel = {
     about: language === "zh" ? "01 · 关于" : "01 · ABOUT",
@@ -25,48 +35,107 @@ export function HomePage({ journeyTimeLogo = null }: HomePageProps = {}) {
     contact: language === "zh" ? "04 · 联系" : "04 · CONTACT",
   } as const;
 
-  const socialHint =
-    language === "zh"
-      ? "提示：把 `src/content/site.ts` 里的 `siteConfig.social` 与 `email` 替换为你的真实链接。"
-      : "Tip: replace `siteConfig.social` + `email` in `src/content/site.ts` with your real links.";
-
   return (
     <PageShell>
       <div id="top">
-        <main className="relative mx-auto max-w-6xl px-4 pb-24 pt-10 sm:px-6">
-          {/* Hero：单列，去掉右侧 Featured 与底部标签 */}
-          <section className="relative pb-14 pt-6 sm:pb-20 sm:pt-10">
-            <div className="max-w-3xl">
-              <Reveal>
-                <p className="font-display text-xs tracking-[0.35em] text-muted">
+        {/* 首屏全宽；背景层向上延伸覆盖导航下方，消除顶栏与渐变之间的硬边 */}
+        <section className="relative isolate w-full min-h-[calc(100dvh-6.5rem)] overflow-x-clip overflow-y-visible sm:min-h-[calc(100dvh-6rem)]">
+          <div className="pointer-events-none absolute inset-x-0 -bottom-20 -top-24 z-0 sm:-bottom-24 sm:-top-28">
+            <HeroFluidBackdrop />
+          </div>
+          <div className="pointer-events-none absolute inset-x-0 -bottom-20 -top-24 z-[5] sm:-bottom-24 sm:-top-28">
+            <HeroLightBeams visible={heroBeamsVisible} />
+          </div>
+
+          <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-6.5rem)] max-w-6xl flex-col items-center justify-center px-4 pb-16 pt-10 text-center sm:min-h-[calc(100dvh-6rem)] sm:px-6 sm:pb-20">
+            <div className="flex w-full max-w-4xl flex-col items-center px-1">
+              <m.div
+                className="flex w-full flex-col items-center"
+                initial={reduceMotion ? false : "hidden"}
+                animate={reduceMotion ? undefined : "show"}
+                variants={{
+                  hidden: {},
+                  show: {
+                    transition: { staggerChildren: 0.12, delayChildren: 0.08 },
+                  },
+                }}
+              >
+                <m.p
+                  variants={{
+                    hidden: { opacity: 0, y: 18 },
+                    show: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.55, ease: heroEase },
+                    },
+                  }}
+                  className="font-display text-xs tracking-[0.35em] text-muted"
+                >
                   {copy.hero.kicker}
-                </p>
-                <h1 className="mt-6 font-display text-4xl leading-[1.05] text-foreground sm:text-6xl">
+                </m.p>
+                <m.h1
+                  variants={{
+                    hidden: { opacity: 0, y: 24 },
+                    show: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.62, ease: heroEase },
+                    },
+                  }}
+                  className="mt-6 max-w-3xl font-display text-4xl font-semibold leading-[1.08] text-foreground drop-shadow-[0_0_40px_rgba(45,212,191,0.12)] sm:text-6xl md:text-7xl"
+                >
                   {copy.hero.headline}
-                </h1>
-                <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
+                </m.h1>
+                <m.p
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    show: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.58, ease: heroEase },
+                    },
+                  }}
+                  className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted sm:text-lg"
+                >
                   {copy.hero.subhead}
-                </p>
+                </m.p>
 
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <MagneticButton
-                    href="/apps/journey-time"
-                    className="inline-flex cursor-pointer items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-[0_0_0_1px_rgba(255,255,255,0.08)] transition-colors duration-200 hover:bg-primary/90"
-                  >
-                    {copy.hero.primaryCta}
-                  </MagneticButton>
-
-                  <a
+                <m.div
+                  variants={{
+                    hidden: { opacity: 0, y: 18 },
+                    show: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.52, ease: heroEase },
+                    },
+                  }}
+                  className="mt-10 flex justify-center"
+                  onAnimationComplete={() => {
+                    if (reduceMotion) return;
+                    if (heroBeamsScheduled.current) return;
+                    heroBeamsScheduled.current = true;
+                    window.setTimeout(() => setHeroBeamsOn(true), 500);
+                  }}
+                >
+                  <m.a
                     href="#contact"
-                    className="inline-flex cursor-pointer items-center justify-center rounded-full border border-white/[0.1] bg-background/25 px-6 py-3 text-sm font-semibold text-foreground/90 backdrop-blur-sm transition-colors duration-200 hover:border-primary/40 hover:bg-background/40"
+                    whileHover={
+                      reduceMotion
+                        ? undefined
+                        : { scale: 1.03, borderColor: "rgba(37, 99, 235, 0.55)" }
+                    }
+                    whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+                    className="inline-flex cursor-pointer items-center justify-center rounded-full border border-white/[0.1] bg-background/25 px-6 py-3 text-sm font-semibold text-foreground/90 shadow-[0_0_40px_-12px_rgba(45,212,191,0.35)] backdrop-blur-sm transition-colors duration-200 hover:border-primary/40 hover:bg-background/40"
                   >
                     {copy.hero.secondaryCta}
-                  </a>
-                </div>
-              </Reveal>
+                  </m.a>
+                </m.div>
+              </m.div>
             </div>
-          </section>
+          </div>
+        </section>
 
+        <main className="relative mx-auto max-w-6xl px-4 pb-24 pt-0 sm:px-6">
           <section id="about" className="scroll-mt-28 py-20 md:py-28">
             <div className="grid gap-10 lg:grid-cols-12">
               <div className="lg:col-span-5">
@@ -74,7 +143,7 @@ export function HomePage({ journeyTimeLogo = null }: HomePageProps = {}) {
                   <p className="font-display text-xs tracking-[0.35em] text-muted">
                     {sectionLabel.about}
                   </p>
-                  <h2 className="mt-4 font-display text-3xl text-foreground sm:text-4xl">
+                  <h2 className="mt-4 font-display text-3xl font-semibold text-foreground sm:text-4xl">
                     {copy.about.title}
                   </h2>
                 </Reveal>
@@ -114,7 +183,7 @@ export function HomePage({ journeyTimeLogo = null }: HomePageProps = {}) {
                   <p className="font-display text-xs tracking-[0.35em] text-muted">
                     {sectionLabel.product}
                   </p>
-                  <h2 className="mt-4 font-display text-3xl text-foreground sm:text-4xl">
+                  <h2 className="mt-4 font-display text-3xl font-semibold text-foreground sm:text-4xl">
                     {copy.featured.title}
                   </h2>
                 </div>
@@ -129,7 +198,7 @@ export function HomePage({ journeyTimeLogo = null }: HomePageProps = {}) {
 
             <div className="mt-10">
               <Reveal>
-                <div className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] bg-gradient-to-br from-background/20 via-background/10 to-background/20 p-6 sm:p-10">
+                <TiltCard className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] bg-gradient-to-br from-background/20 via-background/10 to-background/20 p-6 sm:p-10 [transform-style:preserve-3d]">
                   <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
                   <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-accent/15 blur-3xl" />
 
@@ -193,7 +262,7 @@ export function HomePage({ journeyTimeLogo = null }: HomePageProps = {}) {
                       )}
                     </div>
                   </div>
-                </div>
+                </TiltCard>
               </Reveal>
             </div>
           </section>
@@ -206,7 +275,7 @@ export function HomePage({ journeyTimeLogo = null }: HomePageProps = {}) {
                   <p className="font-display text-xs tracking-[0.35em] text-muted">
                     {sectionLabel.philosophy}
                   </p>
-                  <h2 className="mt-4 font-display text-3xl text-foreground sm:text-4xl">
+                  <h2 className="mt-4 font-display text-3xl font-semibold text-foreground sm:text-4xl">
                     {copy.philosophy.title}
                   </h2>
                 </Reveal>
@@ -250,7 +319,7 @@ export function HomePage({ journeyTimeLogo = null }: HomePageProps = {}) {
                   <p className="font-display text-xs tracking-[0.35em] text-muted">
                     {sectionLabel.contact}
                   </p>
-                  <h2 className="mt-4 font-display text-3xl text-foreground sm:text-4xl">
+                  <h2 className="mt-4 font-display text-3xl font-semibold text-foreground sm:text-4xl">
                     {copy.contact.title}
                   </h2>
                   <p className="mt-5 max-w-prose text-base leading-relaxed text-muted sm:text-lg">
@@ -261,19 +330,21 @@ export function HomePage({ journeyTimeLogo = null }: HomePageProps = {}) {
 
               <div className="lg:col-span-7">
                 <Reveal>
-                  <div className="mt-10 grid gap-10 border-t border-white/[0.06] pt-10 sm:grid-cols-2 sm:gap-12 lg:mt-0 lg:border-t-0 lg:pt-0">
-                    <div>
+                  <div className="mt-10 grid grid-cols-1 gap-10 border-t border-white/[0.06] pt-10 md:grid md:grid-cols-[minmax(0,1fr)_auto] md:items-start md:gap-8 lg:mt-0 lg:border-t-0 lg:pt-0">
+                    <div className="min-w-0 md:min-w-[12rem] md:pr-2">
                       <p className="text-xs font-medium uppercase tracking-wider text-muted">
                         {copy.contact.emailLabel}
                       </p>
-                      <a
-                        href={`mailto:${siteConfig.email}`}
-                        className="mt-3 inline-flex cursor-pointer break-all font-display text-xl text-foreground transition-colors duration-200 hover:text-primary sm:text-2xl"
-                      >
-                        {siteConfig.email}
-                      </a>
+                      <div className="mt-3 max-w-full overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                        <a
+                          href={`mailto:${siteConfig.email}`}
+                          className="inline-block whitespace-nowrap font-display text-sm leading-normal text-foreground transition-colors duration-200 hover:text-primary sm:text-base md:text-lg"
+                        >
+                          {siteConfig.email}
+                        </a>
+                      </div>
                     </div>
-                    <div>
+                    <div className="shrink-0 md:pt-0">
                       <p className="text-xs font-medium uppercase tracking-wider text-muted">
                         {copy.contact.socialLabel}
                       </p>
@@ -282,7 +353,7 @@ export function HomePage({ journeyTimeLogo = null }: HomePageProps = {}) {
                           href={siteConfig.social.github}
                           target="_blank"
                           rel="noreferrer"
-                          className="cursor-pointer rounded-full border border-white/[0.08] bg-background/25 px-4 py-2 text-sm text-foreground/90 backdrop-blur-sm transition-colors duration-200 hover:border-primary/45"
+                          className="cursor-pointer rounded-full border border-white/[0.08] bg-background/25 px-3 py-1.5 text-xs text-foreground/90 backdrop-blur-sm transition-colors duration-200 hover:border-accent/50 sm:px-3.5 sm:py-2 sm:text-sm"
                         >
                           GitHub
                         </a>
@@ -290,14 +361,13 @@ export function HomePage({ journeyTimeLogo = null }: HomePageProps = {}) {
                           href={siteConfig.social.x}
                           target="_blank"
                           rel="noreferrer"
-                          className="cursor-pointer rounded-full border border-white/[0.08] bg-background/25 px-4 py-2 text-sm text-foreground/90 backdrop-blur-sm transition-colors duration-200 hover:border-primary/45"
+                          className="cursor-pointer rounded-full border border-white/[0.08] bg-background/25 px-3 py-1.5 text-xs text-foreground/90 backdrop-blur-sm transition-colors duration-200 hover:border-accent/50 sm:px-3.5 sm:py-2 sm:text-sm"
                         >
                           X
                         </a>
                       </div>
                     </div>
                   </div>
-                  <p className="mt-8 text-xs leading-relaxed text-muted">{socialHint}</p>
                 </Reveal>
               </div>
             </div>
@@ -307,7 +377,7 @@ export function HomePage({ journeyTimeLogo = null }: HomePageProps = {}) {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <p>{copy.footer.note}</p>
               <p className="text-xs text-muted/80">
-                Built with Next.js · Tailwind · Framer Motion
+                Next.js · Tailwind · Framer Motion · GSAP
               </p>
             </div>
           </footer>
