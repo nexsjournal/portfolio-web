@@ -1,60 +1,35 @@
 import type { Metadata } from "next";
-import { Noto_Sans_SC, Outfit } from "next/font/google";
+import { Lexend, Noto_Sans_SC, Outfit } from "next/font/google";
 
-import { ClientHtmlLang } from "@/components/site/ClientHtmlLang";
-import { MotionProvider } from "@/context/motion";
-import { LanguageProvider } from "@/i18n/language";
+import { SiteNavbar } from "@/components/site/site-navbar";
+import { Providers } from "@/components/site/providers";
 
 import "./globals.css";
 
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
-  display: "swap",
-});
-
 const notoSansSc = Noto_Sans_SC({
-  variable: "--font-noto-sc",
   subsets: ["latin"],
   weight: ["300", "400", "500", "700"],
   display: "swap",
+  variable: "--font-noto-sc",
 });
 
-const siteUrl = new URL("https://lextellsyou.asia");
+const lexend = Lexend({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-lexend",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
+  variable: "--font-outfit",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  metadataBase: siteUrl,
-  title: {
-    default: "Lex · Indie Developer",
-    template: "%s · Lex",
-  },
-  description:
-    "Lex（独立开发者）的个人作品集：独立 App、产品叙事与联系方式。深色科技风、蓝青撞色。",
-  alternates: {
-    canonical: "/",
-    languages: {
-      "zh-CN": "/",
-      en: "/",
-    },
-  },
-  openGraph: {
-    type: "website",
-    url: siteUrl,
-    siteName: "Lex",
-    title: "Lex · Indie Developer",
-    description:
-      "Indie developer portfolio: apps, story, and contact. Dark futuristic UI with blue/teal accents.",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Lex · Indie Developer",
-    description:
-      "Indie developer portfolio: apps, story, and contact. Dark futuristic UI with blue/teal accents.",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  title: "Lex · PM & UX & 独立开发者 · 构建有用且有趣的APP",
+  description: "Lex · PM & UX & 独立开发者 · 构建有用且有趣的APP",
 };
 
 export default function RootLayout({
@@ -63,16 +38,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className="h-full">
+    <html lang="zh-CN">
       <body
-        className={`${outfit.variable} ${notoSansSc.variable} min-h-full bg-background text-foreground antialiased`}
+        className={`${lexend.className} ${lexend.variable} ${notoSansSc.variable} ${outfit.variable} antialiased`}
       >
-        <LanguageProvider>
-          <MotionProvider>
-            <ClientHtmlLang />
-            {children}
-          </MotionProvider>
-        </LanguageProvider>
+        <Providers>
+          <SiteNavbar />
+          {children}
+        </Providers>
       </body>
     </html>
   );

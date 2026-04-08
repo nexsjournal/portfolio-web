@@ -2,20 +2,19 @@
 
 :root {
   /* Core canvas */
-  --background: #070a12;
-  --foreground: #e8eefc;
+  --background: #06080e;
+  --foreground: #f7f7f7;
 
   /* Brand */
-  --primary: #2563eb;
-  --primary-foreground: #f8fafc;
-  /* 青绿辅助色：科技感、与蓝主色协调 */
-  --accent: #2dd4bf;
-  --accent-foreground: #0b1220;
+  --primary: #1ff0ff;
+  --primary-foreground: #051016;
+  --accent: #a260ff;
+  --accent-foreground: #f8f5ff;
 
   /* Surfaces */
   --muted: #94a3b8;
-  --border: rgba(148, 163, 184, 0.22);
-  --card: rgba(15, 23, 42, 0.62);
+  --border: rgba(255, 255, 255, 0.12);
+  --card: rgba(10, 15, 24, 0.85);
   --card-foreground: rgba(255, 255, 255, 0.92);
 }
 
@@ -31,76 +30,132 @@
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 
-  --font-sans: var(--font-noto-sc), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-lexend), var(--font-noto-sc), ui-sans-serif, system-ui,
+    sans-serif;
   --font-display: var(--font-outfit), var(--font-noto-sc), ui-sans-serif, system-ui,
     sans-serif;
 }
 
 html {
+  scrollbar-gutter: stable;
   background-color: var(--background);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.16) rgba(6, 8, 14, 0.4);
+}
+
+html::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+html::-webkit-scrollbar-track {
+  background: rgba(6, 8, 14, 0.45);
+  border-radius: 999px;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  border: 1px solid rgba(6, 8, 14, 0.5);
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: rgba(31, 240, 255, 0.4);
+  border-color: rgba(6, 8, 14, 0.4);
 }
 
 body {
   min-height: 100vh;
   color: var(--foreground);
   font-family: var(--font-sans);
-  /* 固定于视口的大范围柔光，避免滚动时出现「横条」式生硬分界 */
   background-color: var(--background);
   background-image: radial-gradient(
-      ellipse 120% 90% at 50% -25%,
-      rgba(37, 99, 235, 0.22),
-      transparent 58%
-    ),
-    radial-gradient(
-      ellipse 90% 70% at 95% 5%,
-      rgba(45, 212, 191, 0.14),
-      transparent 52%
-    ),
-    radial-gradient(
-      ellipse 100% 80% at 5% 105%,
-      rgba(37, 99, 235, 0.14),
+      ellipse 120% 90% at 50% -20%,
+      rgba(31, 240, 255, 0.09),
       transparent 55%
+    ),
+    radial-gradient(
+      ellipse 85% 70% at 92% 8%,
+      rgba(162, 96, 255, 0.11),
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse 100% 80% at 8% 102%,
+      rgba(31, 240, 255, 0.06),
+      transparent 58%
     );
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: cover;
   scrollbar-width: thin;
-  scrollbar-color: rgba(87, 116, 182, 0.72) rgba(148, 163, 184, 0.12);
+  scrollbar-color: rgba(255, 255, 255, 0.16) rgba(6, 8, 14, 0.4);
 }
 
-/* 全站滚动条视觉优化（桌面端） */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+body::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-::-webkit-scrollbar-track {
-  background: rgba(148, 163, 184, 0.1);
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    180deg,
-    rgba(37, 99, 235, 0.86),
-    rgba(96, 165, 250, 0.74)
-  );
+body::-webkit-scrollbar-track {
+  background: rgba(6, 8, 14, 0.45);
   border-radius: 999px;
-  border: 2px solid rgba(11, 18, 32, 0.7);
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    180deg,
-    rgba(59, 130, 246, 0.95),
-    rgba(125, 211, 252, 0.86)
-  );
+body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  border: 1px solid rgba(6, 8, 14, 0.5);
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: rgba(31, 240, 255, 0.42);
+  border-color: rgba(6, 8, 14, 0.4);
+}
+
+/* 其它可滚动容器（与页面色系一致） */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.14) rgba(6, 8, 14, 0.35);
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(6, 8, 14, 0.35);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  border: 1px solid rgba(6, 8, 14, 0.45);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(31, 240, 255, 0.34);
 }
 
 .font-display {
   font-family: var(--font-display);
 }
 
-/* 横向滚动区隐藏滚动条，仍可用触控板/拖拽滚动 */
+.section-title {
+  font-family: var(--font-display), var(--font-noto-sc), ui-sans-serif, system-ui,
+    sans-serif;
+  color: #f4f4f5;
+  font-size: clamp(1.9rem, 3.4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  line-height: 1.15;
+  text-transform: uppercase;
+  text-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.55),
+    0 0 42px rgba(31, 240, 255, 0.09);
+}
+
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -109,23 +164,19 @@ body {
   display: none;
 }
 
-/* 近似 iOS 主屏幕图标圆角（约 22.37% 边长，超椭圆常见近似） */
 .rounded-ios-app {
   border-radius: 22.37%;
   isolation: isolate;
 }
 
-/*
- * 固定尺寸图标（如详情页 Hero 156×156）：用固定 px 圆角，避免 % 在部分浏览器里与图片边缘对齐发虚。
- * 34px ≈ 156 × 22%，接近 iOS 图标比例。
- */
 .rounded-ios-app-fixed {
   border-radius: 34px;
   isolation: isolate;
 }
 
 ::selection {
-  background: rgba(37, 99, 235, 0.35);
+  background: rgba(31, 240, 255, 0.28);
+  color: var(--foreground);
 }
 
 @media (prefers-reduced-motion: reduce) {
