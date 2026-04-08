@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { useReducedMotion } from "framer-motion";
+import { useTheme } from "@/context/theme";
 
 type Star = {
   left: string;
@@ -14,6 +15,8 @@ type Star = {
 
 export function StarsBackground() {
   const reduce = useReducedMotion();
+  const { theme } = useTheme();
+  const isLight = theme === "light";
   const stars = useMemo<Star[]>(
     () =>
       Array.from({ length: 70 }, () => ({
@@ -34,7 +37,7 @@ export function StarsBackground() {
       {stars.map((star, idx) => (
         <span
           key={idx}
-          className="absolute rounded-full bg-white"
+          className={isLight ? "absolute rounded-full bg-slate-300" : "absolute rounded-full bg-white"}
           style={{
             left: star.left,
             top: star.top,

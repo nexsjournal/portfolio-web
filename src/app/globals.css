@@ -18,6 +18,18 @@
   --card-foreground: rgba(255, 255, 255, 0.92);
 }
 
+/* Light theme overrides（通过 html.theme-light 切换） */
+html.theme-light {
+  --background: #f5f5fb;
+  --foreground: #020617;
+  --primary: #2b7cff;
+  --primary-foreground: #051016;
+  --muted: #4b5563;
+  --border: rgba(15, 23, 42, 0.14);
+  --card: rgba(255, 255, 255, 0.94);
+  --card-foreground: #020617;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -98,6 +110,24 @@ body {
   }
 }
 
+html.theme-light body {
+  background-image: radial-gradient(
+      ellipse 118% 88% at 50% -52%,
+      rgba(31, 240, 255, 0.12),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 90% 72% at 92% 0%,
+      rgba(162, 96, 255, 0.12),
+      transparent 54%
+    ),
+    radial-gradient(
+      ellipse 110% 88% at 0% 104%,
+      rgba(187, 255, 42, 0.12),
+      transparent 60%
+    );
+}
+
 body::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -153,7 +183,7 @@ body::-webkit-scrollbar-thumb:hover {
 .section-title {
   font-family: var(--font-montserrat), var(--font-noto-sc), var(--font-lexend),
     ui-sans-serif, system-ui, sans-serif;
-  color: #f4f4f5;
+  color: var(--foreground);
   font-size: clamp(1.9rem, 3.4vw, 3rem);
   font-weight: 700;
   letter-spacing: 0.07em;
@@ -162,6 +192,12 @@ body::-webkit-scrollbar-thumb:hover {
   text-shadow:
     0 1px 1px rgba(0, 0, 0, 0.55),
     0 0 42px rgba(31, 240, 255, 0.09);
+}
+
+html.theme-light .section-title {
+  text-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.18),
+    0 0 42px rgba(31, 240, 255, 0.05);
 }
 
 .scrollbar-hide {

@@ -3,12 +3,13 @@
 import { Compass, Layers3, Sparkles } from "lucide-react";
 
 import { useSiteLanguage } from "@/context/site-language";
+import { useTheme } from "@/context/theme";
 import { t } from "@/i18n/site-copy";
 import { WobbleCard } from "@/components/ui/wobble-card";
 import { FadeInBlock, FadeInTitle } from "@/components/ui/scroll-reveal";
 
-/** 站点主题色（图标与半透明底统一） */
-const THEME_PRIMARY = "#1FF0FF";
+/** 站点主题色（浅色/深色随变量切换） */
+const THEME_PRIMARY = "var(--primary)";
 
 const pointsZh: { title: string; body: string; imageSrc: string }[] = [
   {
@@ -50,6 +51,8 @@ export function PhilosophySection() {
   const { lang } = useSiteLanguage();
   const copy = t(lang);
   const points = lang === "zh" ? pointsZh : pointsEn;
+  const { theme } = useTheme();
+  const isLight = theme === "light";
 
   return (
     <section id="philosophy" className="scroll-mt-24 px-6 py-28 md:px-10 md:py-36">
@@ -57,7 +60,9 @@ export function PhilosophySection() {
         <div className="text-center">
           <FadeInTitle className="section-title">{copy.sections.philosophy}</FadeInTitle>
           <FadeInBlock delay={0.12} className="mx-auto mt-5 max-w-2xl">
-            <p className="text-sm leading-relaxed text-white/55">
+            <p
+              className={isLight ? "text-sm leading-relaxed text-slate-700/65" : "text-sm leading-relaxed text-white/55"}
+            >
               {copy.sections.philosophyDesc}
             </p>
           </FadeInBlock>

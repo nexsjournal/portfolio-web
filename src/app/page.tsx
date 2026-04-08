@@ -7,7 +7,7 @@ import { ProductsSection } from "@/components/sections/products-section";
 
 export default function Home() {
   return (
-    <main className="bg-[#06080e] text-white">
+    <main className="bg-[var(--background)] text-[color:var(--foreground)]">
       <HeroSection />
       <ProductsSection />
       <AboutSection />

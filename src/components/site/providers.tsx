@@ -1,7 +1,12 @@
 "use client";
 
 import { SiteLanguageProvider } from "@/context/site-language";
+import { ThemeProvider } from "@/context/theme";
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  return <SiteLanguageProvider>{children}</SiteLanguageProvider>;
+  return (
+    <ThemeProvider>
+      <SiteLanguageProvider>{children}</SiteLanguageProvider>
+    </ThemeProvider>
+  );
 }

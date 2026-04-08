@@ -9,9 +9,9 @@ export const siteCopy = {
       contact: "联系",
     },
     heroBadge: "设计 · 体验 · 创造",
-    heroSub:
-      "PM & UX & 独立开发者 · 构建有用且有趣的APP",
+    heroSub: "PM & UX & 独立开发者 · 构建有用且有趣的APP",
     heroTitle: "于细微处，为生活作序",
+    heroCta: "查看产品 →",
     sections: {
       products: "PRODUCTS",
       productsDesc:
@@ -49,6 +49,7 @@ export const siteCopy = {
     heroBadge: "Design · Experience · Create",
     heroSub: "PM & UX & Indie dev · Building useful, delightful apps.",
     heroTitle: "Ordering life, in the smallest details.",
+    heroCta: "View products →",
     sections: {
       products: "PRODUCTS",
       productsDesc:

@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { useReducedMotion } from "framer-motion";
+import { useTheme } from "@/context/theme";
 
 type ShootingStar = {
   top: string;
@@ -11,6 +12,8 @@ type ShootingStar = {
 
 export function ShootingStars() {
   const reduce = useReducedMotion();
+  const { theme } = useTheme();
+  const isLight = theme === "light";
   const stars = useMemo<ShootingStar[]>(
     () =>
       Array.from({ length: 8 }, (_, i) => ({
@@ -28,7 +31,7 @@ export function ShootingStars() {
       {stars.map((star, idx) => (
         <span
           key={idx}
-          className="absolute h-[2px] w-28 rotate-[28deg] rounded-full bg-gradient-to-r from-[#1FF0FF] via-white to-transparent"
+          className={isLight ? "absolute h-[2px] w-28 rotate-[28deg] rounded-full bg-gradient-to-r from-[#1FF0FF] via-slate-200 to-transparent" : "absolute h-[2px] w-28 rotate-[28deg] rounded-full bg-gradient-to-r from-[#1FF0FF] via-white to-transparent"}
           style={{
             top: star.top,
             left: star.left,

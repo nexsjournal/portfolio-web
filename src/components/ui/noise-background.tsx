@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/context/theme";
 
 type Props = {
   children: React.ReactNode;
@@ -28,6 +29,8 @@ export function NoiseBackground({
   animate = false,
   flowOnHover = false,
 }: Props) {
+  const { theme } = useTheme();
+  const isLight = theme === "light";
   const stops = gradientColors?.length
     ? gradientColors.join(", ")
     : "rgb(31, 240, 255), rgb(162, 96, 255), rgb(187, 255, 42)";
@@ -52,13 +55,22 @@ export function NoiseBackground({
       />
       <div
         aria-hidden
-        className="absolute inset-0 rounded-[inherit] opacity-[0.28] mix-blend-overlay"
+        className={cn(
+          "absolute inset-0 rounded-[inherit] mix-blend-overlay",
+          isLight ? "opacity-[0.18]" : "opacity-[0.28]",
+        )}
         style={{
           backgroundImage: `url("data:image/svg+xml,${NOISE_SVG}")`,
           backgroundSize: "160px 160px",
         }}
       />
-      <div aria-hidden className="absolute inset-0 rounded-[inherit] bg-black/15" />
+      <div
+        aria-hidden
+        className={cn(
+          "absolute inset-0 rounded-[inherit]",
+          isLight ? "bg-black/5" : "bg-black/15",
+        )}
+      />
       <div className="relative">{children}</div>
     </div>
   );
