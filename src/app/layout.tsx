@@ -37,11 +37,6 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: "Lex · PM & UX & 独立开发者 · 构建有用且有趣的APP",
   description: "Lex · PM & UX & 独立开发者 · 构建有用且有趣的APP",
-  icons: {
-    icon: "/assets/logo-mark.svg",
-    shortcut: "/assets/logo-mark.svg",
-    apple: "/assets/logo-mark.svg",
-  },
 };
 
 export default function RootLayout({
