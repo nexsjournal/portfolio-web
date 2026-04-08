@@ -91,6 +91,13 @@ body {
   scrollbar-color: rgba(255, 255, 255, 0.16) rgba(6, 8, 14, 0.4);
 }
 
+/* Chrome 滚动时降低重绘成本（移动端/低端设备尤明显） */
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll;
+  }
+}
+
 body::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -173,6 +180,30 @@ body::-webkit-scrollbar-thumb:hover {
 .rounded-ios-app-fixed {
   border-radius: 34px;
   isolation: isolate;
+}
+
+@keyframes noise-flow {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(-8px, -6px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 ::selection {

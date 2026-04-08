@@ -48,8 +48,9 @@ export function FadeInTitle({ children, className }: Props) {
   return (
     <motion.h2
       className={className}
-      initial={{ opacity: 0, y: 44, filter: "blur(14px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      // 滚动时 filter: blur 会显著增加重绘成本，导致部分设备掉帧；这里改为纯 transform + opacity
+      initial={{ opacity: 0, y: 44 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={viewportSoft}
       transition={{ duration: 0.68, ease: [0.22, 1, 0.36, 1] }}
     >

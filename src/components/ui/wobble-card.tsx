@@ -19,7 +19,7 @@ export function WobbleCard({ title, body, imageSrc, icon, iconTint }: Props) {
       whileHover={{ y: -4 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-[#1FF0FF]/20 blur-2xl transition-all duration-300 group-hover:bg-[#1FF0FF]/30" />
+      <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-[#1FF0FF]/16 blur-2xl transition-all duration-300 group-hover:bg-[#BBFF2A]/22" />
 
       {/* 内容在上 */}
       <div className="relative z-10 flex flex-1 flex-col pb-5">
@@ -36,7 +36,7 @@ export function WobbleCard({ title, body, imageSrc, icon, iconTint }: Props) {
           </div>
         ) : null}
         <h3 className="text-xl font-semibold text-white">{title}</h3>
-        <p className="mt-3 text-sm leading-7 text-white/78">{body}</p>
+        <p className="mt-2 text-sm leading-7 text-white/78">{body}</p>
       </div>
 
       {/* 图片在下：宽度与卡片一致，1:1，顶部蒙版与上方背景自然衔接 */}

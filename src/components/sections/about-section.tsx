@@ -46,24 +46,39 @@ export function AboutSection() {
           {lang === "zh" ? (
             <FadeInBlock delay={0.12} className="mt-6 space-y-4">
               <p className="text-base leading-8 text-white/78">
-                我是 Lex，一名专注产品体验与细节表达的独立开发者。相比堆叠功能，我更在意
-                每一步交互是否自然、每一个反馈是否有温度。
+                嘿，我是 Lex。
+                <br />
+                我不追求成为那个“什么都会”的万能开发者，我更想做一个会“感受”的创造者。微小的细节总能偷走用户的注意力——或者把他们吓跑——所以我痴迷于这些细节。
               </p>
               <p className="text-base leading-8 text-white/78">
-                这座网站会持续记录我的产品实验、思考与迭代过程。它不是展示「我会什么」，而是
-                展示「我在解决什么问题」。
+                你可以把我想象成生活的玩家：我用相机捕捉光影，用脚步丈量城市，在篮球场上挥洒汗水，在电影院里体验百种人生。这些经历是我的灵感燃料，它们告诉我，最棒的设计，总是源自最真实的生活体验。
+              </p>
+              <p className="text-base leading-8 text-white/78">
+                这里是我的一个灵感仓库，我希望能记录我的每一次冒险、每一次挑战，以及我如何用技能解决现实问题——让科技多一点人情味，少一点冷冰冰的公式感。
               </p>
             </FadeInBlock>
           ) : (
             <FadeInBlock delay={0.12} className="mt-6 space-y-4">
               <p className="text-base leading-8 text-white/78">
-                I&apos;m Lex—an indie developer focused on product feel and
-                small details. I care more about natural interaction and humane
-                feedback than feature count.
+                Hey, I&apos;m Lex.
+                <br />
+                I&apos;m not trying to be the “can-do-everything” developer. I
+                would rather be a creator who can truly feel. Tiny details
+                either steal a user&apos;s attention—or scare them away—so I&apos;m
+                obsessed with getting them right.
               </p>
               <p className="text-base leading-8 text-white/78">
-                This site is a log of experiments and iteration. Less “what I
-                can do,” more “what problems I’m trying to solve.”
+                Think of me as someone who plays life like a game: I capture
+                light with a camera, measure cities with my steps, sweat it out
+                on the basketball court, and live a hundred lives in the
+                cinema. Those experiences are my fuel—they remind me that the
+                best design always comes from real life.
+              </p>
+              <p className="text-base leading-8 text-white/78">
+                This is my personal copy of the world. I want to record every
+                adventure, every challenge, and how I use skills to solve
+                real-world problems—so tech feels a little more human, and a
+                little less like cold formulas.
               </p>
             </FadeInBlock>
           )}
