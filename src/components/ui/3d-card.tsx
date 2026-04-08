@@ -9,6 +9,8 @@ type CardContextValue = {
   rotateY: number;
   setRotate: (x: number, y: number) => void;
   reset: () => void;
+  /** 指针在卡片上时为 true；translateZ 仅此时生效，避免静止时 logo 因透视「顶出」卡片 */
+  depthActive: boolean;
 };
 
 const CardContext = createContext<CardContextValue | null>(null);
@@ -23,6 +25,7 @@ export function CardContainer({
   const ref = useRef<HTMLDivElement>(null);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
+  const [depthActive, setDepthActive] = useState(false);
 
   const setRotate = (x: number, y: number) => {
     setRotateX(x);
@@ -44,11 +47,17 @@ export function CardContainer({
   };
 
   return (
-    <CardContext.Provider value={{ rotateX, rotateY, setRotate, reset }}>
+    <CardContext.Provider
+      value={{ rotateX, rotateY, setRotate, reset, depthActive }}
+    >
       <div
         ref={ref}
+        onMouseEnter={() => setDepthActive(true)}
         onMouseMove={handleMove}
-        onMouseLeave={reset}
+        onMouseLeave={() => {
+          setDepthActive(false);
+          reset();
+        }}
         className={cn(
           "flex items-center justify-center py-10 [perspective:1500px]",
           className,
@@ -104,15 +113,20 @@ export function CardItem<T extends React.ElementType = "div">({
   translateZ = 0,
   ...props
 }: CardItemProps<T>) {
+  const ctx = useContext(CardContext);
   const Component = as ?? "div";
   const z =
     typeof translateZ === "string" ? Number.parseFloat(translateZ) : translateZ;
+  const effectiveZ = ctx == null ? z : ctx.depthActive ? z : 0;
 
   return (
     <Component
-      className={cn(className)}
+      className={cn(
+        "transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform",
+        className,
+      )}
       style={{
-        transform: `translate3d(0,0,${z}px)`,
+        transform: `translate3d(0,0,${effectiveZ}px)`,
         transformStyle: "preserve-3d",
         backfaceVisibility: "hidden",
       }}

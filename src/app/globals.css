@@ -70,7 +70,7 @@ body {
   font-family: var(--font-sans);
   background-color: var(--background);
   background-image: radial-gradient(
-      ellipse 120% 90% at 50% -20%,
+      ellipse 120% 90% at 50% -58%,
       rgba(31, 240, 255, 0.09),
       transparent 55%
     ),
@@ -142,13 +142,14 @@ body::-webkit-scrollbar-thumb:hover {
   font-family: var(--font-display);
 }
 
+/* 须直接用 body 继承的 --font-montserrat；勿放在 @theme 里链式引用，否则 :root 上无该变量会整段失效 */
 .section-title {
-  font-family: var(--font-display), var(--font-noto-sc), ui-sans-serif, system-ui,
-    sans-serif;
+  font-family: var(--font-montserrat), var(--font-noto-sc), var(--font-lexend),
+    ui-sans-serif, system-ui, sans-serif;
   color: #f4f4f5;
   font-size: clamp(1.9rem, 3.4vw, 3rem);
-  font-weight: 800;
-  letter-spacing: 0.09em;
+  font-weight: 700;
+  letter-spacing: 0.07em;
   line-height: 1.15;
   text-transform: uppercase;
   text-shadow:

@@ -15,14 +15,13 @@ export const siteCopy = {
     sections: {
       products: "PRODUCTS",
       productsDesc:
-        "独立开发的应用与实验合集。每一件作品都追求清晰叙事、顺手交互，以及能带出门的真实完成度。",
+        "一些我折腾出来的小产品，有的是为了解决问题，有的是因为觉得可以更好",
       about: "ABOUT",
       philosophy: "PHILOSOPHY",
       philosophyDesc:
-        "几条长期有效的原则：不堆概念，只保留经得起反复使用的设计选择。",
+        "我不太相信功能越多越好，更在意的是，用起来有没有阻力",
       contact: "CONTACT",
-      contactDesc:
-        "可通过邮件或社媒联系；我会认真阅读，回复可能需要一点时间。",
+      contactDesc: "有想法就发给我，我基本都会看",
     },
     products: {
       open: "查看详情",
@@ -53,14 +52,13 @@ export const siteCopy = {
     sections: {
       products: "PRODUCTS",
       productsDesc:
-        "A set of indie apps and experiments—clear stories, crisp UX, and real shipping quality.",
+        "Small things I've shipped—some to solve a problem, some because I thought they could be better.",
       about: "ABOUT",
       philosophy: "PHILOSOPHY",
       philosophyDesc:
-        "A few principles that hold up: no buzzwords, only choices that survive daily use.",
+        "I don't assume more features is better—what I care about is whether it feels effortless to use.",
       contact: "CONTACT",
-      contactDesc:
-        "Reach out by email or social—I read everything; replies may take a moment.",
+      contactDesc: "Send me your thoughts—I read almost all of them.",
     },
     products: {
       open: "Details",

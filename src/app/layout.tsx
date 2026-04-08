@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Lexend, Noto_Sans_SC, Outfit } from "next/font/google";
+import { Lexend, Montserrat, Noto_Sans_SC, Outfit } from "next/font/google";
 
 import { SiteNavbar } from "@/components/site/site-navbar";
 import { Providers } from "@/components/site/providers";
@@ -27,9 +27,21 @@ const outfit = Outfit({
   display: "swap",
 });
 
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  variable: "--font-montserrat",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Lex · PM & UX & 独立开发者 · 构建有用且有趣的APP",
   description: "Lex · PM & UX & 独立开发者 · 构建有用且有趣的APP",
+  icons: {
+    icon: "/assets/logo-mark.svg",
+    shortcut: "/assets/logo-mark.svg",
+    apple: "/assets/logo-mark.svg",
+  },
 };
 
 export default function RootLayout({
@@ -40,7 +52,7 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body
-        className={`${lexend.className} ${lexend.variable} ${notoSansSc.variable} ${outfit.variable} antialiased`}
+        className={`${lexend.className} ${lexend.variable} ${notoSansSc.variable} ${outfit.variable} ${montserrat.variable} antialiased`}
       >
         <Providers>
           <SiteNavbar />

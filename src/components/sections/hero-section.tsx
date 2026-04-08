@@ -26,7 +26,7 @@ export function HeroSection() {
         )}
       />
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_95%_70%_at_50%_28%,rgba(31,240,255,0.1),transparent_58%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_95%_70%_at_50%_4%,rgba(31,240,255,0.1),transparent_58%)]"
         aria-hidden
       />
 

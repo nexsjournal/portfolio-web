@@ -30,7 +30,7 @@ export function ProductDetailContent({ product }: Props) {
   const features = lang === "en" ? product.featuresEn ?? product.features : product.features;
 
   return (
-    <main className="relative isolate min-h-screen overflow-hidden bg-[#05070d] px-6 pb-20 pt-[calc(0.75rem+3rem+2rem)] text-white md:px-10 md:pb-28">
+    <main className="relative isolate min-h-screen overflow-hidden bg-[#05070d] px-6 pb-0 pt-[calc(0.75rem+3rem+2rem)] text-white md:px-10">
       <div className="absolute inset-0 bg-[#06080e]" aria-hidden />
       <Spotlight className="-left-[22rem] -top-[15rem] md:-left-[14rem] md:-top-[10rem]" fill="#1FF0FF" />
       <ShootingStars />
@@ -103,7 +103,7 @@ export function ProductDetailContent({ product }: Props) {
           </div>
         </section>
       </div>
-      <div className="relative z-10 mt-8">
+      <div className="relative z-10">
         <FooterSection />
       </div>
     </main>

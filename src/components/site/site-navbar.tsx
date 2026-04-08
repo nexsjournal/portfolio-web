@@ -45,7 +45,7 @@ export function SiteNavbar() {
     >
       <div
         className={cn(
-          "rounded-2xl border border-white/[0.08] bg-white/[0.06] px-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.35)] backdrop-blur-md lg:px-3",
+          "rounded-2xl border border-white/[0.08] bg-white/[0.06] px-2.5 shadow-[0_6px_22px_rgba(0,0,0,0.22)] backdrop-blur-md lg:px-3",
           scrolled && "border-white/[0.12] bg-[#070a12]/75",
         )}
       >
