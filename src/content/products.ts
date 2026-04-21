@@ -16,6 +16,7 @@ export type Product = {
   sizeEn?: string;
   platform: string;
   platformEn?: string;
+  platformUrl?: string;
   features: string[];
   featuresEn?: string[];
   comingSoon?: boolean;
@@ -42,10 +43,12 @@ export const products: Product[] = [
     categoryEn: "Travel & Journaling",
     language: "中文 / English",
     languageEn: "Chinese / English",
-    size: "约 148 MB",
-    sizeEn: "About 148 MB",
-    platform: "iOS（规划 Android）",
-    platformEn: "iOS (Android planned)",
+    size: "29.2 MB",
+    sizeEn: "29.2 MB",
+    platform: "iOS",
+    platformEn: "iOS",
+    platformUrl:
+      "https://apps.apple.com/cn/app/%E6%97%85%E8%BF%B9%E6%97%B6%E5%85%89/id6761244678",
     features: [
       "多段旅行路线编辑，支持关键节点标注",
       "一键生成路线动画并导出高质量视频",

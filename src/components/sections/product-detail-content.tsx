@@ -30,6 +30,7 @@ export function ProductDetailContent({ product }: Props) {
   const language = lang === "en" ? product.languageEn ?? product.language : product.language;
   const size = lang === "en" ? product.sizeEn ?? product.size : product.size;
   const platform = lang === "en" ? product.platformEn ?? product.platform : product.platform;
+  const platformUrl = product.platformUrl;
   const features = lang === "en" ? product.featuresEn ?? product.features : product.features;
 
   return (
@@ -89,19 +90,8 @@ export function ProductDetailContent({ product }: Props) {
             <InfoItem isLight={isLight} label={copy.category} value={category} />
             <InfoItem isLight={isLight} label={copy.language} value={language} />
             <InfoItem isLight={isLight} label={copy.size} value={size} />
-            <InfoItem isLight={isLight} label={copy.platform} value={platform} />
+            <InfoItem isLight={isLight} label={copy.platform} value={platform} href={platformUrl} />
           </div>
-        </section>
-
-        <section className="mt-16 md:mt-20">
-          <h2
-            className={`font-display text-2xl font-semibold tracking-[0.04em] md:text-[1.75rem] ${
-              isLight ? "text-slate-900" : "text-white/95"
-            }`}
-          >
-            {copy.screenshots}
-          </h2>
-          <ProductScreenshots screenshots={product.screenshots ?? []} />
         </section>
 
         <section className="mt-16 md:mt-20">
@@ -134,6 +124,17 @@ export function ProductDetailContent({ product }: Props) {
             ))}
           </div>
         </section>
+
+        <section className="mt-16 md:mt-20">
+          <h2
+            className={`font-display text-2xl font-semibold tracking-[0.04em] md:text-[1.75rem] ${
+              isLight ? "text-slate-900" : "text-white/95"
+            }`}
+          >
+            {copy.screenshots}
+          </h2>
+          <ProductScreenshots screenshots={product.screenshots ?? []} />
+        </section>
       </div>
       <div className="relative z-10">
         <FooterSection />
@@ -146,11 +147,26 @@ function InfoItem({
   label,
   value,
   isLight,
+  href,
 }: {
   label: string;
   value: string;
   isLight: boolean;
+  href?: string;
 }) {
+  const valueNode = href ? (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className="underline decoration-transparent transition-colors duration-200 hover:text-[#1FF0FF] hover:decoration-[#1FF0FF]/70"
+    >
+      {value}
+    </a>
+  ) : (
+    value
+  );
+
   return (
     <article
       className={`rounded-xl border p-4 ${
@@ -164,7 +180,7 @@ function InfoItem({
       >
         {label}
       </p>
-      <p className={`mt-2 text-sm ${isLight ? "text-slate-900" : "text-white/90"}`}>{value}</p>
+      <p className={`mt-2 text-sm ${isLight ? "text-slate-900" : "text-white/90"}`}>{valueNode}</p>
     </article>
   );
 }
