@@ -28,6 +28,47 @@ export type Product = {
 
 export const products: Product[] = [
   {
+    slug: "echosnap",
+    name: "归影",
+    nameEn: "EchoSnap",
+    tagline: "让回忆更清晰，让相册更轻盈",
+    taglineEn: "Clearer memories, a lighter camera roll.",
+    summary:
+      "归影用滑动手势帮你快速整理照片与视频：分组审阅、撤销收藏、影历回顾、空间统计，让清理变得轻松上瘾。",
+    summaryEn:
+      "EchoSnap helps you declutter photos and videos with swipe gestures—group review, undo & favorites, timeline recap, and storage stats that make cleaning addictive.",
+    category: "照片与整理",
+    categoryEn: "Photos & Organizing",
+    language: "中文",
+    languageEn: "Chinese",
+    size: "TBD",
+    sizeEn: "TBD",
+    platform: "iOS",
+    platformEn: "iOS",
+    features: [
+      "滑动式审阅：照片/视频左右保留、上滑删除，单手更顺手",
+      "分组筛选：截屏/自拍/实况/动图等一键聚合",
+      "影历视图：按年/月回顾清理进度，清理成果可视化",
+      "统计与空间收益：删除数量与空间节省一目了然",
+      "常用工具：撤销、收藏、分享、信息查看（拍摄时间/文件信息等）",
+    ],
+    featuresEn: [
+      "Swipe review: keep with left/right, delete with up—one-hand friendly",
+      "Group filters: screenshots, selfies, Live Photos, GIFs, and more in one tap",
+      "Timeline view: review progress by year/month with clear visual feedback",
+      "Stats & storage gains: deleted items and space saved at a glance",
+      "Tools: undo, favorite, share, and inspect info (time, file details, etc.)",
+    ],
+    iconSrc: "/assets/products/echosnap/icon.jpg",
+    screenshots: [
+      "/assets/products/echosnap/screens/01.jpg",
+      "/assets/products/echosnap/screens/02.jpg",
+      "/assets/products/echosnap/screens/03.jpg",
+      "/assets/products/echosnap/screens/04.jpg",
+      "/assets/products/echosnap/screens/05.jpg",
+    ],
+  },
+  {
     slug: "travel-route",
     name: "旅迹时光",
     nameEn: "TravelRoute",
