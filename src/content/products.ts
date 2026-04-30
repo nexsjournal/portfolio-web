@@ -30,19 +30,21 @@ export const products: Product[] = [
   {
     slug: "echosnap",
     name: "归影",
-    nameEn: "EchoSnap",
-    tagline: "让回忆更清晰，让相册更轻盈",
-    taglineEn: "Clearer memories, a lighter camera roll.",
+    nameEn: "RePhoto",
+    tagline:
+      "让回忆更清晰，让相册更轻盈。用滑动手势快速保留、删除与收藏，整理变得轻松上瘾。",
+    taglineEn:
+      "Clearer memories, a lighter camera roll. Swipe to keep, delete, and favorite—cleaning becomes addictive.",
     summary:
       "归影用滑动手势帮你快速整理照片与视频：分组审阅、撤销收藏、影历回顾、空间统计，让清理变得轻松上瘾。",
     summaryEn:
-      "EchoSnap helps you declutter photos and videos with swipe gestures—group review, undo & favorites, timeline recap, and storage stats that make cleaning addictive.",
+      "RePhoto helps you declutter photos and videos with swipe gestures—group review, undo & favorites, timeline recap, and storage stats that make cleaning addictive.",
     category: "照片与整理",
     categoryEn: "Photos & Organizing",
     language: "中文",
     languageEn: "Chinese",
-    size: "TBD",
-    sizeEn: "TBD",
+    size: "149 MB",
+    sizeEn: "149 MB",
     platform: "iOS",
     platformEn: "iOS",
     features: [
