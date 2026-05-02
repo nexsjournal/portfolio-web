@@ -43,10 +43,12 @@ export const products: Product[] = [
     categoryEn: "Photos & Organizing",
     language: "中文",
     languageEn: "Chinese",
-    size: "149 MB",
-    sizeEn: "149 MB",
+    size: "5.3 MB",
+    sizeEn: "5.3 MB",
     platform: "iOS",
     platformEn: "iOS",
+    platformUrl:
+      "https://apps.apple.com/cn/app/%E5%BD%92%E5%BD%B1/id6764041103",
     features: [
       "滑动式审阅：照片/视频左右保留、上滑删除，单手更顺手",
       "分组筛选：截屏/自拍/实况/动图等一键聚合",
