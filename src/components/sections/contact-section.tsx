@@ -17,18 +17,6 @@ const channels = [
     iconSrc: "/assets/contact/email.svg",
   },
   {
-    label: "X",
-    value: "@justraylex",
-    href: "https://x.com/justraylex",
-    iconSrc: "/assets/contact/x.svg",
-  },
-  {
-    label: "GitHub",
-    value: "https://github.com/nexsjournal",
-    href: "https://github.com/nexsjournal",
-    iconSrc: "/assets/contact/github.svg",
-  },
-  {
     label: "小红书",
     value: "十号日记",
     href: "https://www.xiaohongshu.com/user/profile/5dc92e8000000000010092a6",
