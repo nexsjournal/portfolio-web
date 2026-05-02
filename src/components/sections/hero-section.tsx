@@ -1,5 +1,8 @@
 "use client";
 
+import { motion, useReducedMotion } from "framer-motion";
+import { useMemo } from "react";
+
 import { useSiteLanguage } from "@/context/site-language";
 import { useTheme } from "@/context/theme";
 import { t } from "@/i18n/site-copy";
@@ -14,6 +17,21 @@ export function HeroSection() {
   const ctaLabel = copy.heroCta;
   const { theme } = useTheme();
   const isLight = theme === "light";
+  const reduceMotion = useReducedMotion();
+
+  /** 与 TextGenerateEffect 节奏对齐：主副标题并行播完后稍晚再出按钮 */
+  const ctaEntranceDelay = useMemo(() => {
+    const titleLen = copy.heroTitle.length;
+    const subParts = copy.heroSub.split(/(\s+)/);
+    const titleStep = 0.03;
+    const subStep = 0.012;
+    const dur = 0.38;
+    const titleEnd =
+      titleLen > 0 ? (titleLen - 1) * titleStep + dur : 0;
+    const subEnd =
+      subParts.length > 0 ? (subParts.length - 1) * subStep + dur : 0;
+    return Math.max(titleEnd, subEnd) + 0.12;
+  }, [copy.heroTitle, copy.heroSub]);
 
   return (
     <section
@@ -73,7 +91,21 @@ export function HeroSection() {
           />
           <div className="mt-12 flex justify-center md:mt-14">
             {/* 用 wrapper 统一 group：hover 到按钮任意区域都触发背景流动与文字动画 */}
-            <div className="group/cta">
+            <motion.div
+              key={lang}
+              className="group/cta"
+              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={
+                reduceMotion
+                  ? { duration: 0 }
+                  : {
+                      delay: ctaEntranceDelay,
+                      duration: 0.52,
+                      ease: [0.22, 1, 0.36, 1],
+                    }
+              }
+            >
               <NoiseBackground
                 containerClassName="w-fit rounded-full p-2"
                 gradientColors={[
@@ -103,7 +135,7 @@ export function HeroSection() {
                   </span>
                 </a>
               </NoiseBackground>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
