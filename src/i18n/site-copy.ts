@@ -10,7 +10,7 @@ export const siteCopy = {
     },
     heroBadge: "设计 · 体验 · 创造",
     heroSub: "PM & UX & 独立开发者 · 构建有用且有趣的APP",
-    heroTitle: "于细微处，为生活作序",
+    heroTitle: "人造人十号",
     heroCta: "查看产品 →",
     sections: {
       products: "PRODUCTS",
@@ -48,7 +48,7 @@ export const siteCopy = {
     },
     heroBadge: "Design · Experience · Create",
     heroSub: "PM & UX & Indie dev · Building useful, delightful apps.",
-    heroTitle: "Ordering life, in the smallest details.",
+    heroTitle: "Android No. 10",
     heroCta: "View products →",
     sections: {
       products: "PRODUCTS",

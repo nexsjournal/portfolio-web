@@ -35,8 +35,8 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Lex · PM & UX & 独立开发者 · 构建有用且有趣的APP",
-  description: "Lex · PM & UX & 独立开发者 · 构建有用且有趣的APP",
+  title: "人造人十号 · PM & UX & 独立开发者 · 构建有用且有趣的APP",
+  description: "人造人十号 · PM & UX & 独立开发者 · 构建有用且有趣的APP",
 };
 
 export default function RootLayout({
