@@ -9,6 +9,7 @@ import { Menu, Moon, SunMedium, X } from "lucide-react";
 import { useSiteLanguage } from "@/context/site-language";
 import { useTheme } from "@/context/theme";
 import { t } from "@/i18n/site-copy";
+import { SITE_BRAND } from "@/lib/site-compliance";
 import { cn } from "@/lib/utils";
 
 export function SiteNavbar() {
@@ -61,7 +62,7 @@ export function SiteNavbar() {
           >
             <Image
               src="/assets/logo-mark.svg"
-              alt="Lex"
+              alt={SITE_BRAND}
               width={24}
               height={24}
               className="h-6 w-6 shrink-0 rounded-full object-contain"
@@ -73,7 +74,7 @@ export function SiteNavbar() {
                 isLight ? "text-slate-900/95" : "text-white/95",
               )}
             >
-              Lex
+              {SITE_BRAND}
             </span>
           </Link>
 

@@ -1,6 +1,13 @@
 "use client";
 
+import Link from "next/link";
+
 import { useTheme } from "@/context/theme";
+import {
+  ICP_BEIAN_URL,
+  ICP_NUMBER,
+  SITE_BRAND,
+} from "@/lib/site-compliance";
 
 export function FooterSection() {
   const { theme } = useTheme();
@@ -14,12 +21,30 @@ export function FooterSection() {
         }`}
       >
         <div
-          className={`flex flex-col gap-4 text-sm md:flex-row md:items-center md:justify-between ${
+          className={`grid gap-4 text-sm md:grid-cols-3 md:items-center ${
             isLight ? "text-slate-600/70" : "text-white/70"
           }`}
         >
-          <p>© {new Date().getFullYear()} Lex Studio.</p>
-          <p>Crafted with motion, restraint and intent.</p>
+          <p className="text-center md:text-left">
+            © {new Date().getFullYear()} {SITE_BRAND}
+          </p>
+          <p className="text-center text-xs leading-relaxed md:text-sm">
+            <Link
+              href={ICP_BEIAN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={
+                isLight
+                  ? "text-slate-600 underline decoration-slate-400/60 underline-offset-2 hover:text-slate-900"
+                  : "text-white/75 underline decoration-white/30 underline-offset-2 hover:text-white"
+              }
+            >
+              {ICP_NUMBER}
+            </Link>
+          </p>
+          <p className="text-center md:text-right">
+            Crafted with motion, restraint and intent.
+          </p>
         </div>
       </div>
     </footer>
