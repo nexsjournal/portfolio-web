@@ -1,6 +1,12 @@
 @import "tailwindcss";
 
 :root {
+  /* Google Fonts（与 layout 中 stylesheet 一致；勿用 next/font/google + Turbopack 易触发内置模块解析错误） */
+  --font-lexend: "Lexend", ui-sans-serif, system-ui, sans-serif;
+  --font-noto-sc: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-outfit: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-montserrat: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+
   /* Core canvas */
   --background: #06080e;
   --foreground: #f7f7f7;
@@ -96,18 +102,12 @@ body {
       rgba(31, 240, 255, 0.06),
       transparent 58%
     );
-  background-attachment: fixed;
+  /* fixed 会在滚动时让浏览器反复合成整页背景，易卡顿；scroll 视觉略差但流畅很多 */
+  background-attachment: scroll;
   background-repeat: no-repeat;
   background-size: cover;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.16) rgba(6, 8, 14, 0.4);
-}
-
-/* Chrome 滚动时降低重绘成本（移动端/低端设备尤明显） */
-@media (max-width: 768px) {
-  body {
-    background-attachment: scroll;
-  }
 }
 
 html.theme-light body {
@@ -216,6 +216,17 @@ html.theme-light .section-title {
 .rounded-ios-app-fixed {
   border-radius: 34px;
   isolation: isolate;
+}
+
+/** Hero 点阵微光：仅用 opacity，避免大量 SVG 做 scale 合成 */
+@keyframes dot-pattern-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 @keyframes noise-flow {

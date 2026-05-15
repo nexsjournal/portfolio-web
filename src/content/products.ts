@@ -1,6 +1,12 @@
 export type Product = {
-  /** URL 段与 `public/assets/products/<slug>/` 文件夹名一致，例如 travel-route */
+  /** 资源目录名，对应 `public/assets/products/<slug>/`（可与对外 URL 不同） */
   slug: string;
+  /**
+   * 详情页路径（不含前后斜杠），如 travelroutes、rephoto、altitudeshot。
+   * 仅已上线产品填写；`generateStaticParams` 与站内链接均用此字段。
+   * 若历史上曾使用 `/products/<slug>`，middleware 会按 slug 查到本产品并 308 到 `/<path>`，无需再改 next.config。
+   */
+  path?: string;
   name: string;
   /** 对外英文标识（如应用名、商店名） */
   nameEn?: string;
@@ -29,6 +35,7 @@ export type Product = {
 export const products: Product[] = [
   {
     slug: "echosnap",
+    path: "rephoto",
     name: "归影",
     nameEn: "RePhoto",
     tagline:
@@ -74,6 +81,7 @@ export const products: Product[] = [
   },
   {
     slug: "travel-route",
+    path: "travelroutes",
     name: "旅迹时光",
     nameEn: "TravelRoute",
     tagline:
@@ -129,6 +137,15 @@ export const products: Product[] = [
 
 export function getProductBySlug(slug: string) {
   return products.find((item) => item.slug === slug);
+}
+
+export function getProductByPath(path: string) {
+  return products.find((item) => item.path === path);
+}
+
+/** 用于 `generateStaticParams` 等，仅含已配置 path 且非即将上线的产品 */
+export function getProductPathsForStaticGeneration(): string[] {
+  return products.filter((p) => p.path && !p.comingSoon).map((p) => p.path!);
 }
 
 /** 图标路径：优先 `iconSrc`，否则默认 `icon.png` */

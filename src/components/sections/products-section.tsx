@@ -65,7 +65,7 @@ export function ProductsSection() {
             return (
               <Link
                 key={item.slug}
-                href={`/products/${item.slug}`}
+                href={`/${item.path}`}
                 className="block h-full w-full min-h-[220px] cursor-pointer [transform-style:preserve-3d]"
               >
                 <CardContainer className="flex h-full min-h-[220px] w-full !items-stretch !justify-center !py-0 [perspective:2000px]">

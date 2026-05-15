@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -15,6 +14,22 @@ type DotPatternProps = React.SVGProps<SVGSVGElement> & {
   cr?: number;
   className?: string;
   glow?: boolean;
+};
+
+/** 0–1 稳定伪随机，避免每次渲染 Math.random 导致子节点抖动与布局抖动 */
+function stable01(seed: number) {
+  const x = Math.sin(seed * 12.9898) * 43758.5453123;
+  return x - Math.floor(x);
+}
+
+const MAX_DOTS = 640;
+
+type Dot = {
+  key: string;
+  cx: number;
+  cy: number;
+  delay: number;
+  duration: number;
 };
 
 export function DotPattern({
@@ -34,29 +49,54 @@ export function DotPattern({
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        setDimensions({ width: rect.width, height: rect.height });
-      }
+    const el = containerRef.current;
+    if (!el) return;
+
+    const update = () => {
+      const rect = el.getBoundingClientRect();
+      setDimensions((prev) =>
+        prev.width === rect.width && prev.height === rect.height
+          ? prev
+          : { width: rect.width, height: rect.height },
+      );
     };
-    updateDimensions();
-    window.addEventListener("resize", updateDimensions);
-    return () => window.removeEventListener("resize", updateDimensions);
+
+    update();
+    const ro = new ResizeObserver(() => requestAnimationFrame(update));
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
 
-  const cols = Math.max(1, Math.ceil(dimensions.width / width));
-  const rows = Math.max(1, Math.ceil(dimensions.height / height));
-  const dots = Array.from({ length: cols * rows }, (_, i) => {
-    const col = i % cols;
-    const row = Math.floor(i / cols);
-    return {
-      x: col * width + cx + x,
-      y: row * height + cy + y,
-      delay: Math.random() * 5,
-      duration: Math.random() * 3 + 2,
-    };
-  });
+  const dots = useMemo(() => {
+    if (dimensions.width <= 0 || dimensions.height <= 0) return [];
+
+    let cellW = width;
+    let cellH = height;
+    let cols = Math.max(1, Math.ceil(dimensions.width / cellW));
+    let rows = Math.max(1, Math.ceil(dimensions.height / cellH));
+
+    while (cols * rows > MAX_DOTS && cellW < 96) {
+      cellW += 3;
+      cellH += 3;
+      cols = Math.max(1, Math.ceil(dimensions.width / cellW));
+      rows = Math.max(1, Math.ceil(dimensions.height / cellH));
+    }
+
+    const out: Dot[] = [];
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        const i = row * cols + col;
+        out.push({
+          key: `${col}-${row}`,
+          cx: col * cellW + cx + x,
+          cy: row * cellH + cy + y,
+          delay: stable01(i * 3 + 7) * 5,
+          duration: 2 + stable01(i * 5 + 11) * 3,
+        });
+      }
+    }
+    return out;
+  }, [dimensions.width, dimensions.height, width, height, cx, cy, x, y]);
 
   return (
     <svg
@@ -75,28 +115,18 @@ export function DotPattern({
         </radialGradient>
       </defs>
       {dots.map((dot) => (
-        <motion.circle
-          key={`${dot.x}-${dot.y}`}
-          cx={dot.x}
-          cy={dot.y}
+        <circle
+          key={dot.key}
+          cx={dot.cx}
+          cy={dot.cy}
           r={cr}
           fill={glow ? `url(#${id}-gradient)` : "currentColor"}
-          initial={glow ? { opacity: 0.35, scale: 1 } : {}}
-          animate={
-            glow
-              ? { opacity: [0.35, 1, 0.35], scale: [1, 1.45, 1] }
-              : {}
-          }
-          transition={
+          style={
             glow
               ? {
-                  duration: dot.duration,
-                  repeat: Number.POSITIVE_INFINITY,
-                  repeatType: "reverse",
-                  delay: dot.delay,
-                  ease: [0.45, 0, 0.55, 1],
+                  animation: `dot-pattern-pulse ${dot.duration}s ease-in-out ${dot.delay}s infinite`,
                 }
-              : {}
+              : undefined
           }
         />
       ))}

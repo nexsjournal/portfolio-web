@@ -49,7 +49,7 @@ export function SiteNavbar() {
     >
       <div
         className={cn(
-          "rounded-2xl px-2.5 shadow-[0_6px_22px_rgba(0,0,0,0.22)] backdrop-blur-md lg:px-3",
+          "rounded-2xl px-2.5 shadow-[0_6px_22px_rgba(0,0,0,0.22)] backdrop-blur-sm lg:px-3",
           theme === "light"
             ? "border border-slate-200/80 bg-white/80"
             : "border border-white/[0.08] bg-white/[0.06] scrolled:border-white/[0.12] scrolled:bg-[#070a12]/75",

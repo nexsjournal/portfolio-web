@@ -19,7 +19,7 @@ export function StarsBackground() {
   const isLight = theme === "light";
   const stars = useMemo<Star[]>(
     () =>
-      Array.from({ length: 70 }, () => ({
+      Array.from({ length: 48 }, () => ({
         left: `${Math.random() * 100}%`,
         top: `${Math.random() * 100}%`,
         size: Math.random() * 2 + 1,

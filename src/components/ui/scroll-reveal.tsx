@@ -7,11 +7,11 @@ type Props = {
   className?: string;
 };
 
-/** 视口略放宽，避免「滚到了却不动」 */
+/** 视口略放宽；rootMargin 减少边缘反复进出带来的测量开销 */
 const viewportSoft = {
   once: true as const,
-  margin: "-8% 0px -18% 0px" as const,
-  amount: 0 as const,
+  margin: "-10% 0px -18% 0px" as const,
+  amount: "some" as const,
 };
 
 export function ScrollReveal({ children, className }: Props) {
