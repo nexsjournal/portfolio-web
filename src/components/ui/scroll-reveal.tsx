@@ -4,10 +4,10 @@ import { useRef } from "react";
 import { useReducedMotion } from "framer-motion";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import {
   registerGsapPlugins,
+  revealIfAlreadyInView,
   SCROLL_START,
   SITE_EASE,
 } from "@/lib/gsap/register";
@@ -44,18 +44,27 @@ function useGsapScrollFade(
 
       gsap.set(el, { opacity: 0, y });
 
-      gsap.to(el, {
+      const toVars = {
         opacity: 1,
         y: 0,
         duration,
         delay,
         ease: SITE_EASE,
+      };
+
+      gsap.to(el, {
+        ...toVars,
         scrollTrigger: {
           trigger: el,
           start: SCROLL_START,
           once: true,
         },
       });
+
+      revealIfAlreadyInView(el, toVars);
+
+      const onLoad = () => revealIfAlreadyInView(el, toVars);
+      window.addEventListener("load", onLoad);
 
       if (parallax) {
         gsap.to(el, {
@@ -69,6 +78,10 @@ function useGsapScrollFade(
           },
         });
       }
+
+      return () => {
+        window.removeEventListener("load", onLoad);
+      };
     },
     {
       scope: ref,

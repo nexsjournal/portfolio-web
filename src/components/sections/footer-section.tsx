@@ -3,7 +3,6 @@
 import Link from "next/link";
 
 import { useTheme } from "@/context/theme";
-import { FadeInBlock } from "@/components/ui/scroll-reveal";
 import {
   ICP_BEIAN_URL,
   ICP_NUMBER,
@@ -16,7 +15,7 @@ export function FooterSection() {
 
   return (
     <footer className="px-6 py-16 md:px-10 md:py-20">
-      <FadeInBlock className="mx-auto w-full max-w-6xl">
+      <div className="mx-auto w-full max-w-6xl">
         <div
           className={`border-t pt-10 ${
             isLight ? "border-slate-200/80" : "border-white/10"
@@ -49,7 +48,7 @@ export function FooterSection() {
             </p>
           </div>
         </div>
-      </FadeInBlock>
+      </div>
     </footer>
   );
 }

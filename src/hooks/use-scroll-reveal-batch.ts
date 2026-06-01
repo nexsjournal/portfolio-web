@@ -8,6 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   REVEAL_ITEM_CLASS,
   registerGsapPlugins,
+  revealBatchIfAlreadyInView,
   SCROLL_START,
   SITE_EASE,
 } from "@/lib/gsap/register";
@@ -54,20 +55,31 @@ export function useScrollRevealBatch<T extends HTMLElement = HTMLDivElement>(
 
           gsap.set(items, { opacity: 0, y });
 
+          const toVars = {
+            opacity: 1,
+            y: 0,
+            duration,
+            stagger,
+            ease: SITE_EASE,
+            overwrite: true,
+          };
+
           ScrollTrigger.batch(items, {
             start: SCROLL_START,
             once: true,
             onEnter: (batch) => {
-              gsap.to(batch, {
-                opacity: 1,
-                y: 0,
-                duration,
-                stagger,
-                ease: SITE_EASE,
-                overwrite: true,
-              });
+              gsap.to(batch, toVars);
             },
           });
+
+          revealBatchIfAlreadyInView(items, toVars);
+
+          const onLoad = () => revealBatchIfAlreadyInView(items, toVars);
+          window.addEventListener("load", onLoad);
+
+          return () => {
+            window.removeEventListener("load", onLoad);
+          };
         },
       );
 
