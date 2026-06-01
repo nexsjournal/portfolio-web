@@ -8,6 +8,7 @@ import { useTheme } from "@/context/theme";
 import { t } from "@/i18n/site-copy";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import { FadeInBlock, FadeInTitle } from "@/components/ui/scroll-reveal";
+import { useScrollRevealBatch } from "@/hooks/use-scroll-reveal-batch";
 import { getProductIconPath, products } from "@/content/products";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,10 @@ export function ProductsSection() {
   const copy = t(lang);
   const { theme } = useTheme();
   const isLight = theme === "light";
+  const { containerRef, revealClass } = useScrollRevealBatch({
+    stagger: 0.12,
+    dependencies: [lang],
+  });
 
   return (
     <section id="products" className="scroll-mt-24 px-6 py-28 md:px-10 md:py-36">
@@ -37,13 +42,17 @@ export function ProductsSection() {
           </FadeInBlock>
         </div>
 
-        <FadeInBlock delay={0.06} className="mt-16 grid gap-10 md:grid-cols-2 md:items-stretch">
+        <div
+          ref={containerRef}
+          className="mt-16 grid gap-10 md:grid-cols-2 md:items-stretch"
+        >
           {products.map((item) => {
             if (item.comingSoon) {
               return (
                 <div
                   key={item.slug}
                   className={cn(
+                    revealClass,
                     `flex w-full ${ROW_MIN_H} items-center justify-center rounded-2xl px-6 text-center`,
                     isLight
                       ? "border border-slate-200/70 bg-white/75 shadow-[0_0_0_1px_rgba(15,23,42,0.08)]"
@@ -66,7 +75,10 @@ export function ProductsSection() {
               <Link
                 key={item.slug}
                 href={`/${item.path}`}
-                className="block h-full w-full min-h-[220px] cursor-pointer [transform-style:preserve-3d]"
+                className={cn(
+                  revealClass,
+                  "block h-full w-full min-h-[220px] cursor-pointer [transform-style:preserve-3d]",
+                )}
               >
                 <CardContainer className="flex h-full min-h-[220px] w-full !items-stretch !justify-center !py-0 [perspective:2000px]">
                   <CardBody
@@ -77,9 +89,7 @@ export function ProductsSection() {
                         : "border border-[rgba(255,255,255,0.04)] bg-white/[0.03] shadow-[0_0_0_1px_rgba(255,255,255,0.04)] hover:border-[rgba(255,255,255,0.08)] hover:shadow-[0_0_22px_-6px_rgba(31,240,255,0.14),0_24px_80px_-20px_rgba(31,240,255,0.08)]",
                     )}
                   >
-                    {/* 中间层必须 preserve-3d，否则子项 translateZ 会被压平，logo 与文字会像贴在同一平面 */}
                     <div className="flex flex-1 items-start gap-4 [transform-style:preserve-3d]">
-                      {/* Logo：适度 translateZ，hover 时略浮起即可 */}
                       <CardItem
                         translateZ={110}
                         className="relative z-20 shrink-0 [transform-style:preserve-3d] will-change-transform"
@@ -144,7 +154,7 @@ export function ProductsSection() {
               </Link>
             );
           })}
-        </FadeInBlock>
+        </div>
       </div>
     </section>
   );

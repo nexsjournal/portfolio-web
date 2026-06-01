@@ -7,6 +7,7 @@ import { useSiteLanguage } from "@/context/site-language";
 import { useTheme } from "@/context/theme";
 import { t } from "@/i18n/site-copy";
 import { FadeInBlock, FadeInTitle } from "@/components/ui/scroll-reveal";
+import { useScrollRevealBatch } from "@/hooks/use-scroll-reveal-batch";
 import { cn } from "@/lib/utils";
 
 const channels = [
@@ -18,7 +19,7 @@ const channels = [
   },
   {
     label: "小红书",
-    value: "十号日记",
+    value: "人造人十号",
     href: "https://www.xiaohongshu.com/user/profile/5dc92e8000000000010092a6",
     iconSrc: "/assets/contact/xhs.svg",
   },
@@ -29,6 +30,10 @@ export function ContactSection() {
   const copy = t(lang);
   const { theme } = useTheme();
   const isLight = theme === "light";
+  const { containerRef, revealClass } = useScrollRevealBatch({
+    stagger: 0.12,
+    dependencies: [lang],
+  });
 
   return (
     <section id="contact" className="scroll-mt-24 px-6 py-28 md:px-10 md:py-36">
@@ -47,7 +52,10 @@ export function ContactSection() {
           </FadeInBlock>
         </div>
 
-        <FadeInBlock delay={0.06} className="mt-12 grid gap-3 sm:grid-cols-2 sm:gap-4">
+        <div
+          ref={containerRef}
+          className="mt-12 grid gap-3 sm:grid-cols-2 sm:gap-4"
+        >
           {channels.map((channel) => (
             <a
               key={channel.label}
@@ -55,6 +63,7 @@ export function ContactSection() {
               target="_blank"
               rel="noreferrer"
               className={cn(
+                revealClass,
                 "group flex cursor-pointer items-center justify-between gap-4 rounded-2xl border px-5 py-4 transition-[border-color,background-color,transform,box-shadow] duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5",
                 isLight
                   ? "border-slate-200/70 bg-white/70 shadow-[0_0_0_1px_rgba(15,23,42,0.08)] hover:border-slate-200/90 hover:bg-white/85 hover:shadow-[0_0_18px_-6px_rgba(31,240,255,0.16)]"
@@ -108,7 +117,7 @@ export function ContactSection() {
               />
             </a>
           ))}
-        </FadeInBlock>
+        </div>
       </div>
     </section>
   );

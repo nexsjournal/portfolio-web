@@ -3,14 +3,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useGSAP } from "@gsap/react";
+import { gsap } from "gsap";
 import { Menu, Moon, SunMedium, X } from "lucide-react";
 
 import { useSiteLanguage } from "@/context/site-language";
 import { useTheme } from "@/context/theme";
 import { t } from "@/i18n/site-copy";
+import { registerGsapPlugins, SITE_EASE } from "@/lib/gsap/register";
 import { SITE_BRAND } from "@/lib/site-compliance";
 import { cn } from "@/lib/utils";
+
+registerGsapPlugins();
 
 export function SiteNavbar() {
   const pathname = usePathname();
@@ -20,6 +25,9 @@ export function SiteNavbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const isLight = theme === "light";
+  const navRef = useRef<HTMLElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuTimeline = useRef<gsap.core.Timeline | null>(null);
 
   const links = [
     { href: "/#products", label: copy.nav.products },
@@ -39,8 +47,37 @@ export function SiteNavbar() {
     setOpen(false);
   }, [pathname]);
 
+  useGSAP(
+    () => {
+      const menu = menuRef.current;
+      if (!menu) return;
+
+      gsap.set(menu, { height: 0, opacity: 0, overflow: "hidden" });
+
+      menuTimeline.current = gsap
+        .timeline({ paused: true, defaults: { ease: SITE_EASE } })
+        .to(menu, { height: "auto", opacity: 1, duration: 0.36 })
+        .from(
+          menu.querySelectorAll("[data-mobile-nav-link]"),
+          { y: 10, opacity: 0, stagger: 0.05, duration: 0.28 },
+          "-=0.14",
+        );
+    },
+    { scope: navRef },
+  );
+
+  useEffect(() => {
+    if (!menuTimeline.current) return;
+    if (open) {
+      menuTimeline.current.play();
+    } else {
+      menuTimeline.current.reverse();
+    }
+  }, [open]);
+
   return (
     <nav
+      ref={navRef}
       className={cn(
         "fixed left-1/2 z-40 w-[calc(100%-2rem)] max-w-[900px] -translate-x-1/2 transition-all duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)]",
         scrolled ? "top-2" : "top-3",
@@ -159,12 +196,12 @@ export function SiteNavbar() {
             </button>
             <button
               type="button"
-            className={cn(
-              "rounded-full p-1.5 transition-colors lg:hidden",
-              isLight
-                ? "text-slate-700/60 hover:bg-slate-100/70 hover:text-slate-900"
-                : "text-white/60 hover:bg-white/[0.06] hover:text-white",
-            )}
+              className={cn(
+                "rounded-full p-1.5 transition-colors lg:hidden",
+                isLight
+                  ? "text-slate-700/60 hover:bg-slate-100/70 hover:text-slate-900"
+                  : "text-white/60 hover:bg-white/[0.06] hover:text-white",
+              )}
               onClick={() => setOpen((v) => !v)}
               aria-expanded={open}
               aria-label={open ? "关闭菜单" : "打开菜单"}
@@ -174,13 +211,15 @@ export function SiteNavbar() {
           </div>
         </div>
 
-        {open ? (
-          <div
-            className={cn(
-              "pb-3 pt-2 lg:hidden",
-              isLight ? "border-t border-slate-200/70" : "border-t border-white/[0.08]",
-            )}
-          >
+        <div
+          ref={menuRef}
+          className={cn(
+            "h-0 overflow-hidden opacity-0 lg:hidden",
+            isLight ? "border-t border-slate-200/70" : "border-t border-white/[0.08]",
+          )}
+          aria-hidden={!open}
+        >
+          <div className="pb-3 pt-2">
             <div className="mb-3 flex justify-end">
               <div
                 className={cn(
@@ -227,6 +266,7 @@ export function SiteNavbar() {
                 <li key={item.href}>
                   <a
                     href={item.href}
+                    data-mobile-nav-link
                     className={cn(
                       "block cursor-pointer rounded-lg px-2.5 py-2 text-sm font-medium",
                       isLight
@@ -240,7 +280,7 @@ export function SiteNavbar() {
               ))}
             </ul>
           </div>
-        ) : null}
+        </div>
       </div>
     </nav>
   );

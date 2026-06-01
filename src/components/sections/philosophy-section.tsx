@@ -7,6 +7,8 @@ import { useTheme } from "@/context/theme";
 import { t } from "@/i18n/site-copy";
 import { WobbleCard } from "@/components/ui/wobble-card";
 import { FadeInBlock, FadeInTitle } from "@/components/ui/scroll-reveal";
+import { useScrollRevealBatch } from "@/hooks/use-scroll-reveal-batch";
+import { cn } from "@/lib/utils";
 
 /** 站点主题色（浅色/深色随变量切换） */
 const THEME_PRIMARY = "var(--primary)";
@@ -69,6 +71,10 @@ export function PhilosophySection() {
   const points = lang === "zh" ? pointsZh : pointsEn;
   const { theme } = useTheme();
   const isLight = theme === "light";
+  const { containerRef, revealClass } = useScrollRevealBatch({
+    stagger: 0.14,
+    dependencies: [lang],
+  });
 
   return (
     <section id="philosophy" className="scroll-mt-24 px-6 py-28 md:px-10 md:py-36">
@@ -77,32 +83,36 @@ export function PhilosophySection() {
           <FadeInTitle className="section-title">{copy.sections.philosophy}</FadeInTitle>
           <FadeInBlock delay={0.12} className="mx-auto mt-5 max-w-2xl">
             <p
-              className={isLight ? "text-sm leading-relaxed text-slate-700/65" : "text-sm leading-relaxed text-white/55"}
+              className={cn(
+                "text-sm leading-relaxed",
+                isLight ? "text-slate-700/65" : "text-white/55",
+              )}
             >
               {copy.sections.philosophyDesc}
             </p>
           </FadeInBlock>
         </div>
-        <FadeInBlock delay={0.08} className="mt-12 grid gap-6 md:grid-cols-3">
+        <div ref={containerRef} className="mt-12 grid gap-6 md:grid-cols-3">
           {points.map((point, idx) => (
-            <WobbleCard
-              key={point.title}
-              title={point.title}
-              body={point.body}
-              imageSrc={isLight ? point.imageSrcLight : point.imageSrc}
-              iconTint={THEME_PRIMARY}
-              icon={
-                idx === 0 ? (
-                  <Compass className="h-5 w-5 text-primary" />
-                ) : idx === 1 ? (
-                  <Sparkles className="h-5 w-5 text-primary" />
-                ) : (
-                  <Layers3 className="h-5 w-5 text-primary" />
-                )
-              }
-            />
+            <div key={point.title} className={revealClass}>
+              <WobbleCard
+                title={point.title}
+                body={point.body}
+                imageSrc={isLight ? point.imageSrcLight : point.imageSrc}
+                iconTint={THEME_PRIMARY}
+                icon={
+                  idx === 0 ? (
+                    <Compass className="h-5 w-5 text-primary" />
+                  ) : idx === 1 ? (
+                    <Sparkles className="h-5 w-5 text-primary" />
+                  ) : (
+                    <Layers3 className="h-5 w-5 text-primary" />
+                  )
+                }
+              />
+            </div>
           ))}
-        </FadeInBlock>
+        </div>
       </div>
     </section>
   );

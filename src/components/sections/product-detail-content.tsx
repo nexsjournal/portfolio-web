@@ -10,9 +10,12 @@ import { t } from "@/i18n/site-copy";
 import { Product, getProductIconPath } from "@/content/products";
 import { ProductScreenshots } from "@/components/sections/product-screenshots";
 import { FooterSection } from "@/components/sections/footer-section";
+import { FadeInTitle } from "@/components/ui/scroll-reveal";
 import { ShootingStars } from "@/components/ui/shooting-stars";
 import { Spotlight } from "@/components/ui/spotlight";
 import { StarsBackground } from "@/components/ui/stars-background";
+import { useScrollRevealBatch } from "@/hooks/use-scroll-reveal-batch";
+import { cn } from "@/lib/utils";
 
 type Props = {
   product: Product;
@@ -24,6 +27,10 @@ export function ProductDetailContent({ product }: Props) {
   const featureEmojis = ["🗺️", "🎬", "✨", "⚡", "📌", "🧭"];
   const { theme } = useTheme();
   const isLight = theme === "light";
+  const { containerRef, revealClass } = useScrollRevealBatch({
+    stagger: 0.1,
+    dependencies: [lang, product.slug],
+  });
 
   const title = lang === "en" ? product.nameEn ?? product.name : product.name;
   const summary = lang === "en" ? product.summaryEn ?? product.summary : product.summary;
@@ -52,8 +59,8 @@ export function ProductDetailContent({ product }: Props) {
         aria-hidden
       />
 
-      <div className="relative mx-auto w-full max-w-6xl">
-        <div className="mb-12">
+      <div ref={containerRef} className="relative mx-auto w-full max-w-6xl">
+        <div className={cn("mb-12", revealClass)}>
           <Link
             href="/#products"
             className={`inline-flex cursor-pointer text-sm transition-colors duration-200 hover:text-[#1FF0FF] ${
@@ -65,11 +72,13 @@ export function ProductDetailContent({ product }: Props) {
         </div>
 
         <section
-          className={`relative overflow-hidden rounded-3xl border p-8 ${
+          className={cn(
+            revealClass,
+            "relative overflow-hidden rounded-3xl border p-8",
             isLight
               ? "border-slate-200/70 bg-white/75"
-              : "border-[rgba(255,255,255,0.04)] bg-black/35"
-          }`}
+              : "border-[rgba(255,255,255,0.04)] bg-black/35",
+          )}
         >
           <div className="flex flex-wrap items-center gap-4">
             <div className="relative h-20 w-20 overflow-hidden rounded-xl">
@@ -82,7 +91,9 @@ export function ProductDetailContent({ product }: Props) {
               />
             </div>
             <div>
-              <h1 className={`text-3xl font-semibold ${isLight ? "text-slate-900" : "text-white"}`}>{title}</h1>
+              <h1 className={`text-3xl font-semibold ${isLight ? "text-slate-900" : "text-white"}`}>
+                {title}
+              </h1>
               <p className={`mt-2 ${isLight ? "text-slate-700/70" : "text-white/70"}`}>{summary}</p>
             </div>
           </div>
@@ -96,21 +107,23 @@ export function ProductDetailContent({ product }: Props) {
         </section>
 
         <section className="mt-16 md:mt-20">
-          <h2
+          <FadeInTitle
             className={`font-display text-2xl font-semibold tracking-[0.04em] md:text-[1.75rem] ${
               isLight ? "text-slate-900" : "text-white/95"
             }`}
           >
             {copy.features}
-          </h2>
+          </FadeInTitle>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {features.map((feature, index) => (
               <article
-                className={`rounded-xl border p-4 transition-transform duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 ${
+                className={cn(
+                  revealClass,
+                  "rounded-xl border p-4 transition-transform duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1",
                   isLight
                     ? "border-slate-200/70 bg-white/75"
-                    : "border-[rgba(255,255,255,0.04)] bg-black/30"
-                }`}
+                    : "border-[rgba(255,255,255,0.04)] bg-black/30",
+                )}
                 key={feature}
               >
                 <p
@@ -127,25 +140,29 @@ export function ProductDetailContent({ product }: Props) {
         </section>
 
         <section className="mt-16 md:mt-20">
-          <h2
+          <FadeInTitle
             className={`font-display text-2xl font-semibold tracking-[0.04em] md:text-[1.75rem] ${
               isLight ? "text-slate-900" : "text-white/95"
             }`}
           >
             {copy.screenshots}
-          </h2>
-          <ProductScreenshots screenshots={product.screenshots ?? []} />
+          </FadeInTitle>
+          <div className={cn("mt-6", revealClass)}>
+            <ProductScreenshots screenshots={product.screenshots ?? []} />
+          </div>
         </section>
 
         {product.privacyUrl || product.termsUrl ? (
-          <ProductLegalLinks
-            isLight={isLight}
-            legalLabel={copy.legal}
-            privacyLabel={copy.privacy}
-            termsLabel={copy.terms}
-            privacyUrl={product.privacyUrl}
-            termsUrl={product.termsUrl}
-          />
+          <div className={revealClass}>
+            <ProductLegalLinks
+              isLight={isLight}
+              legalLabel={copy.legal}
+              privacyLabel={copy.privacy}
+              termsLabel={copy.terms}
+              privacyUrl={product.privacyUrl}
+              termsUrl={product.termsUrl}
+            />
+          </div>
         ) : null}
       </div>
       <div className="relative z-10">

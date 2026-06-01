@@ -1,89 +1,130 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import { useReducedMotion } from "framer-motion";
+import { useGSAP } from "@gsap/react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+import {
+  registerGsapPlugins,
+  SCROLL_START,
+  SITE_EASE,
+} from "@/lib/gsap/register";
+
+registerGsapPlugins();
 
 type Props = {
   children: React.ReactNode;
   className?: string;
 };
 
-/** 视口略放宽；rootMargin 减少边缘反复进出带来的测量开销 */
-const viewportSoft = {
-  once: true as const,
-  margin: "-10% 0px -18% 0px" as const,
-  amount: "some" as const,
+type FadeOptions = {
+  y?: number;
+  duration?: number;
+  delay?: number;
+  parallax?: boolean;
 };
+
+function useGsapScrollFade(
+  reduce: boolean,
+  { y = 40, duration = 0.55, delay = 0, parallax = false }: FadeOptions,
+) {
+  const ref = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      const el = ref.current;
+      if (!el) return;
+
+      if (reduce) {
+        gsap.set(el, { clearProps: "opacity,transform" });
+        return;
+      }
+
+      gsap.set(el, { opacity: 0, y });
+
+      gsap.to(el, {
+        opacity: 1,
+        y: 0,
+        duration,
+        delay,
+        ease: SITE_EASE,
+        scrollTrigger: {
+          trigger: el,
+          start: SCROLL_START,
+          once: true,
+        },
+      });
+
+      if (parallax) {
+        gsap.to(el, {
+          y: -22,
+          ease: "none",
+          scrollTrigger: {
+            trigger: el,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1,
+          },
+        });
+      }
+    },
+    {
+      scope: ref,
+      dependencies: [reduce, y, duration, delay, parallax],
+      revertOnUpdate: true,
+    },
+  );
+
+  return ref;
+}
 
 export function ScrollReveal({ children, className }: Props) {
   const reduce = useReducedMotion();
-
-  if (reduce) {
-    return <div className={className}>{children}</div>;
-  }
+  const ref = useGsapScrollFade(!!reduce, { y: 40, duration: 0.55 });
 
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={viewportSoft}
-      transition={{
-        duration: 0.55,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-    >
+    <div ref={ref as React.RefObject<HTMLDivElement>} className={className}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
-/** 板块标题：类似 Fade in by line — 位移 + 模糊渐入 */
-export function FadeInTitle({ children, className }: Props) {
+export function FadeInTitle({
+  children,
+  className,
+  parallax = false,
+}: Props & { parallax?: boolean }) {
   const reduce = useReducedMotion();
-
-  if (reduce) {
-    return <h2 className={className}>{children}</h2>;
-  }
+  const ref = useGsapScrollFade(!!reduce, {
+    y: 44,
+    duration: 0.68,
+    parallax,
+  });
 
   return (
-    <motion.h2
-      className={className}
-      // 滚动时 filter: blur 会显著增加重绘成本，导致部分设备掉帧；这里改为纯 transform + opacity
-      initial={{ opacity: 0, y: 44 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={viewportSoft}
-      transition={{ duration: 0.68, ease: [0.22, 1, 0.36, 1] }}
-    >
+    <h2 ref={ref as React.RefObject<HTMLHeadingElement>} className={className}>
       {children}
-    </motion.h2>
+    </h2>
   );
 }
 
-/** 副标题 / 段落块：略晚于标题上浮 */
 export function FadeInBlock({
   children,
   className,
   delay = 0.1,
 }: Props & { delay?: number }) {
   const reduce = useReducedMotion();
-
-  if (reduce) {
-    return <div className={className}>{children}</div>;
-  }
+  const ref = useGsapScrollFade(!!reduce, {
+    y: 32,
+    duration: 0.58,
+    delay,
+  });
 
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: 32 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={viewportSoft}
-      transition={{
-        duration: 0.58,
-        delay,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-    >
+    <div ref={ref as React.RefObject<HTMLDivElement>} className={className}>
       {children}
-    </motion.div>
+    </div>
   );
 }
