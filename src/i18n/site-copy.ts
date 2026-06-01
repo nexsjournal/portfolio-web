@@ -37,6 +37,9 @@ export const siteCopy = {
       platform: "上架平台",
       screenshots: "截图预览",
       features: "核心功能",
+      legal: "法律信息",
+      privacy: "隐私政策",
+      terms: "用户协议",
     },
   },
   en: {
@@ -75,6 +78,9 @@ export const siteCopy = {
       platform: "Platform",
       screenshots: "Screenshots",
       features: "Key features",
+      legal: "Legal",
+      privacy: "Privacy Policy",
+      terms: "Terms of Service",
     },
   },
 } as const;

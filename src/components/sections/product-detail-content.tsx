@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowUpRight, FileText, Shield } from "lucide-react";
 
 import { useSiteLanguage } from "@/context/site-language";
 import { useTheme } from "@/context/theme";
@@ -135,11 +136,110 @@ export function ProductDetailContent({ product }: Props) {
           </h2>
           <ProductScreenshots screenshots={product.screenshots ?? []} />
         </section>
+
+        {product.privacyUrl || product.termsUrl ? (
+          <ProductLegalLinks
+            isLight={isLight}
+            legalLabel={copy.legal}
+            privacyLabel={copy.privacy}
+            termsLabel={copy.terms}
+            privacyUrl={product.privacyUrl}
+            termsUrl={product.termsUrl}
+          />
+        ) : null}
       </div>
       <div className="relative z-10">
         <FooterSection />
       </div>
     </main>
+  );
+}
+
+function ProductLegalLinks({
+  isLight,
+  legalLabel,
+  privacyLabel,
+  termsLabel,
+  privacyUrl,
+  termsUrl,
+}: {
+  isLight: boolean;
+  legalLabel: string;
+  privacyLabel: string;
+  termsLabel: string;
+  privacyUrl?: string;
+  termsUrl?: string;
+}) {
+  const linkBase = isLight
+    ? "border-slate-200/80 bg-white/80 text-slate-800 hover:border-[#1FF0FF]/35 hover:bg-[#1FF0FF]/[0.06]"
+    : "border-white/[0.08] bg-white/[0.03] text-white/88 hover:border-[#1FF0FF]/40 hover:bg-[#1FF0FF]/[0.08]";
+
+  return (
+    <section className="mt-14 pb-2 md:mt-16">
+      <div
+        className={`rounded-2xl border p-5 md:p-6 ${
+          isLight
+            ? "border-slate-200/70 bg-gradient-to-br from-white/90 to-slate-50/80"
+            : "border-white/[0.06] bg-gradient-to-br from-white/[0.04] to-transparent"
+        }`}
+      >
+        <p
+          className={`text-xs font-medium uppercase tracking-[0.2em] ${
+            isLight ? "text-slate-600/55" : "text-white/42"
+          }`}
+        >
+          {legalLabel}
+        </p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {privacyUrl ? (
+            <a
+              href={privacyUrl}
+              target="_blank"
+              rel="noreferrer"
+              className={`group flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-4 py-3.5 transition-all duration-200 ${linkBase}`}
+            >
+              <span className="flex min-w-0 items-center gap-3">
+                <span
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+                    isLight ? "bg-[#1FF0FF]/12 text-[#0891b2]" : "bg-[#1FF0FF]/12 text-[#1FF0FF]"
+                  }`}
+                >
+                  <Shield className="h-4 w-4" aria-hidden />
+                </span>
+                <span className="truncate text-sm font-medium">{privacyLabel}</span>
+              </span>
+              <ArrowUpRight
+                className="h-4 w-4 shrink-0 opacity-45 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-90"
+                aria-hidden
+              />
+            </a>
+          ) : null}
+          {termsUrl ? (
+            <a
+              href={termsUrl}
+              target="_blank"
+              rel="noreferrer"
+              className={`group flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-4 py-3.5 transition-all duration-200 ${linkBase}`}
+            >
+              <span className="flex min-w-0 items-center gap-3">
+                <span
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+                    isLight ? "bg-[#1FF0FF]/12 text-[#0891b2]" : "bg-[#1FF0FF]/12 text-[#1FF0FF]"
+                  }`}
+                >
+                  <FileText className="h-4 w-4" aria-hidden />
+                </span>
+                <span className="truncate text-sm font-medium">{termsLabel}</span>
+              </span>
+              <ArrowUpRight
+                className="h-4 w-4 shrink-0 opacity-45 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-90"
+                aria-hidden
+              />
+            </a>
+          ) : null}
+        </div>
+      </div>
+    </section>
   );
 }
 

@@ -30,6 +30,8 @@ export type Product = {
   iconSrc?: string;
   /** 详情页横向截图，如 `/assets/products/<slug>/screens/01.jpg` */
   screenshots?: string[];
+  privacyUrl?: string;
+  termsUrl?: string;
 };
 
 export const products: Product[] = [
@@ -78,6 +80,8 @@ export const products: Product[] = [
       "/assets/products/echosnap/screens/04.jpg",
       "/assets/products/echosnap/screens/05.jpg",
     ],
+    privacyUrl: "https://nexsjournal.github.io/echosnap-legal/privacy-policy.html",
+    termsUrl: "https://nexsjournal.github.io/echosnap-legal/terms-of-service.html",
   },
   {
     slug: "travel-route",
@@ -119,6 +123,56 @@ export const products: Product[] = [
       "/assets/products/travel-route/screens/03.jpg",
       "/assets/products/travel-route/screens/04.jpg",
       "/assets/products/travel-route/screens/05.jpg",
+    ],
+    privacyUrl: "https://nexsjournal.github.io/travelroute-legal/privacy-policy.html",
+    termsUrl: "https://nexsjournal.github.io/travelroute-legal/terms-of-service.html",
+  },
+  {
+    slug: "altitudeshot",
+    path: "altitudeshot",
+    name: "实时海拔计",
+    nameEn: "AltitudeNow",
+    tagline:
+      "把「到达这一刻」变成一张值得分享、可收藏的登顶卡片——超大海拔数字与取景画面，一目了然。",
+    taglineEn:
+      "Turn the moment you arrive into a shareable summit card—huge live altitude and your view, at a glance.",
+    summary:
+      "不是又一个堆满参数的 GPS 工具箱。打开 App，第一眼就是超大海拔数字和取景画面：你在哪座山、此刻海拔多少，一目了然。拍一张实景，或切换氛围主题一键 Pin，系统自动合成带海拔、地点、气压与精度的 3:4 竖版分享卡，直接保存相册或发到朋友圈、小红书。",
+    summaryEn:
+      "Not another GPS dashboard. Open the app to a giant live altitude readout and your camera view—where you are on the mountain, right now. Shoot a real scene or pick a themed Pin; we compose a 3:4 share card with altitude, place, pressure, and accuracy—ready for your camera roll or social feeds.",
+    category: "户外与记录",
+    categoryEn: "Outdoors & Journaling",
+    language: "简体中文 / English",
+    languageEn: "Chinese / English",
+    size: "—",
+    sizeEn: "—",
+    platform: "iOS",
+    platformEn: "iOS",
+    features: [
+      "实时 GPS 海拔与地点，支持米 / 英尺切换",
+      "气压、含氧量估算、经纬度与指南针",
+      "登顶卡片：自动合成海拔、地点、气压、精度等信息",
+      "到达记录时间线：按日分组，支持详情查看、再次分享与删除",
+      "应用内简体中文 / English 切换",
+      "App Store 新版本更新提醒",
+    ],
+    featuresEn: [
+      "Live GPS altitude and place names, with meters / feet",
+      "Barometric pressure, estimated oxygen, coordinates, and compass",
+      "Summit cards: auto-compose altitude, location, pressure, and accuracy",
+      "Arrival timeline grouped by day—view, re-share, or delete",
+      "In-app Chinese / English",
+      "App Store update prompts when a new version is available",
+    ],
+    privacyUrl: "https://nexsjournal.github.io/altitudeshot-terms/privacy-policy.html",
+    termsUrl: "https://nexsjournal.github.io/altitudeshot-terms/terms-of-service.html",
+    iconSrc: "/assets/products/altitudeshot/icon.jpg",
+    screenshots: [
+      "/assets/products/altitudeshot/screens/01.jpg",
+      "/assets/products/altitudeshot/screens/02.jpg",
+      "/assets/products/altitudeshot/screens/03.jpg",
+      "/assets/products/altitudeshot/screens/04.jpg",
+      "/assets/products/altitudeshot/screens/05.jpg",
     ],
   },
   {
