@@ -75,11 +75,6 @@ export function WobbleCard({ title, body, imageSrc, icon, iconTint }: Props) {
               WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 52%)",
               maskSize: "100% 100%",
               WebkitMaskSize: "100% 100%",
-              // 浅色下轻微调色：提升亮度/饱和度，让图片更“轻”更适配浅底
-              // 让原本偏黑/深底的图片在浅色模式下呈现浅色观感
-              filter: isLight
-                ? "invert(1) hue-rotate(180deg) brightness(1.15) contrast(0.92) saturate(1.1)"
-                : undefined,
             }}
           />
         </div>

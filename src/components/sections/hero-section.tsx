@@ -1,12 +1,12 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { useSiteLanguage } from "@/context/site-language";
 import { useTheme } from "@/context/theme";
 import { t } from "@/i18n/site-copy";
-import { DotPattern } from "@/components/ui/dot-pattern";
+import { InteractiveGridPattern } from "@/components/ui/interactive-grid-pattern";
 import { NoiseBackground } from "@/components/ui/noise-background";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { cn } from "@/lib/utils";
@@ -18,6 +18,25 @@ export function HeroSection() {
   const { theme } = useTheme();
   const isLight = theme === "light";
   const reduceMotion = useReducedMotion();
+  const [gridPointer, setGridPointer] = useState<{ x: number; y: number } | null>(
+    null,
+  );
+
+  const handleGridPointerMove = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      if (reduceMotion) return;
+      const rect = event.currentTarget.getBoundingClientRect();
+      setGridPointer({
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+      });
+    },
+    [reduceMotion],
+  );
+
+  const handleGridPointerLeave = useCallback(() => {
+    setGridPointer(null);
+  }, []);
 
   /** 与 TextGenerateEffect 节奏对齐：主副标题并行播完后稍晚再出按钮 */
   const ctaEntranceDelay = useMemo(() => {
@@ -37,6 +56,8 @@ export function HeroSection() {
     <section
       id="top"
       className="relative isolate flex min-h-screen min-h-[100svh] flex-col overflow-hidden px-6 md:px-10"
+      onMouseMove={handleGridPointerMove}
+      onMouseLeave={handleGridPointerLeave}
     >
       <div
         className={cn(
@@ -45,25 +66,49 @@ export function HeroSection() {
         )}
         aria-hidden
       />
-      <DotPattern
-        glow
-        width={isLight ? 16 : 18}
-        height={isLight ? 16 : 18}
-        cr={isLight ? 1.4 : 1}
+      <div
         className={cn(
-          // dot 略微更明显，但仍保持克制（只提升一点对比与可见范围）
-          isLight ? "text-[#0b1220]/45" : "text-white/55",
-          isLight
-            ? "[mask-image:radial-gradient(ellipse_1200px_900px_at_50%_50%,white,transparent)]"
-            : "[mask-image:radial-gradient(ellipse_900px_720px_at_50%_52%,white,transparent)]",
+          "pointer-events-none absolute inset-0",
+          // 底部线性渐隐：网格在接近下一模块前逐渐消失
+          "[mask-image:linear-gradient(to_bottom,black_0%,black_42%,rgba(0,0,0,0.55)_68%,transparent_100%)]",
         )}
-      />
+        aria-hidden
+      >
+        <InteractiveGridPattern
+          pointer={gridPointer}
+          interactive={!reduceMotion}
+          width={isLight ? 22 : 24}
+          height={isLight ? 22 : 24}
+          className={cn(
+            isLight
+              ? "[mask-image:radial-gradient(ellipse_78%_56%_at_50%_38%,black,transparent)]"
+              : "[mask-image:radial-gradient(ellipse_74%_52%_at_50%_40%,black,transparent)]",
+          )}
+          linesClassName={cn(
+            isLight ? "text-[#0b1220]/[0.048]" : "text-white/[0.055]",
+          )}
+          activeSquaresClassName={
+            isLight
+              ? "fill-[#2b7cff]/38 stroke-[#2b7cff]/90 stroke-[1.25] drop-shadow-[0_0_14px_rgba(43,124,255,0.65)]"
+              : "fill-[#1ff0ff]/32 stroke-[#1ff0ff]/95 stroke-[1.25] drop-shadow-[0_0_16px_rgba(31,240,255,0.75)]"
+          }
+        />
+      </div>
       <div
         className={cn(
           "pointer-events-none absolute inset-0",
           isLight
-            ? "bg-[radial-gradient(ellipse_95%_70%_at_50%_4%,rgba(43,124,255,0.18),transparent_58%)]"
-            : "bg-[radial-gradient(ellipse_95%_70%_at_50%_4%,rgba(31,240,255,0.1),transparent_58%)]",
+            ? "bg-[radial-gradient(ellipse_95%_70%_at_50%_4%,rgba(43,124,255,0.14),transparent_58%)]"
+            : "bg-[radial-gradient(ellipse_95%_70%_at_50%_4%,rgba(31,240,255,0.07),transparent_58%)]",
+        )}
+        aria-hidden
+      />
+      <div
+        className={cn(
+          "pointer-events-none absolute inset-x-0 bottom-0 h-[min(34vh,280px)]",
+          isLight
+            ? "bg-gradient-to-t from-[#f5f5fb] from-[12%] via-[#f5f5fb]/75 via-[48%] to-transparent"
+            : "bg-gradient-to-t from-[#06080e] from-[12%] via-[#06080e]/80 via-[48%] to-transparent",
         )}
         aria-hidden
       />

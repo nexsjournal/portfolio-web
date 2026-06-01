@@ -11,39 +11,55 @@ import { FadeInBlock, FadeInTitle } from "@/components/ui/scroll-reveal";
 /** 站点主题色（浅色/深色随变量切换） */
 const THEME_PRIMARY = "var(--primary)";
 
-const pointsZh: { title: string; body: string; imageSrc: string }[] = [
+const pointsZh: {
+  title: string;
+  body: string;
+  imageSrc: string;
+  imageSrcLight: string;
+}[] = [
   {
     title: "只做自己会用的产品",
     body: "先说服自己，再谈上线。",
     imageSrc: "/assets/philosophy/01.png",
+    imageSrcLight: "/assets/philosophy/light-01.png",
   },
   {
     title: "功能克制，但体验优先",
     body: "少即是多，交互要经得起日常。",
     imageSrc: "/assets/philosophy/02.png",
+    imageSrcLight: "/assets/philosophy/light-02.png",
   },
   {
     title: "让记录更简单，而不是更复杂",
     body: "把路径缩短，把反馈说清楚。",
     imageSrc: "/assets/philosophy/03.png",
+    imageSrcLight: "/assets/philosophy/light-03.png",
   },
 ];
 
-const pointsEn: { title: string; body: string; imageSrc: string }[] = [
+const pointsEn: {
+  title: string;
+  body: string;
+  imageSrc: string;
+  imageSrcLight: string;
+}[] = [
   {
     title: "Build what I’d use myself",
     body: "If it doesn’t convince me, it doesn’t ship.",
     imageSrc: "/assets/philosophy/01.png",
+    imageSrcLight: "/assets/philosophy/light-01.png",
   },
   {
     title: "Fewer features, better feel",
     body: "Less noise; interactions that hold up daily.",
     imageSrc: "/assets/philosophy/02.png",
+    imageSrcLight: "/assets/philosophy/light-02.png",
   },
   {
     title: "Make capturing easier, not heavier",
     body: "Shorter paths, clearer feedback.",
     imageSrc: "/assets/philosophy/03.png",
+    imageSrcLight: "/assets/philosophy/light-03.png",
   },
 ];
 
@@ -73,7 +89,7 @@ export function PhilosophySection() {
               key={point.title}
               title={point.title}
               body={point.body}
-              imageSrc={point.imageSrc}
+              imageSrc={isLight ? point.imageSrcLight : point.imageSrc}
               iconTint={THEME_PRIMARY}
               icon={
                 idx === 0 ? (
