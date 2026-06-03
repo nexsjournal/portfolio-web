@@ -1,7 +1,5 @@
-import type { Metadata } from "next";
-
 import { SiteNavbar } from "@/components/site/site-navbar";
-import { SITE_FILING_NAME } from "@/lib/site-compliance";
+import { siteMetadata } from "@/lib/site-metadata";
 import { Providers } from "@/components/site/providers";
 
 import "./globals.css";
@@ -10,10 +8,7 @@ import "./globals.css";
 const googleFontsHref =
   "https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Noto+Sans+SC:wght@300;400;500;700&family=Outfit:wght@500;600;700;800&display=swap";
 
-export const metadata: Metadata = {
-  title: `${SITE_FILING_NAME} · PM & UX & 独立开发者 · 构建有用且有趣的 APP`,
-  description: `${SITE_FILING_NAME} · PM & UX & 独立开发者 · 构建有用且有趣的 APP`,
-};
+export const metadata = siteMetadata;
 
 export default function RootLayout({
   children,
