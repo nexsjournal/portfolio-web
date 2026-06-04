@@ -98,11 +98,23 @@ export function ProductDetailContent({ product }: Props) {
             </div>
           </div>
 
-          <div className="mt-8 grid gap-4 md:grid-cols-4">
+          <div
+            className={cn(
+              "mt-8 grid items-stretch gap-4 sm:grid-cols-2",
+              platformUrl ? "lg:grid-cols-5" : "md:grid-cols-4",
+            )}
+          >
             <InfoItem isLight={isLight} label={copy.category} value={category} />
             <InfoItem isLight={isLight} label={copy.language} value={language} />
             <InfoItem isLight={isLight} label={copy.size} value={size} />
-            <InfoItem isLight={isLight} label={copy.platform} value={platform} href={platformUrl} />
+            <InfoItem isLight={isLight} label={copy.platform} value={platform} />
+            {platformUrl ? (
+              <AppStoreDownloadCard
+                isLight={isLight}
+                href={platformUrl}
+                label={copy.downloadAppStore}
+              />
+            ) : null}
           </div>
         </section>
 
@@ -260,44 +272,65 @@ function ProductLegalLinks({
   );
 }
 
+/** 与信息卡、下载按钮统一的最小高度（单独占一行时也不会过扁） */
+const INFO_CELL_MIN_H = "min-h-[5.5rem]";
+
+const infoCardClass = (isLight: boolean) =>
+  cn(
+    INFO_CELL_MIN_H,
+    "rounded-xl border p-4",
+    isLight ? "border-slate-200/60 bg-white/75" : "border-[rgba(255,255,255,0.04)] bg-black/25",
+  );
+
+const infoLabelClass = (isLight: boolean) =>
+  cn(
+    "text-xs uppercase tracking-[0.18em]",
+    isLight ? "text-slate-700/50" : "text-white/50",
+  );
+
 function InfoItem({
   label,
   value,
   isLight,
-  href,
 }: {
   label: string;
   value: string;
   isLight: boolean;
-  href?: string;
 }) {
-  const valueNode = href ? (
+  return (
+    <article className={cn(infoCardClass(isLight), "h-full")}>
+      <p className={infoLabelClass(isLight)}>{label}</p>
+      <p className={cn("mt-2 text-sm", isLight ? "text-slate-900" : "text-white/90")}>
+        {value}
+      </p>
+    </article>
+  );
+}
+
+function AppStoreDownloadCard({
+  isLight,
+  href,
+  label,
+}: {
+  isLight: boolean;
+  href: string;
+  label: string;
+}) {
+  return (
     <a
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="underline decoration-transparent transition-colors duration-200 hover:text-[#1FF0FF] hover:decoration-[#1FF0FF]/70"
+      className={cn(
+        INFO_CELL_MIN_H,
+        "flex h-full w-full items-center justify-center gap-2 rounded-xl border px-4 text-sm font-semibold transition-[background-color,box-shadow,transform] duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 active:scale-[0.98]",
+        isLight
+          ? "border-[#1FF0FF]/45 bg-[#1FF0FF]/22 text-[#051016] shadow-[0_0_20px_-8px_rgba(31,240,255,0.35)] hover:border-[#1FF0FF]/60 hover:bg-[#1FF0FF]/32 hover:shadow-[0_0_28px_-6px_rgba(31,240,255,0.45)]"
+          : "border-[#1FF0FF]/40 bg-[#1FF0FF]/14 text-[#1FF0FF] shadow-[0_0_22px_-8px_rgba(31,240,255,0.28)] hover:border-[#1FF0FF]/55 hover:bg-[#1FF0FF]/22 hover:shadow-[0_0_32px_-6px_rgba(31,240,255,0.4)]",
+      )}
     >
-      {value}
+      <span className="text-center leading-snug">{label}</span>
+      <ArrowUpRight className="h-4 w-4 shrink-0" aria-hidden />
     </a>
-  ) : (
-    value
-  );
-
-  return (
-    <article
-      className={`rounded-xl border p-4 ${
-        isLight ? "border-slate-200/60 bg-white/75" : "border-[rgba(255,255,255,0.04)] bg-black/25"
-      }`}
-    >
-      <p
-        className={`text-xs uppercase tracking-[0.18em] ${
-          isLight ? "text-slate-700/50" : "text-white/50"
-        }`}
-      >
-        {label}
-      </p>
-      <p className={`mt-2 text-sm ${isLight ? "text-slate-900" : "text-white/90"}`}>{valueNode}</p>
-    </article>
   );
 }
