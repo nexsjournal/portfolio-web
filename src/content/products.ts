@@ -137,17 +137,18 @@ export const products: Product[] = [
     taglineEn:
       "Turn the moment you arrive into a shareable summit card—huge live altitude and your view, at a glance.",
     summary:
-      "不是又一个堆满参数的 GPS 工具箱。打开 App，第一眼就是超大海拔数字和取景画面：你在哪座山、此刻海拔多少，一目了然。拍一张实景，或切换氛围主题一键 Pin，系统自动合成带海拔、地点、气压与精度的 3:4 竖版分享卡，直接保存相册或发到朋友圈、小红书。",
+      "专为户外爱好者与旅行打卡者打造。超大字号实时海拔、GPS 经纬度、气压与指南针数据一屏呈现；一拍一 Pin 自动合成适合小红书、朋友圈的精美分享卡。",
     summaryEn:
-      "Not another GPS dashboard. Open the app to a giant live altitude readout and your camera view—where you are on the mountain, right now. Shoot a real scene or pick a themed Pin; we compose a 3:4 share card with altitude, place, pressure, and accuracy—ready for your camera roll or social feeds.",
+      "Built for outdoor lovers and travel check-ins. Giant live altitude, GPS coordinates, barometric pressure, and compass on one screen—one shot, one Pin, beautiful cards ready for social feeds.",
     category: "户外与记录",
     categoryEn: "Outdoors & Journaling",
     language: "简体中文 / English",
     languageEn: "Chinese / English",
-    size: "—",
-    sizeEn: "—",
+    size: "6.5 MB",
+    sizeEn: "6.5 MB",
     platform: "iOS",
     platformEn: "iOS",
+    platformUrl: "https://apps.apple.com/cn/app/id6773985059",
     features: [
       "实时 GPS 海拔与地点，支持米 / 英尺切换",
       "气压、含氧量估算、经纬度与指南针",
