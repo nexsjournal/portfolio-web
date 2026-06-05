@@ -26,6 +26,8 @@
 
 # cursor / local config
 .cursor/
+.agents/
+skills-lock.json
 .npmrc
 
 # debug
