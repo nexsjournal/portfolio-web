@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRef } from "react";
 import { useReducedMotion } from "framer-motion";
 import { useGSAP } from "@gsap/react";
@@ -121,7 +122,7 @@ export function HeroEntrance({
           ]}
           flowOnHover
         >
-          <a
+          <Link
             href="/#products"
             className={cn(
               "inline-flex min-w-[200px] items-center justify-center rounded-full bg-white px-10 py-3.5 text-base font-semibold text-black shadow-[0_22px_54px_-30px_rgba(0,0,0,0.55),0_2px_0_0_rgba(255,255,255,0.65)_inset] transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.98] group-hover/cta:shadow-[0_26px_60px_-32px_rgba(0,0,0,0.7),0_2px_0_0_rgba(255,255,255,0.8)_inset]",
@@ -139,7 +140,7 @@ export function HeroEntrance({
                 </span>
               ))}
             </span>
-          </a>
+          </Link>
         </NoiseBackground>
       </div>
     </div>

@@ -34,6 +34,7 @@ export function SiteLanguageProvider({
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY) as SiteLang | null;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (saved === "zh" || saved === "en") setLangState(saved);
     } catch {
       /* ignore */

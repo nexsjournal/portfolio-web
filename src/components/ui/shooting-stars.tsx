@@ -7,8 +7,13 @@ import { useTheme } from "@/context/theme";
 type ShootingStar = {
   top: string;
   left: string;
-  delay: number;
+  delay: string;
 };
+
+function seeded(index: number, salt: number) {
+  const value = Math.sin(index * 91.7 + salt * 37.3) * 10000;
+  return value - Math.floor(value);
+}
 
 export function ShootingStars() {
   const reduce = useReducedMotion();
@@ -17,9 +22,9 @@ export function ShootingStars() {
   const stars = useMemo<ShootingStar[]>(
     () =>
       Array.from({ length: 8 }, (_, i) => ({
-        top: `${Math.random() * 88}%`,
-        left: `${Math.random() * 88}%`,
-        delay: i * 2.1 + Math.random() * 0.8,
+        top: `${(seeded(i, 1) * 88).toFixed(4)}%`,
+        left: `${(seeded(i, 2) * 88).toFixed(4)}%`,
+        delay: `${(i * 2.1 + seeded(i, 3) * 0.8).toFixed(3)}s`,
       })),
     [],
   );
@@ -36,7 +41,7 @@ export function ShootingStars() {
             top: star.top,
             left: star.left,
             opacity: 0,
-            animation: `shootingStar 11s linear ${star.delay}s infinite`,
+            animation: `shootingStar 11s linear ${star.delay} infinite`,
           }}
         />
       ))}

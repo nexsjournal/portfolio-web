@@ -28,6 +28,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     try {
       const saved = localStorage.getItem(STORAGE_KEY) as ThemeMode | null;
       if (saved === "dark" || saved === "light") {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setThemeState(saved);
         return;
       }
@@ -73,4 +74,3 @@ export function useTheme() {
   }
   return ctx;
 }
-

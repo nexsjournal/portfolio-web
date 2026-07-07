@@ -4,7 +4,6 @@ import { useRef } from "react";
 import { useReducedMotion } from "framer-motion";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { useSiteLanguage } from "@/context/site-language";
 import { useTheme } from "@/context/theme";

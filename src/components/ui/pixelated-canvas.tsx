@@ -172,7 +172,9 @@ export function PixelatedCanvas({
         sx = Math.max(0, Math.min(iw - 1, sx));
         sy = Math.max(0, Math.min(ih - 1, sy));
 
-        let [r, g, b, a] = samplePixel(data, iw, ih, sx, sy, sampleAverage);
+        const sampled = samplePixel(data, iw, ih, sx, sy, sampleAverage);
+        let [r, g, b] = sampled;
+        const alpha = sampled[3];
 
         if (tint && tintStrength > 0) {
           r = r * (1 - tintStrength) + tint.r * tintStrength;
@@ -180,7 +182,7 @@ export function PixelatedCanvas({
           b = b * (1 - tintStrength) + tint.b * tintStrength;
         }
 
-        ctx.fillStyle = `rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},${a / 255})`;
+        ctx.fillStyle = `rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},${alpha / 255})`;
         const drawSize = cs * scale;
 
         if (shape === "circle") {

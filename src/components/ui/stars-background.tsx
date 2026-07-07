@@ -7,11 +7,16 @@ import { useTheme } from "@/context/theme";
 type Star = {
   left: string;
   top: string;
-  size: number;
-  duration: number;
-  delay: number;
-  opacity: number;
+  size: string;
+  duration: string;
+  delay: string;
+  opacity: string;
 };
+
+function seeded(index: number, salt: number) {
+  const value = Math.sin(index * 77.13 + salt * 29.91) * 10000;
+  return value - Math.floor(value);
+}
 
 export function StarsBackground() {
   const reduce = useReducedMotion();
@@ -19,13 +24,13 @@ export function StarsBackground() {
   const isLight = theme === "light";
   const stars = useMemo<Star[]>(
     () =>
-      Array.from({ length: 48 }, () => ({
-        left: `${Math.random() * 100}%`,
-        top: `${Math.random() * 100}%`,
-        size: Math.random() * 2 + 1,
-        duration: Math.random() * 3 + 2.8,
-        delay: Math.random() * 3.5,
-        opacity: Math.random() * 0.55 + 0.25,
+      Array.from({ length: 48 }, (_, index) => ({
+        left: `${(seeded(index, 1) * 100).toFixed(4)}%`,
+        top: `${(seeded(index, 2) * 100).toFixed(4)}%`,
+        size: `${(seeded(index, 3) * 2 + 1).toFixed(3)}px`,
+        duration: `${(seeded(index, 4) * 3 + 2.8).toFixed(3)}s`,
+        delay: `${(seeded(index, 5) * 3.5).toFixed(3)}s`,
+        opacity: (seeded(index, 6) * 0.55 + 0.25).toFixed(3),
       })),
     [],
   );
@@ -44,7 +49,7 @@ export function StarsBackground() {
             width: star.size,
             height: star.size,
             opacity: star.opacity,
-            animation: `starTwinkle ${star.duration}s ease-in-out ${star.delay}s infinite`,
+            animation: `starTwinkle ${star.duration} ease-in-out ${star.delay} infinite`,
           }}
         />
       ))}
