@@ -1,15 +1,30 @@
 "use client";
 
-import { ArrowDown, ArrowUpRight, Github, Mail } from "lucide-react";
+import { ArrowUpRight, Github, Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import type { PointerEvent } from "react";
 
 import { type Product, getProductIconPath, products } from "@/content/products";
 import { type SiteLang, useSiteLanguage } from "@/context/site-language";
 import { portfolioCopy } from "@/i18n/portfolio-copy";
 import { ICP_BEIAN_URL, ICP_NUMBER, SITE_BRAND } from "@/lib/site-compliance";
+import { PortfolioIntro } from "./portfolio-intro";
 
 const publishedProducts = products.filter((item) => item.path && !item.comingSoon);
+const projectHighlights: Partial<Record<string, { zh: string; en: string; badge: string }>> = {
+  echosnap: { zh: "滑一滑，整理相册里的照片和视频。", en: "Sort photos and videos with a swipe.", badge: "Swipe to sort" },
+  "travel-route": { zh: "把走过的路线，变成一段能分享的动画。", en: "Turn the route you took into an animated travel video.", badge: "On the road" },
+  altitudeshot: { zh: "实时看海拔，把到达这一刻拍成一张登顶卡片。", en: "See your altitude live and capture the moment with a summit card.", badge: "Take it higher" },
+};
+
+function trackProjectPointer(event: PointerEvent<HTMLAnchorElement>) {
+  if (event.pointerType !== "mouse" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const card = event.currentTarget;
+  const bounds = card.getBoundingClientRect();
+  card.style.setProperty("--project-pointer-x", `${event.clientX - bounds.left}px`);
+  card.style.setProperty("--project-pointer-y", `${event.clientY - bounds.top}px`);
+}
 
 export function PortfolioHome() {
   const { lang } = useSiteLanguage();
@@ -17,32 +32,11 @@ export function PortfolioHome() {
 
   return (
     <main id="main-content" className="portfolio-page portfolio-wrap" tabIndex={-1}>
-      <section id="top" className="portfolio-intro" aria-labelledby="intro-title">
-        <div className="portfolio-intro-copy">
-          <h1 id="intro-title">{copy.greeting} <em>Lex</em><span>.</span></h1>
-          <p className="portfolio-motto">{copy.motto}</p>
-          <p>{copy.intro}</p>
-          <a className="portfolio-action" href="#products">
-            {copy.workAction} <ArrowDown size={16} aria-hidden />
-          </a>
-        </div>
-        <figure className="portfolio-portrait">
-          <Image
-            src="/assets/reference/main-avatar.png"
-            alt={copy.portrait}
-            width={1000}
-            height={1000}
-            sizes="(max-width: 600px) 200px, 348px"
-            preload
-          />
-          <figcaption lang="zh-CN">见微筑境</figcaption>
-        </figure>
-      </section>
+      <PortfolioIntro lang={lang} products={publishedProducts} />
 
       <section id="products" className="portfolio-section" aria-labelledby="work-title">
         <div className="portfolio-heading">
           <h2 id="work-title">{copy.workTitle}</h2>
-          <span>{String(publishedProducts.length).padStart(2, "0")} / iOS</span>
         </div>
         <div className="portfolio-works">
           {publishedProducts.map((product) => (
@@ -114,19 +108,15 @@ function ProjectCard({ product, lang }: { product: Product; lang: SiteLang }) {
   const english = lang === "en";
   const title = english ? product.nameEn ?? product.name : product.name;
   const titleId = `work-${product.slug}`;
+  const highlight = projectHighlights[product.slug];
 
   return (
     <article className="portfolio-project" data-project={product.slug}>
-      <Link href={`/${product.path}`} aria-labelledby={titleId} className="portfolio-project-link">
+      <Link href={`/${product.path}`} aria-labelledby={titleId} className="portfolio-project-link" onPointerEnter={trackProjectPointer} onPointerMove={trackProjectPointer}>
         <div className="portfolio-project-copy">
           <span className="portfolio-project-arrow" aria-hidden><ArrowUpRight size={21} /></span>
-          <div className="portfolio-project-title">
-            <Image src={getProductIconPath(product)} alt="" width={40} height={40} />
-            <h3 id={titleId}>
-              {title} {!english && product.nameEn ? <small lang="en">{product.nameEn}</small> : null}
-            </h3>
-          </div>
-          <p>{english ? product.taglineEn ?? product.tagline : product.tagline}</p>
+          <h3 id={titleId}>{title}</h3>
+          <p>{highlight?.[lang] ?? (english ? product.taglineEn ?? product.tagline : product.tagline)}</p>
           <ul className="portfolio-tags">
             <li>{english ? product.categoryEn ?? product.category : product.category}</li>
             <li>{product.platform}</li>
@@ -135,10 +125,23 @@ function ProjectCard({ product, lang }: { product: Product; lang: SiteLang }) {
         {product.screenshots?.length ? (
           <div className="portfolio-project-art" aria-hidden>
             {product.screenshots.slice(0, 3).map((src) => (
-              <Image key={src} src={src} alt="" width={1284} height={2778} sizes="(max-width: 600px) 28vw, 125px" />
+              <Image key={src} src={src} alt="" width={1284} height={2778} sizes="(max-width: 670px) 31vw, 180px" />
             ))}
           </div>
         ) : null}
+        <div className="portfolio-project-stickers" aria-hidden>
+          <span className="portfolio-project-sticker portfolio-sticker-brand">
+            <Image src={getProductIconPath(product)} alt="" width={20} height={20} loading="eager" /> {product.nameEn ?? product.name}
+          </span>
+          {highlight ? (
+            <>
+              <span className="portfolio-project-sticker portfolio-sticker-badge" lang="en">{highlight.badge} <ArrowUpRight size={15} /></span>
+              <span className="portfolio-project-sticker portfolio-sticker-left" />
+              <span className="portfolio-project-sticker portfolio-sticker-right" />
+            </>
+          ) : null}
+        </div>
+        <span className="portfolio-project-cursor" aria-hidden>{portfolioCopy[lang].viewProject}</span>
       </Link>
     </article>
   );
