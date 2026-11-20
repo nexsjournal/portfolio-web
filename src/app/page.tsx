@@ -1,5 +1,5 @@
-import { RedoyanHome } from "@/components/sections/redoyan-home";
+import { PortfolioHome } from "@/components/sections/portfolio-home";
 
 export default function Home() {
-  return <RedoyanHome />;
+  return <PortfolioHome />;
 }

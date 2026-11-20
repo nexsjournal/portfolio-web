@@ -3,6 +3,7 @@ import { siteMetadata } from "@/lib/site-metadata";
 import { Providers } from "@/components/site/providers";
 
 import "./globals.css";
+import "./portfolio.css";
 
 /** 使用样式表加载字体，避免 next/font/google 在 Turbopack 下解析 @vercel/turbopack-next 内置模块失败 */
 const googleFontsHref =

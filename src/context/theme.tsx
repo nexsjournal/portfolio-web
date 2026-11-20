@@ -22,7 +22,8 @@ const STORAGE_KEY = "lex-site-theme";
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeMode>("dark");
+  const [theme, setThemeState] = useState<ThemeMode>("light");
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     try {
@@ -30,26 +31,24 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       if (saved === "dark" || saved === "light") {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setThemeState(saved);
-        return;
       }
-      const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")
-        .matches;
-      setThemeState(prefersDark ? "dark" : "dark");
     } catch {
-      setThemeState("dark");
+      // ignore
     }
+    setReady(true);
   }, []);
 
   useEffect(() => {
     const root = document.documentElement;
     root.classList.toggle("theme-light", theme === "light");
     root.classList.toggle("theme-dark", theme === "dark");
+    if (!ready) return;
     try {
       localStorage.setItem(STORAGE_KEY, theme);
     } catch {
       // ignore
     }
-  }, [theme]);
+  }, [theme, ready]);
 
   const setTheme = useCallback((mode: ThemeMode) => {
     setThemeState(mode);
