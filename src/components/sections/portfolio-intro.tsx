@@ -1,66 +1,61 @@
 "use client";
 
-import { ArrowLeftRight, ArrowUpRight, Copy, Mail, X } from "lucide-react";
+import { ArrowLeftRight, Mail, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
 
+import { getCaseStudyByProductSlug } from "@/content/case-studies";
 import { type Product, getProductIconPath } from "@/content/products";
 import type { SiteLang } from "@/context/site-language";
 import { portfolioCopy } from "@/i18n/portfolio-copy";
-
-const email = "lextellsyou@gmail.com";
+import { PortfolioGazeAvatar } from "./portfolio-gaze-avatar";
 
 export function PortfolioIntro({ lang, products }: { lang: SiteLang; products: Product[] }) {
   const copy = portfolioCopy[lang];
   const seal = useRef<HTMLDialogElement>(null);
-  const contact = useRef<HTMLDialogElement>(null);
   const [screen, setScreen] = useState(0);
-  const [copied, setCopied] = useState(false);
   const activeProduct = products[screen - 1];
   const activeName = activeProduct && (lang === "en" ? activeProduct.nameEn ?? activeProduct.name : activeProduct.name);
-
-  async function copyEmail() {
-    try {
-      await navigator.clipboard.writeText(email);
-      setCopied(true);
-    } catch {
-      setCopied(false);
-    }
-  }
 
   return (
     <section id="top" className="portfolio-intro" aria-labelledby="intro-title">
       <div className="portfolio-intro-copy">
         <div className="portfolio-intro-name">
-          <h1 id="intro-title">Lex</h1>
+          <h1 id="intro-title">{copy.introName}</h1>
           <button className="portfolio-seal" type="button" aria-label={copy.sealLabel} aria-haspopup="dialog" onClick={() => seal.current?.showModal()}>
             <span aria-hidden>L<span>✦</span></span>
           </button>
         </div>
-        <p className="portfolio-intro-line">{copy.introRole}</p>
+        <p className="portfolio-intro-bio">
+          {copy.introRole}
+          {lang === "zh" ? "，" : ". "}
+          {copy.introBio}
+        </p>
         <p className="portfolio-intro-line"><span className="portfolio-intro-shine">{copy.motto}</span></p>
-        <p className="portfolio-intro-line portfolio-intro-link-row">
-          {copy.introNext}
-          <button type="button" className="portfolio-intro-slot" aria-haspopup="dialog" onClick={() => contact.current?.showModal()}>{copy.introContact}</button>
-        </p>
-        <p className="portfolio-intro-line portfolio-intro-link-row">
-          {copy.introStudio}
-          <a className="portfolio-intro-sticker portfolio-intro-studio" href="#about">Lex Studio <ArrowUpRight size={14} aria-hidden /></a>
-        </p>
         <div className="portfolio-intro-line portfolio-intro-link-row">
           <span>{copy.introWork}</span>
           <ul className="portfolio-intro-apps">
-            {products.map((product) => (
-              <li key={product.slug}>
-                <Link href={`/${product.path}`} className="portfolio-intro-sticker" data-app={product.slug}>
-                  <Image src={getProductIconPath(product)} alt="" width={20} height={20} />
-                  {lang === "en" ? product.nameEn ?? product.name : product.name}
-                </Link>
-              </li>
-            ))}
+            {products.map((product) => {
+              const caseStudy = getCaseStudyByProductSlug(product.slug);
+              const href = caseStudy ? `/projects/${caseStudy.slug}?from=home` : "/projects";
+              return (
+                <li key={product.slug}>
+                  <Link href={href} className="portfolio-intro-sticker" data-app={product.slug}>
+                    <Image src={getProductIconPath(product)} alt="" width={20} height={20} />
+                    {lang === "en" ? product.nameEn ?? product.name : product.name}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
+        <p className="portfolio-intro-line portfolio-intro-link-row portfolio-intro-collab-row">
+          {copy.introCollab}
+          <a className="portfolio-intro-sticker portfolio-intro-studio" href="mailto:lextellsyou@gmail.com">
+            {copy.introCta} <Mail size={14} aria-hidden />
+          </a>
+        </p>
       </div>
 
       <figure className="portfolio-computer">
@@ -81,7 +76,7 @@ export function PortfolioIntro({ lang, products }: { lang: SiteLang; products: P
               {activeProduct.screenshots?.[0] ? <Image className="portfolio-computer-app-shot" src={activeProduct.screenshots[0]} alt="" width={1284} height={2778} sizes="95px" /> : null}
             </span>
           ) : (
-            <Image className="portfolio-computer-avatar" src="/assets/hero/lex-3d-avatar.png" alt={copy.portrait} width={1254} height={1254} sizes="(max-width: 670px) 42vw, 196px" preload />
+            <PortfolioGazeAvatar label={copy.portrait} />
           )}
           <span className="portfolio-computer-switch" aria-hidden><ArrowLeftRight size={13} /></span>
         </button>
@@ -91,24 +86,13 @@ export function PortfolioIntro({ lang, products }: { lang: SiteLang; products: P
       <dialog ref={seal} className="portfolio-dialog portfolio-dialog-letter" aria-labelledby="seal-title" onClick={(event) => { if (event.target === event.currentTarget) seal.current?.close(); }}>
         <div className="portfolio-dialog-content">
           <button type="button" className="portfolio-dialog-close" aria-label={copy.close} onClick={() => seal.current?.close()}><X size={20} aria-hidden /></button>
-          <div className="portfolio-letter-address">Lex Studio <span lang="zh-CN">见微筑境</span></div>
+          <div className="portfolio-letter-address">Lex Studio</div>
           <h2 id="seal-title">{copy.sealTitle}</h2>
           <p>{copy.sealBody}</p>
-          <strong className="portfolio-letter-signature">Lex</strong>
+          <strong className="portfolio-letter-signature">{copy.introName}</strong>
         </div>
       </dialog>
 
-      <dialog ref={contact} className="portfolio-dialog" aria-labelledby="hello-title" onClose={() => setCopied(false)} onClick={(event) => { if (event.target === event.currentTarget) contact.current?.close(); }}>
-        <div className="portfolio-dialog-content">
-          <button type="button" className="portfolio-dialog-close" aria-label={copy.close} onClick={() => contact.current?.close()}><X size={20} aria-hidden /></button>
-          <h2 id="hello-title">{copy.contactTitle}</h2>
-          <p>{copy.contactBody}</p>
-          <div className="portfolio-dialog-actions">
-            <a className="portfolio-action" href={`mailto:${email}`}><Mail size={16} aria-hidden /> {email} <ArrowUpRight size={14} aria-hidden /></a>
-            <button className="portfolio-copy" type="button" onClick={copyEmail}><Copy size={16} aria-hidden /><span aria-live="polite">{copied ? copy.emailCopied : copy.copyEmail}</span></button>
-          </div>
-        </div>
-      </dialog>
     </section>
   );
 }

@@ -1,4 +1,4 @@
-# Lex Portfolio Web
+# Lex Studio Portfolio
 
 这是我的个人作品集网站，用于展示我在产品与体验方向上的思考、作品与持续迭代过程。
 
@@ -13,6 +13,18 @@
 
 - 参考 [Xiaoyang Hu 的作品集](https://xiaoyanghu.com/)：通过 ego-browser 检查渲染样式和电脑屏幕的多层媒体，实测印章与联系弹层、作品悬停和退出状态。底色取实测的 `#F8FAFC`，作品卡默认白色，悬停才展开渐变、贴纸和跟随提示。
 - 采用 [clone-website](https://github.com/JCodesMore/ai-website-cloner-template/blob/master/.agents/skills/clone-website/SKILL.md) 的「观察 → 重建 → 验证」流程，在原 Next.js 工程实现。对比了以资源镜像为主的 [Remake](https://github.com/rubenhassid1/remake) 和以设计令牌为主的 [Design Extract](https://github.com/Manavarya09/design-extract)，均未引入额外运行时。电脑外观和像素贴纸为生成素材；头像、产品截图、文案和链接来自 Lex Studio。
-- 首页 `/` 集中展示个人介绍与精选作品；产品详情保留 `/rephoto`、`/travelroutes`、`/altitudeshot`。产品数据仍维护在 `src/content/products.ts`。
+- 首屏真人头像使用内置 imagegen 转为 Aqua 风格 3D 卡通素材，保留真人面部、眼镜和服装特征；Projects 卡片采用连续轮廓的文件夹框，鼠标悬停时纸片笔记从封面后抽出，移开后收回，内层内容统一裁切在文件夹范围内。
+- 首页 `/` 集中展示个人介绍、3 个精选作品、Projects 纸板区、About 相机卡和两段叠放式内容卡片；更多项目区展示可图、小菌丝和 FlowDo，入口分别进入 `/projects/*`。产品数据仍维护在 `src/content/products.ts`，案例文案维护在 `src/content/case-studies.ts`。
+- Projects 纸板区的项目截图直接满铺在文件夹封面内，不再叠加项目名、平台等小字；FlowDo 与其他项目使用同样的满铺裁切。首页与 `/projects` 共用同一套拼贴尺寸和下移规则：手机 5 图/4 图分别约 20%/23%，截图整体下移并由卡片底边裁切。
+- 「关于我」「我怎么做产品」「联系我」合并为一组 `26rem` 等高圆角卡片，桌面端滚动时通过 sticky 依次向上叠放，上一张只露出 `14px` 顶边；卡片不添加外层投影，移动端和 `prefers-reduced-motion` 下恢复普通纵向排列。
+- 案例详情底部提供「上一件 / 下一件」双向浏览；桌面 App 预览使用 5px 深色外框，与手机预览保持一致的设备感。
+- Projects 区块的「查看更多」进入 `/projects`，全部项目使用纵向大卡片展示；卡片内按截图数量生成不同尺寸、角度与层级的照片拼贴。
+- `/projects` 复用案例内页的 `1240px` 顶栏结构：圆形返回按钮、Lex Studio 标识与右侧控件左右边界完全对齐。
+- 精选作品、顶部 App 标签和 Projects 卡片统一进入 `/projects/*` 案例内页；旧 `/work/*` 与 `/products/*` 仅保留 308 兼容跳转，案例顶栏左右控件对齐 `1240px` 内容区。
+- 案例内页保留固定顶栏、加长产品简介、可切换的真实界面预览和下一项目；章节说明、原则区与功能示意动画不再展示。
+- 案例 Hero 使用 [Kubai Icons](https://icons.kubai.design/) 产品装饰图标，每页随机分布在文字安全区外，并支持鼠标拖拽后保持位置；真实界面预览使用循环轮播。
+- 标题、产品名与手写卡片使用本地字体「乐米春序晚星体 Light」，正文保留无衬线字体保证可读性；字体来源与版权说明见 `public/fonts/LICENSE-LemiChunXuWanXing.txt`。
+- 主要按钮参考 [michi-onl/aqua](https://github.com/michi-onl/aqua) 的 macOS Aqua 分层渐变与高光处理，用纯 CSS 实现蓝色凝胶按钮和银色胶囊按钮。
+- 案例返回按入口区分：首页精选回首页、更多项目回 `#projects`、全部项目回 `/projects`；案例顶部的「全部案例」统一进入 `/projects`。蓝色 Aqua 按钮使用白字和轻微投影，实时海拔计案例使用青绿色点缀与多组浅色章节底色。
 - 本地预览：`npm ci` 后运行 `npm run dev`。提交前运行 `npm run lint` 和 `npm run build`。
 

@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 
-import { SITE_FILING_NAME } from "@/lib/site-compliance";
-
 /** 对外正式域名（Google Play / Search Console 填写的网址） */
 export const SITE_URL = "https://lexstudio.club";
 
-const siteTitle = `${SITE_FILING_NAME} · PM & UX & 独立开发者 · 构建有用且有趣的 APP`;
-const siteDescription = siteTitle;
+const siteTitle = "Lex Ray";
+const siteDescription = "产品经理、UX 设计师、独立开发者。";
 
 /** Search Console → HTML 标记 → content 属性值（在部署平台配置 GOOGLE_SITE_VERIFICATION） */
 const googleSiteVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();

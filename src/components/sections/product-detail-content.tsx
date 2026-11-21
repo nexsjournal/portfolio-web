@@ -36,7 +36,7 @@ export function ProductDetailContent({ product }: { product: Product }) {
         <p>{english ? product.summaryEn ?? product.summary : product.summary}</p>
         {product.platformUrl ? (
           <a className="portfolio-action" href={product.platformUrl} target="_blank" rel="noreferrer">
-            {copy.downloadAppStore} <ArrowUpRight size={17} aria-hidden />
+            {english ? product.actionLabelEn ?? copy.downloadAppStore : product.actionLabel ?? copy.downloadAppStore} <ArrowUpRight size={17} aria-hidden />
           </a>
         ) : null}
       </header>
@@ -47,7 +47,7 @@ export function ProductDetailContent({ product }: { product: Product }) {
             <h2 id="screenshots-title">{copy.screenshots}</h2>
             <p id="screenshots-hint">{portfolio.screenshotsHint}</p>
           </div>
-          <ProductScreenshots screenshots={screenshots} title={title} />
+          <ProductScreenshots product={product} title={title} />
         </section>
       ) : null}
 

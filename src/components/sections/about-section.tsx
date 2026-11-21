@@ -89,7 +89,7 @@ export function AboutSection() {
 
   const zhParagraphs = [
     <>
-      嘿，我是 Lex。
+      嘿，我是阿雷。
       <br />
       我不追求成为那个“什么都会”的万能开发者，我更想做一个会“感受”的创造者。微小的细节总能偷走用户的注意力——或者把他们吓跑——所以我痴迷于这些细节。
     </>,
@@ -103,7 +103,7 @@ export function AboutSection() {
 
   const enParagraphs = [
     <>
-      Hey, I&apos;m Lex.
+      Hey, I&apos;m Lei.
       <br />
       I&apos;m not trying to be the “can-do-everything” developer. I would rather
       be a creator who can truly feel. Tiny details either steal a user&apos;s

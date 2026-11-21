@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Lemi ChunXu WanXing";
+  src:
+    url("/fonts/LemiChunXuWanXingTi-Light.woff2") format("woff2"),
+    url("/fonts/LemiChunXuWanXingTi-Light.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  font-synthesis: none;
+}
+
 :root {
   /* Google Fonts（与 layout 中 stylesheet 一致；勿用 next/font/google + Turbopack 易触发内置模块解析错误） */
   --font-lexend: "Lexend", ui-sans-serif, system-ui, sans-serif;
