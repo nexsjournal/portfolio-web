@@ -70,10 +70,9 @@ export function PortfolioIntro({ lang, products }: { lang: SiteLang; products: P
           {activeProduct ? (
             <span className="portfolio-computer-app" key={activeProduct.slug} data-app={activeProduct.slug}>
               <span className="portfolio-computer-app-info">
-                <Image src={getProductIconPath(activeProduct)} alt="" width={56} height={56} />
+                <Image src={getProductIconPath(activeProduct)} alt="" width={112} height={112} />
                 <strong>{activeName}</strong>
               </span>
-              {activeProduct.screenshots?.[0] ? <Image className="portfolio-computer-app-shot" src={activeProduct.screenshots[0]} alt="" width={1284} height={2778} sizes="95px" /> : null}
             </span>
           ) : (
             <PortfolioGazeAvatar label={copy.portrait} />

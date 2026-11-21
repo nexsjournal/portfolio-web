@@ -6,10 +6,11 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
-type ThemeMode = "dark" | "light";
+import { DARK_THEME_QUERY, THEME_STORAGE_KEY, type ThemeMode } from "@/lib/theme-settings";
 
 type ThemeContextValue = {
   theme: ThemeMode;
@@ -17,46 +18,48 @@ type ThemeContextValue = {
   setTheme: (mode: ThemeMode) => void;
 };
 
-const STORAGE_KEY = "lex-site-theme";
-
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeMode>("light");
-  const [ready, setReady] = useState(false);
+  const preference = useRef<ThemeMode | null>(null);
 
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY) as ThemeMode | null;
-      if (saved === "dark" || saved === "light") {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setThemeState(saved);
-      }
-    } catch {
-      // ignore
-    }
-    setReady(true);
-  }, []);
-
-  useEffect(() => {
+  const applyTheme = useCallback((mode: ThemeMode) => {
     const root = document.documentElement;
-    root.classList.toggle("theme-light", theme === "light");
-    root.classList.toggle("theme-dark", theme === "dark");
-    if (!ready) return;
-    try {
-      localStorage.setItem(STORAGE_KEY, theme);
-    } catch {
-      // ignore
-    }
-  }, [theme, ready]);
-
-  const setTheme = useCallback((mode: ThemeMode) => {
+    root.classList.toggle("theme-light", mode === "light");
+    root.classList.toggle("theme-dark", mode === "dark");
     setThemeState(mode);
   }, []);
 
+  useEffect(() => {
+    const media = window.matchMedia(DARK_THEME_QUERY);
+    try {
+      const saved = localStorage.getItem(THEME_STORAGE_KEY);
+      if (saved === "light" || saved === "dark") preference.current = saved;
+    } catch {
+      /* ignore */
+    }
+
+    const syncSystemTheme = () => applyTheme(preference.current ?? (media.matches ? "dark" : "light"));
+
+    syncSystemTheme();
+    media.addEventListener("change", syncSystemTheme);
+    return () => media.removeEventListener("change", syncSystemTheme);
+  }, [applyTheme]);
+
+  const setTheme = useCallback((mode: ThemeMode) => {
+    preference.current = mode;
+    applyTheme(mode);
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, mode);
+    } catch {
+      /* ignore */
+    }
+  }, [applyTheme]);
+
   const toggleTheme = useCallback(() => {
-    setThemeState((prev) => (prev === "dark" ? "light" : "dark"));
-  }, []);
+    setTheme(document.documentElement.classList.contains("theme-dark") ? "light" : "dark");
+  }, [setTheme]);
 
   const value = useMemo(
     () => ({ theme, toggleTheme, setTheme }),

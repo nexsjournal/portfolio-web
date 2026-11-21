@@ -1,0 +1,28 @@
+export const notFoundCopy = {
+  zh: {
+    kicker: "SIGNAL LOST · 404",
+    titleLead: "这个页面",
+    titleTail: "漂走了。",
+    body: "链接可能过期、地址写错了，或者它还没被创建。别担心，往回走一步就好。",
+    home: "回到首页",
+    notes: "看看笔记",
+    projects: "全部项目",
+    code: "ERROR 404 / COORDINATES NOT FOUND",
+    imageAlt: "Lex 的 Aqua 像素风形象，拿着指南针寻找页面",
+    tag: "LEX · LOST IN SPACE",
+    hint: "正在重新定位…",
+  },
+  en: {
+    kicker: "SIGNAL LOST · 404",
+    titleLead: "This page",
+    titleTail: "drifted away.",
+    body: "The link may be stale, the address may be off, or this page has not been made yet. No worries — take one step back.",
+    home: "Back home",
+    notes: "Browse notes",
+    projects: "All projects",
+    code: "ERROR 404 / COORDINATES NOT FOUND",
+    imageAlt: "Lex as an Aqua pixel-art character, checking a compass for the missing page",
+    tag: "LEX · LOST IN SPACE",
+    hint: "Re-locating…",
+  },
+} as const;

@@ -35,8 +35,8 @@
   --card-foreground: rgba(255, 255, 255, 0.92);
 }
 
-/* Light theme overrides（通过 html.theme-light 切换） */
-html.theme-light {
+html:not(.theme-dark) {
+  color-scheme: light;
   --background: #f5f5fb;
   --foreground: #020617;
   --primary: #2b7cff;
@@ -45,6 +45,10 @@ html.theme-light {
   --border: rgba(15, 23, 42, 0.14);
   --card: rgba(255, 255, 255, 0.94);
   --card-foreground: #020617;
+}
+
+html.theme-dark {
+  color-scheme: dark;
 }
 
 @theme inline {

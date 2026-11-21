@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="robots" content="noindex">
+    <meta name="description" content="Lex Studio 个人网站设计系统：品牌语言、设计令牌、交互组件和页面模板。">
+    <title>设计系统 · Lex Studio</title>
+    <link rel="icon" href="../assets/logo-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./tokens.css">
+    <link rel="stylesheet" href="./preview.css">
+    <script src="./tokens.data.js" defer></script>
+    <script src="./preview.js" defer></script>
+  </head>
+  <body>
+    <svg class="icon-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></symbol>
+      <symbol id="icon-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 4H6a2 2 0 0 0-2 2v10"/></symbol>
+      <symbol id="icon-close" viewBox="0 0 24 24"><path d="m18 6-12 12M6 6l12 12"/></symbol>
+      <symbol id="icon-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-9 6a2 2 0 0 1-2 0L2 7"/></symbol>
+      <symbol id="icon-down" viewBox="0 0 24 24"><path d="M12 5v14m-6-6 6 6 6-6"/></symbol>
+    </svg>
+
+    <a class="skip-link" href="#main">跳至主要内容</a>
+    <header class="masthead" id="top">
+      <div class="shell masthead-inner">
+        <a class="wordmark" href="#top"><img src="../assets/logo-mark.svg" alt="" width="25" height="25"> Lex Studio</a>
+        <div class="choices theme" role="group" aria-label="展示页主题">
+          <button type="button" data-theme-option="system" aria-pressed="true">系统</button>
+          <button type="button" data-theme-option="light" aria-pressed="false">浅色</button>
+          <button type="button" data-theme-option="dark" aria-pressed="false">深色</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="shell" id="main" tabindex="-1">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="index-label"><span class="live-dot"></span> LEX STUDIO FIELD GUIDE</p>
+          <h1 id="page-title">设计系统</h1>
+          <p class="hero-intro">Lex Ray 个人网站的设计规范。<br>让颜色、组件和页面，在每次更新里保持同一种语气。</p>
+          <div class="actions">
+            <a href="#foundations" class="aqua primary">查看规范 <svg class="icon" aria-hidden="true"><use href="#icon-down"/></svg></a>
+            <a href="./tokens.json" class="text-action" download>下载 Tokens <svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></a>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="photo hero-photo"><img src="../assets/hero/polaroid-moment-02-v2.webp" alt="" width="480" height="360"><span>FROM THE WORKBENCH</span></div>
+          <div class="memo"><span>LEX / NOTE 01</span><p><span>先做自己</span><span>会用的。</span></p><span>让常用的动作短一点。</span></div>
+        </div>
+      </section>
+
+      <nav class="chapter-nav" aria-label="设计系统目录">
+        <a href="#foundations"><b>01</b> 基础样式</a>
+        <a href="#components"><b>02</b> 组件示例</a>
+        <a href="#templates"><b>03</b> 页面模板</a>
+        <a href="#tokens"><b>04</b> Token 索引</a>
+      </nav>
+
+      <section class="chapter" id="foundations" aria-labelledby="foundation-title">
+        <div class="chapter-heading"><span class="section-no">01</span><div><h2 id="foundation-title">基础样式</h2><p>纸底、墨色与青色构成界面。作品的颜色留给作品。</p></div></div>
+        <div class="spec panel">
+          <div class="spec-heading"><h3>语义色</h3><p>切换右上角主题预览；点击色样复制 CSS 变量。</p></div>
+          <div class="swatch-grid" id="semantic-swatches"></div>
+          <div class="spec-heading minor"><h4>项目色</h4><p>只用于相应作品的淡渐变和装饰。</p></div>
+          <div class="project-swatches" id="project-swatches"></div>
+          <noscript><p>交互色样需要 JavaScript。完整值可在 <a href="./tokens.css">CSS Tokens</a> 查看。</p></noscript>
+        </div>
+
+        <div class="pair">
+          <div class="spec panel">
+            <div class="spec-heading"><h3>字体</h3><p>界面负责可读，手写负责表达。</p></div>
+            <dl class="type-spec">
+              <div><dt class="sample-title">小事，做好。</dt><dd>页面标题 · Inter / Noto Sans SC</dd></div>
+              <div><dt class="sample-prose">从反复遇到的小麻烦开始，把它做成顺手的工具。</dt><dd>文章正文 · 行高 1.85</dd></div>
+              <div><dt class="sample-hand">先做自己会用的</dt><dd>手写质感 · 乐米春序晚星体</dd></div>
+            </dl>
+          </div>
+          <div class="spec panel">
+            <div class="spec-heading"><h3>间距与圆角</h3><p>用空间分层，不靠加重阴影。</p></div>
+            <dl class="space-spec">
+              <div><dt><span class="measure measure-tag"></span>标签间距</dt><dd>0.375rem</dd></div>
+              <div><dt><span class="measure measure-control"></span>控件间距</dt><dd>0.5rem</dd></div>
+              <div><dt><span class="measure measure-gutter"></span>页边距</dt><dd>1.125–2rem</dd></div>
+              <div><dt><span class="measure measure-section"></span>区块间距</dt><dd>3.25–5.25rem</dd></div>
+            </dl>
+            <div class="radius-row"><span>小标签 · 5px</span><span>面板 · 24px</span><span>胶囊 · 999px</span></div>
+          </div>
+        </div>
+
+        <div class="spec panel assets-spec">
+          <div><div class="spec-heading"><h3>图标与图片</h3><p>功能图标用 Lucide 线框；真实截图展示产品，纸张、白边与头像表达个人性格。</p></div>
+            <div class="icon-samples" aria-label="示例：外链、邮件、复制、关闭">
+              <svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg><svg class="icon" aria-hidden="true"><use href="#icon-mail"/></svg><svg class="icon" aria-hidden="true"><use href="#icon-copy"/></svg><svg class="icon" aria-hidden="true"><use href="#icon-close"/></svg>
+            </div>
+            <p class="small-copy">文章卡封面 16:10，文章详情 16:9。产品截图保持设备比例。</p>
+          </div>
+          <div class="asset-photos" aria-hidden="true"><img src="../assets/hero/lex-look-neutral.webp" alt="" loading="lazy"><img src="../assets/hero/polaroid-moment-01-v2.webp" alt="" loading="lazy"></div>
+        </div>
+      </section>
+
+      <section class="chapter" id="components" aria-labelledby="components-title">
+        <div class="chapter-heading"><span class="section-no">02</span><div><h2 id="components-title">组件示例</h2><p>在不同主题下试试筛选、弹窗与截图切换。</p></div></div>
+        <div class="spec panel">
+          <div class="spec-heading"><h3>按钮与弹窗</h3><p>蓝色给主操作，银色给次要操作。用 Tab 也能看见清晰的焦点。</p></div>
+          <div class="actions">
+            <button type="button" class="aqua primary" id="open-dialog"><svg class="icon" aria-hidden="true"><use href="#icon-mail"/></svg> 打开联系弹窗</button>
+            <a class="aqua silver" href="./tokens.css" download>下载 CSS</a>
+            <a class="text-action" href="#templates">查看页面模板 <svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></a>
+            <button type="button" class="aqua silver" disabled>不可用</button>
+          </div>
+        </div>
+
+        <div class="spec panel">
+          <div class="spec-heading"><h3>选项与文章卡</h3><p>选项负责过滤类型，标签只是内容信息。只有有真实条目的类型才会显示卡片。</p></div>
+          <div class="choices note-filters" role="group" aria-label="按内容类型筛选">
+            <button type="button" data-filter="all" aria-pressed="true">全部</button>
+            <button type="button" data-filter="article" aria-pressed="false">文章</button>
+            <button type="button" data-filter="event" aria-pressed="false">活动</button>
+            <button type="button" data-filter="video" aria-pressed="false">视频</button>
+            <button type="button" data-filter="note" aria-pressed="false">短记</button>
+          </div>
+          <p class="sr-only" id="note-count" role="status"></p>
+          <div class="note-grid">
+            <article class="note-card" data-note="article">
+              <div class="note-cover"><img src="../assets/hero/polaroid-moment-02-v2.webp" alt="" loading="lazy"></div>
+              <div class="note-copy">
+                <div class="metadata"><time datetime="2026-11-20">2026.11.20</time><span class="badge">文章</span></div>
+                <h4>我怎么做产品</h4>
+                <p>我通常从自己反复遇到的小麻烦开始，先做自己会用的，再把常用动作做短。</p>
+                <ul class="tags" aria-label="标签"><li>产品方法</li><li>独立开发</li><li>UX</li></ul>
+              </div>
+            </article>
+            <article class="note-card" data-note="note">
+              <div class="note-cover"><img src="../assets/hero/polaroid-moment-01-v2.webp" alt="" loading="lazy"></div>
+              <div class="note-copy">
+                <div class="metadata"><time datetime="2026-11-22">2026.11.22</time><span class="badge note">短记</span></div>
+                <h4>为什么叫「Lex Studio」？</h4>
+                <p>Lex Studio 是我独立做产品的地方：留意那些没被好好解决的小事，再把它们做成顺手、好用的工具。</p>
+                <ul class="tags" aria-label="标签"><li>Lex Studio</li><li>独立开发</li></ul>
+              </div>
+            </article>
+          </div>
+          <p class="empty" id="empty-notes" hidden>这个类型暂时没有内容。</p>
+          <div class="badge-samples" aria-label="类型徽标示例"><span class="badge">文章</span><span class="badge event">活动</span><span class="badge video">视频</span><span class="badge note">短记</span></div>
+        </div>
+
+        <div class="pair work-pair">
+          <div class="spec panel">
+            <div class="spec-heading"><h3>作品卡</h3><p>悬停或聚焦时，从顶端透出项目色。</p></div>
+            <details class="work-card">
+              <summary><span class="work-title">旅迹时光</span><span class="small-copy">把走过的路线，变成一段能分享的动画。</span>
+                <span class="work-art" aria-hidden="true"><img src="../assets/products/travel-route/screens/01.jpg" alt="" loading="lazy"><img src="../assets/products/travel-route/screens/02.jpg" alt="" loading="lazy"><img src="../assets/products/travel-route/screens/03.jpg" alt="" loading="lazy"></span>
+              </summary>
+              <div class="work-caption">产品名 → 价值描述 → 真实截图。本站整卡链接到案例；此处展开查看结构。</div>
+            </details>
+          </div>
+          <div class="spec panel">
+            <div class="spec-heading"><h3>案例预览</h3><p>切换真实截图，保留当前项的选中状态。</p></div>
+            <div class="preview-gallery">
+              <div class="device"><img id="active-shot" src="../assets/products/travel-route/screens/01.jpg" alt="旅迹时光第 1 张界面截图" loading="lazy"></div>
+              <div class="shot-picker" role="group" aria-label="旅迹时光截图">
+                <button type="button" data-shot="1" aria-label="第 1 张截图" aria-pressed="true"><img src="../assets/products/travel-route/screens/01.jpg" alt="" loading="lazy"></button>
+                <button type="button" data-shot="2" aria-label="第 2 张截图" aria-pressed="false"><img src="../assets/products/travel-route/screens/02.jpg" alt="" loading="lazy"></button>
+                <button type="button" data-shot="3" aria-label="第 3 张截图" aria-pressed="false"><img src="../assets/products/travel-route/screens/03.jpg" alt="" loading="lazy"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="spec panel">
+          <div class="spec-heading"><h3>品牌组件</h3><p>这些是 Lex Studio 的专属细节，不是默认卡片装饰。</p></div>
+          <div class="brand-grid">
+            <article><div class="brand-art crt-art" aria-hidden="true"><img src="../assets/hero/retro-crt.webp" alt="" loading="lazy"><img src="../assets/hero/lex-look-neutral.webp" alt="" loading="lazy"></div><h4>CRT 与头像</h4><p>屏幕切换产品 Logo；头像选择整帧头部姿态。触屏或减少动态时使用中立图。</p></article>
+            <article><div class="brand-art paper-art" aria-hidden="true"><span></span><span></span><span><img src="../assets/hero/polaroid-moment-03-v2.webp" alt="" loading="lazy"></span></div><h4>Projects 纸板与故事叠卡</h4><p>文件夹封面保留真实产品截图；故事卡用纸张、便签与照片，移动端恢复普通纵排。</p></article>
+            <article><div class="brand-art camera-art" aria-hidden="true"><img src="../assets/hero/polaroid-camera.webp" alt="" loading="lazy"></div><h4>感谢相机</h4><p>相机是首页收尾，可点按翻看照片。动效只让内容更有触感，不承担导航。</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter" id="templates" aria-labelledby="templates-title">
+        <div class="chapter-heading"><span class="section-no">03</span><div><h2 id="templates-title">页面模板</h2><p>先找最接近的页面结构，再填内容。不要从空白重新定一套风格。</p></div></div>
+        <div class="template-grid">
+          <article class="template panel"><div class="wire home-wire" aria-hidden="true"><span></span><span></span><span></span><span></span></div><h3>首页</h3><code>/</code><p>品牌介绍与 CRT → 精选作品 → Projects 纸板 → 关于／方法／联系 → 感谢相机。</p><a class="text-action" data-live-url="/" hidden>查看首页 ↗</a></article>
+          <article class="template panel"><div class="wire projects-wire" aria-hidden="true"><span></span><span></span><span></span><span></span></div><h3>作品索引</h3><code>/projects</code><p>内页顶栏 → 标题和介绍 → 纵向作品大卡。复用首页作品卡。</p><a class="text-action" data-live-url="/projects" hidden>查看作品索引 ↗</a></article>
+          <article class="template panel"><div class="wire case-wire" aria-hidden="true"><span></span><span></span><span></span><span></span></div><h3>产品案例</h3><code>/projects/[caseSlug]</code><p>产品简介与主要动作 → 真实截图轮播 → 上一件／下一件。</p><a class="text-action" data-live-url="/projects/travelroutes" hidden>查看旅迹时光案例 ↗</a></article>
+          <article class="template panel"><div class="wire notes-wire" aria-hidden="true"><span></span><span></span><span></span><span></span></div><h3>Notes 索引</h3><code>/notes</code><p>标题与介绍 → 类型筛选 → 文章卡片；窄屏从两列改一列。</p><a class="text-action" data-live-url="/notes" hidden>查看 Notes 索引 ↗</a></article>
+          <article class="template panel"><div class="wire article-wire" aria-hidden="true"><span></span><span></span><span></span><span></span></div><h3>Notes 详情</h3><code>/notes/[slug]</code><p>标题和元信息 → 封面 → 窄栏 MDX 正文 → 原文和相邻文章。</p><a class="text-action" data-live-url="/notes/how-i-build" hidden>查看文章样例 ↗</a></article>
+        </div>
+      </section>
+
+      <section class="chapter" id="tokens" aria-labelledby="tokens-title">
+        <div class="chapter-heading"><span class="section-no">04</span><div><h2 id="tokens-title">Token 索引</h2><p id="token-summary">颜色、字号、间距、圆角、动效及各组件的语义变量。</p></div></div>
+        <div class="spec panel token-panel">
+          <div class="token-toolbar">
+            <label class="token-search">搜索 Token <input id="token-search" type="search" placeholder="例如：accent、圆角、notes.css" autocomplete="off"></label>
+            <div class="actions"><a class="text-action" href="./tokens.json" download>JSON <svg class="icon" aria-hidden="true"><use href="#icon-down"/></svg></a><a class="text-action" href="./tokens.css" download>CSS <svg class="icon" aria-hidden="true"><use href="#icon-down"/></svg></a></div>
+          </div>
+          <div id="token-groups"></div>
+          <p class="empty" id="empty-tokens" hidden role="status">没有匹配的 Token。</p>
+          <p class="small-copy token-hint">网站样式是来源。修改后运行 <code>node scripts/design-system.mjs</code>，不要手改生成文件。</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="shell footer"><span>Lex Studio · Design System</span><a href="#top">回到顶部 ↑</a></footer>
+
+    <dialog id="contact-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-copy">
+      <div class="dialog-content">
+        <form method="dialog"><button class="dialog-close" aria-label="关闭弹窗" autofocus><svg class="icon" aria-hidden="true"><use href="#icon-close"/></svg></button></form>
+        <p class="index-label">GET IN TOUCH</p>
+        <h2 id="dialog-title">有想法，就发给我。</h2>
+        <p id="dialog-copy">产品反馈、合作，或者想聊聊独立开发，都欢迎来信。</p>
+        <a class="aqua primary" href="mailto:lextellsyou@gmail.com"><svg class="icon" aria-hidden="true"><use href="#icon-mail"/></svg> 发邮件</a>
+      </div>
+    </dialog>
+    <div id="copy-status" class="copy-status" role="status"></div>
+  </body>
+</html>

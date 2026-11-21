@@ -9,6 +9,12 @@
 - 理念与方法论板块
 - 联系方式与社媒入口
 
+## 设计系统
+
+- [Lex Studio 设计规范](DESIGN.md)：品牌、基础样式、组件状态和页面模板。
+- [Design Tokens](public/design-system/tokens.json) · [CSS 变量](public/design-system/tokens.css) · [交互展示页](public/design-system/index.html)（开发环境路径 `/design-system/index.html`）。
+- 修改站点样式后，运行 `node scripts/design-system.mjs` 同步令牌；用 `node scripts/design-system.mjs --check` 检查是否有遗漏。
+
 ## 首页改版
 
 - 参考 [Xiaoyang Hu 的作品集](https://xiaoyanghu.com/)：通过 ego-browser 检查渲染样式和电脑屏幕的多层媒体，实测印章与联系弹层、作品悬停和退出状态。底色取实测的 `#F8FAFC`，作品卡默认白色，悬停才展开渐变、贴纸和跟随提示。
@@ -26,5 +32,8 @@
 - 标题、产品名与手写卡片使用本地字体「乐米春序晚星体 Light」，正文保留无衬线字体保证可读性；字体来源与版权说明见 `public/fonts/LICENSE-LemiChunXuWanXing.txt`。
 - 主要按钮参考 [michi-onl/aqua](https://github.com/michi-onl/aqua) 的 macOS Aqua 分层渐变与高光处理，用纯 CSS 实现蓝色凝胶按钮和银色胶囊按钮。
 - 案例返回按入口区分：首页精选回首页、更多项目回 `#projects`、全部项目回 `/projects`；案例顶部的「全部案例」统一进入 `/projects`。蓝色 Aqua 按钮使用白字和轻微投影，实时海拔计案例使用青绿色点缀与多组浅色章节底色。
+- 新增 `/notes` 文章与记录区，内容来自 `content/notes/*.mdx`；支持文章、活动、视频、短记四种类型与标签筛选，详情页包含封面、原文链接和上一篇/下一篇。内容格式与公众号导入方式见 `content/notes/README.md`。
+- 公众号文章可通过 `npm run import:wechat -- "<文章链接>"` 导入：自动抓取标题、正文、发布时间与封面，下载正文图片，生成带 frontmatter 的 MDX，不需要在网站上二次排版。
+- 自定义 404 页面使用 `public/assets/404/lex-404.webp` 的 Aqua 像素风 IP 形象，配合“SIGNAL LOST”叙事、指南针与坐标标注，提供回首页、笔记和项目列表入口；明暗主题与移动端均已适配。
 - 本地预览：`npm ci` 后运行 `npm run dev`。提交前运行 `npm run lint` 和 `npm run build`。
 

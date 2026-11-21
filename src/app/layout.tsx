@@ -1,10 +1,13 @@
 import { SiteNavbar } from "@/components/site/site-navbar";
 import { siteMetadata } from "@/lib/site-metadata";
+import { themeInitScript } from "@/lib/theme-settings";
 import { Providers } from "@/components/site/providers";
 
 import "./globals.css";
 import "./portfolio.css";
 import "./case-study.css";
+import "./notes.css";
+import "./not-found.css";
 
 /** 使用样式表加载字体，避免 next/font/google 在 Turbopack 下解析 @vercel/turbopack-next 内置模块失败 */
 const googleFontsHref =
@@ -20,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href={googleFontsHref} rel="stylesheet" />

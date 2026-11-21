@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 
 import { CaseStudyPage } from "@/components/sections/case-study-page";
 import { caseStudies, getCaseStudy } from "@/content/case-studies";
+import { getProductBySlug } from "@/content/products";
+import { createPageMetadata } from "@/lib/site-metadata";
 
 type Props = {
   params: Promise<{ caseSlug: string }>;
@@ -17,13 +19,20 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { caseSlug } = await params;
   const study = getCaseStudy(caseSlug);
-  if (!study) return {};
+  const product = study && getProductBySlug(study.productSlug);
+  if (!study || !product) notFound();
 
-  return {
-    title: `${study.title.zh.replace("\n", " ")} · Lex Ray`,
-    description: study.subtitle.zh,
-    alternates: { canonical: `/projects/${study.slug}` },
-  };
+  const name = product.nameEn && product.nameEn !== product.name
+    ? `${product.name} ${product.nameEn}`
+    : product.name;
+  const screenshot = product.screenshots?.[0];
+
+  return createPageMetadata({
+    path: `/projects/${study.slug}`,
+    title: `${name}：${study.seoTitle}｜Lex Ray`,
+    description: product.summary,
+    image: screenshot ? { url: screenshot, alt: `${name} 产品截图` } : undefined,
+  });
 }
 
 export default async function CasePage({ params }: Props) {

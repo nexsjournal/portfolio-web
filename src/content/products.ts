@@ -53,7 +53,7 @@ export const products: Product[] = [
     taglineEn:
       "Clearer memories, a lighter camera roll. Swipe to keep, delete, and favorite—cleaning becomes addictive.",
     summary:
-      "归影用滑动手势帮你快速整理照片与视频：分组审阅、撤销收藏、影历回顾、空间统计，让清理变得轻松上瘾。",
+      "归影 RePhoto 是一款 iOS 相册整理工具。滑动即可保留或删除照片与视频，支持按类型筛选、撤销、影历回顾和清理空间统计。",
     summaryEn:
       "RePhoto helps you declutter photos and videos with swipe gestures—group review, undo & favorites, timeline recap, and storage stats that make cleaning addictive.",
     category: "照片与整理",
@@ -101,7 +101,7 @@ export const products: Product[] = [
     taglineEn:
       "A travel app that turns your route into cinematic animated journey videos.",
     summary:
-      "通过简单的地点添加和路线编辑，即可生成专业的旅行路线动画，并导出为高质量视频，完美记录你的旅行故事。",
+      "旅迹时光 TravelRoute 是一款 iOS 旅行路线动画工具。添加地点、编辑路线并选择交通工具，把走过的路线导出为可分享的视频。",
     summaryEn:
       "Create polished travel route animations with simple waypoint editing and export high-quality videos to tell your trip story.",
     category: "旅游与记录",
@@ -145,7 +145,7 @@ export const products: Product[] = [
     taglineEn:
       "Turn the moment you arrive into a shareable summit card—huge live altitude and your view, at a glance.",
     summary:
-      "专为户外爱好者与旅行打卡者打造。超大字号实时海拔、GPS 经纬度、气压与指南针数据一屏呈现；一拍一 Pin 自动合成适合小红书、朋友圈的精美分享卡。",
+      "实时海拔计 AltitudeNow 在一屏显示当前海拔、GPS 经纬度、气压和指南针。可将现场照片和海拔数据合成登顶卡片，留存或分享。",
     summaryEn:
       "Built for outdoor lovers and travel check-ins. Giant live altitude, GPS coordinates, barometric pressure, and compass on one screen—one shot, one Pin, beautiful cards ready for social feeds.",
     category: "户外与记录",

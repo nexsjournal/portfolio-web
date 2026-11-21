@@ -18,6 +18,7 @@ export type CaseChapter = {
 export type CaseStudy = {
   slug: string;
   productSlug: string;
+  seoTitle: string;
   title: Localized;
   subtitle: Localized;
   intro: Localized;
@@ -31,6 +32,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "rephoto",
     productSlug: "echosnap",
+    seoTitle: "iOS 滑动相册整理",
     title: {
       zh: "RePhoto，\n让整理相册轻一点",
       en: "RePhoto, a calmer way\nto clean your camera roll",
@@ -119,6 +121,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "travelroutes",
     productSlug: "travel-route",
+    seoTitle: "旅行路线动画与视频制作",
     title: {
       zh: "TravelRoute，\n把走过的路变成动画",
       en: "TravelRoute,\nturning a trip into motion",
@@ -207,6 +210,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "altitudeshot",
     productSlug: "altitudeshot",
+    seoTitle: "实时海拔测量与登顶卡片",
     title: {
       zh: "AltitudeNow，\n把到达这一刻留下来",
       en: "AltitudeNow,\nkeeping the moment you arrive",
@@ -295,6 +299,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "flowdo",
     productSlug: "flowdo",
+    seoTitle: "本地待办、手账与句子收藏",
     title: {
       zh: "FlowDo，\n把今天过清楚一点",
       en: "FlowDo,\na clearer way through today",
@@ -383,6 +388,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "aray-studio",
     productSlug: "aray-studio",
+    seoTitle: "Mac 录屏、剪辑与离线字幕",
     title: {
       zh: "ARay Studio，\n录完就能剪",
       en: "ARay Studio,\nready to edit the moment you stop",
@@ -471,6 +477,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "colpix",
     productSlug: "colpix",
+    seoTitle: "本地图片与素材管理",
     title: {
       zh: "Colpix，\n让每张参考都找得回来",
       en: "Colpix,\nevery reference within reach",
@@ -560,6 +567,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "mycelia",
     productSlug: "mycelia",
+    seoTitle: "Mac 多平台内容运营工作台",
     title: {
       zh: "Mycelia，\n把多平台运营接成一条线",
       en: "Mycelia,\none line from idea to review",

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeft, Briefcase, House, Layers, Mail, Moon, Sun, UserRound } from "lucide-react";
+import { ArrowLeft, Briefcase, House, Layers, Mail, Moon, NotebookPen, Sun, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { useSiteLanguage } from "@/context/site-language";
@@ -13,13 +13,14 @@ const sections = [
   { id: "top", href: "#top", label: "home", Icon: House },
   { id: "products", href: "#products", label: "products", Icon: Briefcase },
   { id: "projects", href: "/projects", label: "projects", Icon: Layers },
+  { id: "notes", href: "/notes", label: "notes", Icon: NotebookPen },
   { id: "about", href: "#about", label: "about", Icon: UserRound },
   { id: "contact", href: "#contact", label: "contact", Icon: Mail },
 ] as const;
 
 export function SiteNavbar() {
   const pathname = usePathname();
-  const caseRoute = pathname.startsWith("/projects") || pathname.startsWith("/work");
+  const caseRoute = pathname.startsWith("/projects") || pathname.startsWith("/work") || pathname.startsWith("/notes");
   const home = pathname === "/";
   const { lang, toggleLang } = useSiteLanguage();
   const { theme, toggleTheme } = useTheme();

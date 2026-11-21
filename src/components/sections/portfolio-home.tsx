@@ -21,6 +21,14 @@ const featuredProducts = featuredProductSlugs.flatMap((slug) => {
 const moreProducts = publishedProducts.filter(
   (item) => moreProductSlugs.some((slug) => slug === item.slug),
 );
+const contactScenes = [
+  "/assets/contact/desk-camera.webp",
+  "/assets/contact/iceland-road.webp",
+  "/assets/contact/iceland-coast.webp",
+  "/assets/contact/lake.webp",
+  "/assets/contact/forest.webp",
+  "/assets/contact/mountain.webp",
+];
 
 export function PortfolioHome() {
   const { lang } = useSiteLanguage();
@@ -125,45 +133,48 @@ export function PortfolioHome() {
 
         <section id="build" className="portfolio-story-card portfolio-build" aria-labelledby="build-title">
           <div className="portfolio-story-surface">
-            <header className="portfolio-story-head">
-              <div>
-                <span className="portfolio-story-kicker">HOW I BUILD</span>
-                <h2 id="build-title">{copy.buildTitle}</h2>
+            <div id="philosophy" className="portfolio-story-copy">
+              <h2 id="build-title">{copy.buildTitle}</h2>
+              {copy.buildBody.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            </div>
+            <div className="portfolio-build-art" aria-hidden="true">
+              <div className="portfolio-build-notebook">
+                <small>FIELD NOTES</small>
+                <strong>{copy.buildNotebook}</strong>
+                <span>LEX STUDIO</span>
               </div>
-              <span className="portfolio-story-index" aria-hidden>02</span>
-            </header>
-            <ol id="philosophy" className="portfolio-principles">
-              {copy.principles.map((item, index) => (
-                <li key={item.title}>
-                  <span aria-hidden>{String(index + 1).padStart(2, "0")}</span>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </li>
-              ))}
-            </ol>
+              <div className="portfolio-build-note">
+                {copy.buildNote.map((line) => <span key={line}>{line}</span>)}
+                <span>— {copy.introName}</span>
+              </div>
+            </div>
           </div>
         </section>
 
         <section id="contact" className="portfolio-story-card portfolio-contact" aria-labelledby="contact-title">
           <div className="portfolio-story-surface">
-            <header className="portfolio-story-head">
-              <div>
-                <span className="portfolio-story-kicker">GET IN TOUCH</span>
-                <h2 id="contact-title">{copy.contactTitle}</h2>
+            <div className="portfolio-contact-scenes" aria-hidden="true">
+              {contactScenes.map((src) => (
+                <span className="portfolio-contact-scene" key={src}>
+                  <Image src={src} alt="" fill sizes="(max-width: 670px) 42vw, 220px" />
+                </span>
+              ))}
+            </div>
+            <div className="portfolio-story-copy portfolio-contact-copy">
+              <h2 id="contact-title">{copy.contactTitle}</h2>
+              <p>{copy.contactBody}</p>
+              <p>{copy.contactFollowUp}</p>
+              <div className="portfolio-contact-links">
+                <a href="mailto:lextellsyou@gmail.com" className="portfolio-action">
+                  <Mail size={17} aria-hidden /> lextellsyou@gmail.com
+                </a>
+                <a href="https://www.xiaohongshu.com/user/profile/5dc92e8000000000010092a6" target="_blank" rel="noreferrer">
+                  {copy.xiaohongshu} <ArrowUpRight size={16} aria-hidden />
+                </a>
+                <a href="https://github.com/nexsjournal" target="_blank" rel="noreferrer">
+                  <Github size={16} aria-hidden /> GitHub <ArrowUpRight size={16} aria-hidden />
+                </a>
               </div>
-              <span className="portfolio-story-index" aria-hidden>03</span>
-            </header>
-            <p>{copy.contactBody}</p>
-            <div className="portfolio-contact-links">
-              <a href="mailto:lextellsyou@gmail.com" className="portfolio-action">
-                <Mail size={17} aria-hidden /> lextellsyou@gmail.com
-              </a>
-              <a href="https://www.xiaohongshu.com/user/profile/5dc92e8000000000010092a6" target="_blank" rel="noreferrer">
-                {copy.xiaohongshu} <ArrowUpRight size={16} aria-hidden />
-              </a>
-              <a href="https://github.com/nexsjournal" target="_blank" rel="noreferrer">
-                <Github size={16} aria-hidden /> GitHub <ArrowUpRight size={16} aria-hidden />
-              </a>
             </div>
           </div>
         </section>
