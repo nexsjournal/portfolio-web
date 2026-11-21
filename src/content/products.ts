@@ -270,10 +270,9 @@ export const products: Product[] = [
     iconSrc: "/assets/products/aray-studio/icon.svg",
     screenshots: [
       "/assets/products/aray-studio/screens/01.webp",
-      "/assets/products/aray-studio/screens/04.webp",
-      "/assets/products/aray-studio/screens/05.webp",
-      "/assets/products/aray-studio/screens/03.webp",
       "/assets/products/aray-studio/screens/02.webp",
+      "/assets/products/aray-studio/screens/03.webp",
+      "/assets/products/aray-studio/screens/04.webp",
     ],
     screenshotLayout: "desktop",
     screenshotWidth: 1600,
