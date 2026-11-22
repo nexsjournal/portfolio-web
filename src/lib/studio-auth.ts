@@ -2,7 +2,11 @@ import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import type { NextRequest } from "next/server";
 
 export const STUDIO_COOKIE = "lex-studio-session";
-const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30;
+const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
+
+function username() {
+  return process.env.STUDIO_USER?.trim() || "lex";
+}
 
 function password() {
   return process.env.STUDIO_PASSWORD?.trim() ?? "";
@@ -28,6 +32,14 @@ export function verifyStudioPassword(value: string) {
   const expected = password();
   if (!expected || !value) return false;
   return timingSafeEqual(digest(expected), digest(value));
+}
+
+export function verifyStudioUser(value: string) {
+  return Boolean(value.trim()) && timingSafeEqual(digest(username()), digest(value.trim().toLowerCase()));
+}
+
+export function studioUsername() {
+  return username();
 }
 
 export function createStudioSession() {

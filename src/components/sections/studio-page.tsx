@@ -5,7 +5,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 
 import type { NoteSummary } from "@/content/notes";
 
-type Session = { configured: boolean; authenticated: boolean };
+type Session = { configured: boolean; authenticated: boolean; user?: string };
 type Mode = "url" | "html" | "text";
 type ImportResult = { title: string; url: string; images: number };
 
@@ -17,6 +17,7 @@ const modeLabels: Record<Mode, string> = {
 
 export function StudioPage() {
   const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -57,12 +58,12 @@ export function StudioPage() {
       const response = await fetch("/api/studio/login", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ user, password }),
       });
       const data = await response.json() as { error?: string };
       if (!response.ok) throw new Error(data.error ?? "登录失败。");
       setPassword("");
-      setSession({ configured: true, authenticated: true });
+      setSession({ configured: true, authenticated: true, user });
       await loadNotes();
     } catch (loginError) {
       setError(loginError instanceof Error ? loginError.message : "登录失败。");
@@ -139,15 +140,28 @@ export function StudioPage() {
       ) : !session.configured ? (
         <section className="studio-card">
           <p className="studio-kicker">SETUP REQUIRED</p>
-          <h1>还差两个环境变量</h1>
-          <p>在 Vercel 项目设置中添加 <code>STUDIO_PASSWORD</code> 和 <code>STUDIO_SESSION_SECRET</code>，再重新部署。</p>
+          <h1>还差登录环境变量</h1>
+          <p>在 Vercel 项目设置中添加 <code>STUDIO_USER</code>、<code>STUDIO_PASSWORD</code> 和 <code>STUDIO_SESSION_SECRET</code>，再重新部署。</p>
         </section>
       ) : !session.authenticated ? (
         <section className="studio-card studio-login">
           <p className="studio-kicker">PRIVATE DESK</p>
           <h1>进入发布台</h1>
-          <p>输入管理员密码。这里只有你能进入，页面不会被搜索引擎收录。</p>
+          <p>输入管理员账号和密码。这里只有你能进入，页面不会被搜索引擎收录。</p>
           <form onSubmit={login}>
+            <label>
+              账号
+              <input
+                value={user}
+                onChange={(event) => setUser(event.target.value)}
+                autoComplete="username"
+                autoCapitalize="none"
+                autoCorrect="off"
+                autoFocus
+                placeholder="lex"
+                required
+              />
+            </label>
             <label>
               管理员密码
               <input
@@ -155,7 +169,6 @@ export function StudioPage() {
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 autoComplete="current-password"
-                autoFocus
                 required
               />
             </label>
