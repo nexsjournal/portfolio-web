@@ -372,12 +372,16 @@
 }
 
 .note-prose blockquote {
-  padding: 1rem 1.1rem;
-  border: 1px solid var(--portfolio-line);
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.85rem 1.1rem 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--portfolio-line) 82%, transparent);
   border-left: 3px solid var(--portfolio-accent);
   border-radius: 12px;
-  background: color-mix(in srgb, var(--portfolio-highlight) 52%, var(--portfolio-panel));
+  background: color-mix(in srgb, var(--portfolio-highlight) 42%, var(--portfolio-panel));
   color: var(--portfolio-muted);
+  font-size: 0.94em;
+  line-height: 1.7;
 }
 
 .note-prose blockquote > :first-child {
@@ -385,14 +389,15 @@
 }
 
 .note-prose blockquote > p:first-child {
+  margin: 0 0 0.45em;
   color: var(--portfolio-ink);
-  font-size: 0.78em;
+  font-size: 0.82em;
   font-weight: 650;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
 
 .note-prose blockquote p {
-  margin-block: 0.42em;
+  margin-block: 0.15em;
 }
 
 .note-prose blockquote > :last-child {
@@ -405,6 +410,12 @@
   height: auto;
   margin: 1.5em auto;
   border-radius: 12px;
+}
+
+.note-prose img[alt$="三花猫头像"] {
+  width: clamp(7rem, 12vw, 8.5rem);
+  margin-block: 1.35em 1.5em;
+  border-radius: 14px;
 }
 
 .note-prose p:has(> .note-sequence-mark) {
@@ -463,6 +474,7 @@
 
 .note-prose blockquote:has(> pre) {
   display: grid;
+  width: 100%;
   gap: 0;
   padding: 0;
   overflow: hidden;
