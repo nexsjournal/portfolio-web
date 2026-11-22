@@ -1,12 +1,3 @@
-.notes-chrome-center {
-  grid-column: 2;
-  color: var(--portfolio-muted);
-  font-size: 0.75rem;
-  font-weight: 650;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
 .notes-index,
 .notes-detail {
   --case-chrome-h: 76px;
@@ -459,7 +450,11 @@
 }
 
 @media (max-width: 760px) {
-  .notes-chrome-center {
+  .notes-chrome {
+    grid-template-columns: 1fr auto;
+  }
+
+  .notes-chrome .case-chrome-spacer {
     display: none;
   }
 }

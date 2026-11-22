@@ -35,9 +35,7 @@ export function NotesChrome({ backHref = "/#products", backLabel }: NotesChromeP
         </Link>
         <span className="case-brand">Lex Studio</span>
       </div>
-      <Link href="/notes" className="notes-chrome-center">
-        Lex Notes
-      </Link>
+      <span className="case-chrome-spacer" aria-hidden />
       <div className="case-chrome-actions">
         <button type="button" className="projects-chrome-setting" aria-label={themeLabel} title={themeLabel} onClick={toggleTheme}>
           {theme === "dark" ? <Sun size={18} aria-hidden /> : <Moon size={18} aria-hidden />}

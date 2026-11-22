@@ -125,6 +125,10 @@ body {
   scrollbar-color: rgba(255, 255, 255, 0.16) rgba(6, 8, 14, 0.4);
 }
 
+a[href*="beian.miit.gov.cn"] {
+  display: none !important;
+}
+
 html.theme-light body {
   background-image: radial-gradient(
       ellipse 118% 88% at 50% -52%,

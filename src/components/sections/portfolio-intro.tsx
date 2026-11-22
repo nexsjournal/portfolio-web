@@ -22,7 +22,7 @@ export function PortfolioIntro({ lang, products }: { lang: SiteLang; products: P
     <section id="top" className="portfolio-intro" aria-labelledby="intro-title">
       <div className="portfolio-intro-copy">
         <div className="portfolio-intro-name">
-          <h1 id="intro-title">{copy.introName}</h1>
+          <h1 id="intro-title">{copy.introDisplayName}</h1>
           <button className="portfolio-seal" type="button" aria-label={copy.sealLabel} aria-haspopup="dialog" onClick={() => seal.current?.showModal()}>
             <span aria-hidden>L<span>✦</span></span>
           </button>
