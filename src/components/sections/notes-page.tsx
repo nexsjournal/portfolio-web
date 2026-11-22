@@ -18,6 +18,10 @@ type NoteSort = "newest" | "oldest";
 
 const filters: NoteFilter[] = ["all", "article", "event", "video", "note"];
 
+function noteTimestamp(note: NoteSummary) {
+  return Date.parse(note.publishedAt ?? `${note.date}T00:00:00+08:00`) || 0;
+}
+
 function formatDate(date: string, lang: "zh" | "en") {
   return new Intl.DateTimeFormat(lang === "zh" ? "zh-CN" : "en-US", {
     year: "numeric",
@@ -35,7 +39,7 @@ export function NotesPage({ notes }: { notes: NoteSummary[] }) {
     () => {
       const filtered = filter === "all" ? notes : notes.filter((note) => note.type === filter);
       return [...filtered].sort((a, b) => {
-        const order = (b.publishedAt ?? b.date).localeCompare(a.publishedAt ?? a.date);
+        const order = noteTimestamp(b) - noteTimestamp(a);
         return sort === "newest" ? order : -order;
       });
     },

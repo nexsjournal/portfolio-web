@@ -42,6 +42,10 @@ function summaryFromNote(note: StoredNote): NoteSummary {
   };
 }
 
+function noteTimestamp(note: NoteSummary) {
+  return Date.parse(note.publishedAt ?? `${note.date}T00:00:00+08:00`) || 0;
+}
+
 const readRemoteNoteSummaries = unstable_cache(
   async (): Promise<NoteSummary[]> => {
     if (!blobConfigured()) return [];
@@ -55,7 +59,7 @@ const readRemoteNoteSummaries = unstable_cache(
     return notes
       .filter((note): note is StoredNote => note !== null)
       .map(summaryFromNote)
-      .sort((a, b) => (b.publishedAt ?? b.date).localeCompare(a.publishedAt ?? a.date));
+      .sort((a, b) => noteTimestamp(b) - noteTimestamp(a));
   },
   ["remote-note-summaries"],
   { tags: [NOTES_CACHE_TAG], revalidate: 30 },
@@ -83,7 +87,7 @@ export async function getAllNotesWithRemote() {
   return [
     ...remote.map((note) => ({ ...note, content: "" })),
     ...localNotes,
-  ].sort((a, b) => (b.publishedAt ?? b.date).localeCompare(a.publishedAt ?? a.date));
+  ].sort((a, b) => noteTimestamp(b) - noteTimestamp(a));
 }
 
 export async function getNoteWithRemoteBySlug(slug: string) {

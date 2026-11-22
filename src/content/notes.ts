@@ -71,6 +71,7 @@ export function toNoteSummary(note: Note): NoteSummary {
     slug: note.slug,
     title: note.title,
     date: note.date,
+    publishedAt: note.publishedAt,
     type: note.type,
     tags: note.tags,
     excerpt: note.excerpt,
