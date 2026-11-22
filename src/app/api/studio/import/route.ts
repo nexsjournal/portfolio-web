@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 import {
   deleteRemoteAssets,
@@ -99,6 +99,7 @@ export async function POST(request: NextRequest) {
     if (existing?.assets.length) {
       await deleteRemoteAssets(existing.assets.filter((url) => !assets.includes(url))).catch(() => {});
     }
+    revalidateTag("remote-notes", "max");
     revalidatePath("/notes");
     revalidatePath(`/notes/${note.slug}`);
 

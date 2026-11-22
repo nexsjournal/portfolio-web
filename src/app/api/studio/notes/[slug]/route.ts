@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 import { deleteRemoteNote } from "@/content/remote-notes";
 import { hasStudioSession } from "@/lib/studio-auth";
@@ -18,6 +18,7 @@ export async function DELETE(
   const deleted = await deleteRemoteNote(slug);
   if (!deleted) return NextResponse.json({ error: "文章不存在。" }, { status: 404 });
 
+  revalidateTag("remote-notes", "max");
   revalidatePath("/notes");
   revalidatePath(`/notes/${slug}`);
   return NextResponse.json({ ok: true });

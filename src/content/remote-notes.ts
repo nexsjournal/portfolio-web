@@ -1,20 +1,10 @@
-import { del, get, put } from "@vercel/blob";
+import { unstable_cache } from "next/cache";
+import { del, get, list, put } from "@vercel/blob";
 
 import { getAllNotes, type Note, type NoteSummary } from "@/content/notes";
 
-const MANIFEST_PATH = "notes/index.json";
 const POST_PREFIX = "notes/posts";
-
-type ManifestNote = NoteSummary & {
-  url: string;
-  updatedAt: string;
-};
-
-type Manifest = {
-  version: 1;
-  updatedAt: string;
-  notes: ManifestNote[];
-};
+const NOTES_CACHE_TAG = "remote-notes";
 
 export type StoredNote = Note & {
   assets: string[];
@@ -35,22 +25,7 @@ async function readBlobJson<T>(urlOrPathname: string): Promise<T> {
   return new Response(result.stream).json() as Promise<T>;
 }
 
-async function readManifest(): Promise<Manifest> {
-  if (!blobConfigured()) return { version: 1, updatedAt: "", notes: [] };
-
-  try {
-    const manifest = await readBlobJson<Manifest>(MANIFEST_PATH);
-    return {
-      version: 1,
-      updatedAt: typeof manifest.updatedAt === "string" ? manifest.updatedAt : "",
-      notes: Array.isArray(manifest.notes) ? manifest.notes : [],
-    };
-  } catch {
-    return { version: 1, updatedAt: "", notes: [] };
-  }
-}
-
-function summaryFromManifest(note: ManifestNote): NoteSummary {
+function summaryFromNote(note: StoredNote): NoteSummary {
   return {
     slug: note.slug,
     title: note.title,
@@ -66,16 +41,33 @@ function summaryFromManifest(note: ManifestNote): NoteSummary {
   };
 }
 
+const readRemoteNoteSummaries = unstable_cache(
+  async (): Promise<NoteSummary[]> => {
+    if (!blobConfigured()) return [];
+    const result = await list({ prefix: `${POST_PREFIX}/`, limit: 1000 });
+    const notes = await Promise.all(
+      result.blobs
+        .filter((blob) => blob.pathname.endsWith(".json"))
+        .map((blob) => readBlobJson<StoredNote>(blob.url).catch(() => null)),
+    );
+
+    return notes
+      .filter((note): note is StoredNote => note !== null)
+      .map(summaryFromNote)
+      .sort((a, b) => b.date.localeCompare(a.date));
+  },
+  ["remote-note-summaries"],
+  { tags: [NOTES_CACHE_TAG], revalidate: 30 },
+);
+
 export async function getRemoteNoteSummaries() {
-  return (await readManifest()).notes.map(summaryFromManifest);
+  return readRemoteNoteSummaries();
 }
 
 export async function getRemoteNoteBySlug(slug: string): Promise<StoredNote | undefined> {
-  const item = (await readManifest()).notes.find((note) => note.slug === slug);
-  if (!item) return undefined;
-
+  if (!blobConfigured()) return undefined;
   try {
-    return await readBlobJson<StoredNote>(item.url);
+    return await readBlobJson<StoredNote>(`${POST_PREFIX}/${slug}.json`);
   } catch {
     return undefined;
   }
@@ -103,67 +95,31 @@ export async function uploadNoteAsset(
   data: Uint8Array,
   contentType: string,
 ) {
-  const result = await put(`notes/assets/${slug}/${Date.now()}-${fileName}`, Buffer.from(data), {
+  return put(`notes/assets/${slug}/${Date.now()}-${fileName}`, Buffer.from(data), {
     access: "public",
     addRandomSuffix: false,
     cacheControlMaxAge: 60 * 60 * 24 * 365,
     contentType,
   });
-  return result;
 }
 
 export async function saveRemoteNote(note: StoredNote) {
-  const manifest = await readManifest();
-  const postPath = `${POST_PREFIX}/${note.slug}.json`;
-  const post = await put(postPath, JSON.stringify(note), {
+  const pathname = `${POST_PREFIX}/${note.slug}.json`;
+  const result = await put(pathname, JSON.stringify(note), {
     access: "public",
     allowOverwrite: true,
     addRandomSuffix: false,
     cacheControlMaxAge: 60,
     contentType: "application/json",
   });
-
-  const summary = summaryFromManifest({ ...note, url: post.url, updatedAt: note.updatedAt });
-  const nextManifest: Manifest = {
-    version: 1,
-    updatedAt: note.updatedAt,
-    notes: [
-      ...manifest.notes.filter((item) => item.slug !== note.slug),
-      { ...summary, url: post.url, updatedAt: note.updatedAt },
-    ].sort((a, b) => b.date.localeCompare(a.date)),
-  };
-
-  await put(MANIFEST_PATH, JSON.stringify(nextManifest), {
-    access: "public",
-    allowOverwrite: true,
-    addRandomSuffix: false,
-    cacheControlMaxAge: 60,
-    contentType: "application/json",
-  });
-  return summary;
+  return { ...summaryFromNote(note), url: result.url };
 }
 
 export async function deleteRemoteNote(slug: string) {
-  const manifest = await readManifest();
-  const item = manifest.notes.find((note) => note.slug === slug);
-  if (!item) return false;
+  const note = await getRemoteNoteBySlug(slug);
+  if (!note) return false;
 
-  const stored = await getRemoteNoteBySlug(slug);
-  const urls = [item.url, ...(stored?.assets ?? [])];
-  if (urls.length) await del(urls);
-
-  const nextManifest: Manifest = {
-    version: 1,
-    updatedAt: new Date().toISOString(),
-    notes: manifest.notes.filter((note) => note.slug !== slug),
-  };
-  await put(MANIFEST_PATH, JSON.stringify(nextManifest), {
-    access: "public",
-    allowOverwrite: true,
-    addRandomSuffix: false,
-    cacheControlMaxAge: 60,
-    contentType: "application/json",
-  });
+  await del([`${POST_PREFIX}/${slug}.json`, ...note.assets]);
   return true;
 }
 
