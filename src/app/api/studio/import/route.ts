@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 
 import {
+  deleteRemoteAssets,
   getRemoteNoteBySlug,
   saveRemoteNote,
   uploadNoteAsset,
@@ -93,6 +94,9 @@ export async function POST(request: NextRequest) {
     };
 
     const summary = await saveRemoteNote(note);
+    if (existing?.assets.length) {
+      await deleteRemoteAssets(existing.assets.filter((url) => !assets.includes(url))).catch(() => {});
+    }
     revalidatePath("/notes");
     revalidatePath(`/notes/${note.slug}`);
 

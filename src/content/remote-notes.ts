@@ -188,3 +188,8 @@ export async function deleteRemoteNote(slug: string) {
   manifestUrl = saved.url;
   return true;
 }
+
+export async function deleteRemoteAssets(urls: string[]) {
+  if (!urls.length) return;
+  await del(urls);
+}
