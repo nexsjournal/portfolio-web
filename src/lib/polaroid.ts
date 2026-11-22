@@ -28,19 +28,19 @@ export class PolaroidConfigError extends Error {
 const ZH_PROMPT = [
   "生成一张完整的 4:3 横版纪念合影，像一张朋友一起拍的拍立得。",
   "图一是 IP 形象参考：一个黑发、黑框眼镜、黑色内搭、半透明蓝色连帽外套的年轻男生，整体是光滑通透的 Aqua / 玻璃树脂质感的 3D 卡通风格。",
-  "图二是真实摄像头自拍。保留图二主人物可辨认的五官、发型、眼镜、肤色和服装特征；去掉图二原来的背景、其他人或杂物。",
-  "把图二的真实人物转换成与图一完全一致的 3D 卡通风格：光滑树脂皮肤、清晰柔和高光、浅蓝色渐变摄影棚背景、干净的轮廓和轻微投影。",
-  "让两个人并肩站在镜头前，像朋友合影一样自然微笑；IP 形象在左，真实人物在右，头部和肩膀四周留出舒服的安全边距。",
-  "只输出一张统一渲染的合影，不要文字、水印、边框、拼贴、分屏，也不要重复的人脸。",
+  "图二是真实摄像头照片。保留图二中每一个主体的可辨认身份和物种：如果主体是人，保留五官、发型、眼镜、肤色和服装；如果主体是猫、狗等宠物，保留毛色、斑纹、眼睛颜色、耳朵形状和体型，绝对不要把宠物变成人。",
+  "去掉图二原来的背景、其他人或杂物。把图二中的主体转换成与图一完全一致的 3D 卡通风格：光滑树脂质感、清晰柔和高光、浅蓝色渐变摄影棚背景、干净的轮廓和轻微投影。",
+  "让 IP 形象和图二的主体并肩出现在镜头前；IP 形象在左，真实主体在右。如果图二有两只宠物，要把两只都完整展示出来；IP 形象可以蹲在旁边或抱着它们，保持宠物原本的物种特征。",
+  "只输出一张统一渲染的合影，不要文字、水印、边框、拼贴、分屏，也不要重复的主体。",
 ].join("");
 
 const EN_PROMPT = [
-  "Create one cohesive 4:3 landscape souvenir photo, like a Polaroid taken by two friends.",
+  "Create one cohesive 4:3 landscape souvenir photo, like a Polaroid taken by friends.",
   "Image 0 is the IP character reference: a young man with spiky black hair, black rectangular glasses, a black tee, and a translucent blue hooded jacket, rendered in a glossy Aqua / glass-resin 3D cartoon style.",
-  "Image 1 is a real webcam selfie. Keep the main person's recognizable face, hairstyle, glasses, skin tone, and clothing; remove the original background, other people, and clutter.",
-  "Restyle the real person from Image 1 into exactly the same glossy 3D cartoon style as Image 0, with smooth resin-like skin, soft studio highlights, a light blue gradient studio background, and a subtle shadow.",
-  "Place the two characters shoulder to shoulder, both facing the camera and smiling naturally. The IP character is on the left and the real person is on the right, with comfortable margins around their heads and shoulders.",
-  "Output one cohesive rendered image only. No text, watermark, border, collage, split screen, or duplicated faces.",
+  "Image 1 is a real webcam photo. Preserve the recognizable identity and species of every main subject in Image 1. If the subject is a person, keep their face, hairstyle, glasses, skin tone, and clothing. If the subject is a pet such as a cat or dog, keep its fur color, markings, eye color, ear shape, and body proportions. Never turn a pet into a human.",
+  "Remove the original background, other people, and clutter. Restyle each subject from Image 1 into the same glossy 3D cartoon style as Image 0, with smooth resin-like surfaces, soft studio highlights, a light blue gradient studio background, and a subtle shadow.",
+  "Place the IP character and the subject or subjects together, facing the camera, with comfortable margins. The IP character is on the left and the real subject or subjects on the right. If there are two pets, show both clearly; the IP character can kneel beside or hold them.",
+  "Output one cohesive rendered image only. No text, watermark, border, collage, split screen, or duplicated subjects.",
 ].join(" ");
 
 const rateBuckets = new Map<string, { count: number; resetAt: number }>();
