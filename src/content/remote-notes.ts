@@ -33,6 +33,14 @@ export function blobConfigured() {
 
 async function resolveManifestUrl() {
   if (manifestUrl) return manifestUrl;
+
+  const storeId = process.env.BLOB_STORE_ID?.trim();
+  if (storeId) {
+    const host = storeId.replace(/^store_/i, "").toLowerCase();
+    manifestUrl = `https://${host}.public.blob.vercel-storage.com/${MANIFEST_PATH}`;
+    return manifestUrl;
+  }
+
   if (!blobConfigured()) return null;
 
   try {
