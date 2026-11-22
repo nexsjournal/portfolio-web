@@ -2840,6 +2840,33 @@ html:has(.portfolio-page) body {
   text-align: center;
 }
 
+.portfolio-thanks-hint.is-quota {
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--portfolio-line) 82%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--portfolio-panel) 94%, transparent);
+  box-shadow: 0 6px 18px rgb(12 19 27 / .12);
+  backdrop-filter: blur(10px);
+  color: var(--portfolio-muted);
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.portfolio-thanks-hint.is-quota strong {
+  color: var(--portfolio-ink);
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+
+.theme-dark .portfolio-thanks-hint.is-quota {
+  background: color-mix(in srgb, #141a1d 94%, transparent);
+  box-shadow: 0 6px 18px rgb(0 0 0 / .28);
+}
+
 .portfolio-thanks-gallery-button {
   position: absolute;
   right: 0;
@@ -3643,6 +3670,13 @@ body.portfolio-camera-open {
   .portfolio-thanks-hint {
     bottom: 3.5rem;
     font-size: 0.68rem;
+  }
+
+  .portfolio-thanks-hint.is-quota {
+    bottom: 3.3rem;
+    gap: 0.3rem;
+    padding: 0.3rem 0.55rem;
+    font-size: 0.65rem;
   }
 
   .portfolio-thanks-gallery-button {

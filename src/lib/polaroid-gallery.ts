@@ -1,8 +1,9 @@
 import { list, put } from "@vercel/blob";
-import { mkdir, readdir, stat, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const GALLERY_PREFIX = "polaroids/";
+const QUOTA_PATH = "polaroids/.quota.json";
 const LOCAL_GALLERY_ROOT = path.join(process.cwd(), ".data", "polaroids");
 const LOCAL_GALLERY_URL = "/api/polaroids";
 
@@ -75,6 +76,54 @@ export async function listPolaroidPhotos(limit = 1000): Promise<GalleryPhoto[]> 
   } catch (error) {
     console.error("[polaroid-gallery]", error instanceof Error ? error.message : "Unknown gallery error");
     return [];
+  }
+}
+
+export type PolaroidQuotaStatus = {
+  resetAt: number;
+};
+
+export async function savePolaroidQuotaStatus(resetAt: number) {
+  if (!blobConfigured()) {
+    if (!localGalleryEnabled()) return;
+    await mkdir(LOCAL_GALLERY_ROOT, { recursive: true });
+    await writeFile(
+      path.join(LOCAL_GALLERY_ROOT, ".quota.json"),
+      JSON.stringify({ resetAt } satisfies PolaroidQuotaStatus),
+    );
+    return;
+  }
+
+  await put(QUOTA_PATH, JSON.stringify({ resetAt } satisfies PolaroidQuotaStatus), {
+    access: "public",
+    addRandomSuffix: false,
+    contentType: "application/json",
+    cacheControlMaxAge: 0,
+  });
+}
+
+export async function getPolaroidQuotaStatus(): Promise<PolaroidQuotaStatus | null> {
+  if (!blobConfigured()) {
+    if (!localGalleryEnabled()) return null;
+    try {
+      const raw = await readFile(path.join(LOCAL_GALLERY_ROOT, ".quota.json"), "utf8");
+      const parsed = JSON.parse(raw) as Partial<PolaroidQuotaStatus>;
+      return typeof parsed.resetAt === "number" ? { resetAt: parsed.resetAt } : null;
+    } catch {
+      return null;
+    }
+  }
+
+  try {
+    const result = await list({ prefix: QUOTA_PATH, limit: 1 });
+    const blob = result.blobs.find((item) => item.pathname === QUOTA_PATH);
+    if (!blob) return null;
+    const response = await fetch(`${blob.url}?t=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) return null;
+    const parsed = await response.json() as Partial<PolaroidQuotaStatus>;
+    return typeof parsed.resetAt === "number" ? { resetAt: parsed.resetAt } : null;
+  } catch {
+    return null;
   }
 }
 

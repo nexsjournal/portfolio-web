@@ -33,6 +33,15 @@ type DragSession = {
 const PHOTO_WIDTH = 1200;
 const PHOTO_HEIGHT = 900;
 const DEVELOP_MIN_MS = 2400;
+const QUOTA_STORAGE_KEY = "lex-polaroid-quota-reset";
+
+function formatQuotaCountdown(ms: number) {
+  const total = Math.max(0, Math.ceil(ms / 1000));
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = total % 60;
+  return [hours, minutes, seconds].map((value) => String(value).padStart(2, "0")).join(":");
+}
 
 function cameraErrorMessage(error: unknown, copy: (typeof portfolioCopy)[SiteLang]) {
   const name = error instanceof DOMException ? error.name : "";
@@ -87,6 +96,8 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
   const [saveToGallery, setSaveToGallery] = useState(true);
   const [position, setPosition] = useState<DragPosition>({ x: 0, y: 0 });
   const [flash, setFlash] = useState(false);
+  const [quotaResetAt, setQuotaResetAt] = useState<number | null>(null);
+  const [quotaNow, setQuotaNow] = useState(() => Date.now());
 
   const dialogRef = useRef<HTMLDialogElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -97,6 +108,16 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
   const generatedUrlRef = useRef<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const flashTimer = useRef<number | null>(null);
+
+  const activateQuota = useCallback((resetAt: number) => {
+    setQuotaResetAt(resetAt);
+    setQuotaNow(Date.now());
+    try {
+      window.localStorage.setItem(QUOTA_STORAGE_KEY, String(resetAt));
+    } catch {
+      // Ignore private-mode or storage-disabled failures.
+    }
+  }, []);
 
   const stopStream = useCallback(() => {
     streamRef.current?.getTracks().forEach((track) => track.stop());
@@ -127,6 +148,51 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
     };
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    try {
+      const stored = Number(window.localStorage.getItem(QUOTA_STORAGE_KEY));
+      if (stored > Date.now()) activateQuota(stored);
+      else if (stored) window.localStorage.removeItem(QUOTA_STORAGE_KEY);
+    } catch {
+      // Ignore private-mode or storage-disabled failures.
+    }
+
+    fetch("/api/thanks/polaroid/status", { cache: "no-store" })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data: { exhausted?: boolean; resetAt?: number } | null) => {
+        if (cancelled || !data?.exhausted || typeof data.resetAt !== "number") return;
+        if (data.resetAt > Date.now()) activateQuota(data.resetAt);
+      })
+      .catch(() => undefined);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activateQuota]);
+
+  useEffect(() => {
+    if (!quotaResetAt) return;
+    const timer = window.setInterval(() => setQuotaNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, [quotaResetAt]);
+
+  useEffect(() => {
+    if (!quotaResetAt || quotaResetAt > quotaNow) return;
+    setQuotaResetAt(null);
+    try {
+      window.localStorage.removeItem(QUOTA_STORAGE_KEY);
+    } catch {
+      // Ignore private-mode or storage-disabled failures.
+    }
+  }, [quotaNow, quotaResetAt]);
+
+  const quotaActive = Boolean(quotaResetAt && quotaResetAt > quotaNow);
+  const quotaCountdown = quotaActive && quotaResetAt
+    ? formatQuotaCountdown(quotaResetAt - quotaNow)
+    : "";
+
   const triggerFlash = () => {
     setFlash(true);
     if (flashTimer.current) window.clearTimeout(flashTimer.current);
@@ -154,8 +220,15 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
       });
 
       if (!response.ok) {
-        const payload = await response.json().catch(() => null) as { code?: string } | null;
-        if (payload?.code === "quota_exhausted") throw new Error(copy.thanksQuotaExhausted);
+        const payload = await response.json().catch(() => null) as { code?: string; resetAt?: number } | null;
+        if (payload?.code === "quota_exhausted") {
+          const retryAfter = Number(response.headers.get("retry-after")) || 0;
+          const resetAt = typeof payload.resetAt === "number"
+            ? payload.resetAt
+            : Date.now() + retryAfter * 1000;
+          if (resetAt > Date.now()) activateQuota(resetAt);
+          throw new Error(copy.thanksQuotaExhausted);
+        }
         throw new Error(payload?.code === "rate_limited" ? copy.thanksRateLimited : copy.thanksDevelopError);
       }
 
@@ -192,7 +265,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
     } finally {
       window.clearTimeout(timeoutId);
     }
-  }, [copy.thanksDevelopError, copy.thanksQuotaExhausted, copy.thanksRateLimited]);
+  }, [activateQuota, copy.thanksDevelopError, copy.thanksQuotaExhausted, copy.thanksRateLimited]);
 
   const openCamera = useCallback(async () => {
     setCameraError(null);
@@ -284,7 +357,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
   }, [cameraState, closeCamera, copy.thanksCameraFailed, developPhoto, saveToGallery]);
 
   const shutter = () => {
-    if (shot?.phase === "developing" || cameraState === "requesting" || cameraState === "capturing") return;
+    if (quotaActive || shot?.phase === "developing" || cameraState === "requesting" || cameraState === "capturing") return;
     void openCamera();
   };
 
@@ -328,12 +401,14 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
     dragSession.current = null;
   };
 
-  const shutterBusy = cameraState === "requesting" || cameraState === "capturing" || shot?.phase === "developing";
-  const shutterLabel = shutterBusy
-    ? copy.thanksShutterBusy
-    : shot
-      ? copy.thanksShutterAgain
-      : copy.thanksShutter;
+  const shutterBusy = quotaActive || cameraState === "requesting" || cameraState === "capturing" || shot?.phase === "developing";
+  const shutterLabel = quotaActive
+    ? `${copy.thanksQuotaCountdown} ${quotaCountdown}`
+    : shutterBusy
+      ? copy.thanksShutterBusy
+      : shot
+        ? copy.thanksShutterAgain
+        : copy.thanksShutter;
   return (
     <section className="portfolio-section portfolio-thanks" aria-labelledby="thanks-title">
       <div className="portfolio-thanks-card">
@@ -436,7 +511,16 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
 
           {flash ? <span className="portfolio-thanks-flash" aria-hidden /> : null}
 
-          {!shot && cameraState === "idle" ? (
+          {quotaActive ? (
+            <p
+              className="portfolio-thanks-hint is-quota"
+              role="timer"
+              aria-label={`${copy.thanksQuotaExhausted}，${copy.thanksQuotaCountdown} ${quotaCountdown}`}
+            >
+              <span>{copy.thanksQuotaCountdown}</span>
+              <strong>{quotaCountdown}</strong>
+            </p>
+          ) : !shot && cameraState === "idle" ? (
             <p className="portfolio-thanks-hint" aria-live="polite">{copy.thanksShutterTry}</p>
           ) : null}
           <Link className="portfolio-action portfolio-action-silver portfolio-thanks-gallery-button" href="/polaroids">
