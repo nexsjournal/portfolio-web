@@ -9,7 +9,7 @@ import { useSiteLanguage } from "@/context/site-language";
 import { notesCopy } from "@/i18n/notes-copy";
 import { ICP_BEIAN_URL, ICP_NUMBER, SITE_BRAND } from "@/lib/site-compliance";
 
-import { NotesChrome } from "./notes-chrome";
+import { SiteChrome } from "./site-chrome";
 
 type NoteFilter = NoteType | "all";
 
@@ -35,7 +35,7 @@ export function NotesPage({ notes }: { notes: NoteSummary[] }) {
   return (
     <>
       <a className="portfolio-skip" href="#main-content">{lang === "zh" ? "跳到正文" : "Skip to content"}</a>
-      <NotesChrome backHref="/#projects" backLabel={lang === "zh" ? "返回首页" : "Back home"} />
+      <SiteChrome backHref="/#projects" backLabel={lang === "zh" ? "返回首页" : "Back home"} />
       <main id="main-content" className="portfolio-page portfolio-wrap notes-index" tabIndex={-1}>
         <header className="notes-index-hero">
           <p className="projects-index-kicker">{copy.kicker}</p>

@@ -448,13 +448,3 @@
     text-align: left;
   }
 }
-
-@media (max-width: 760px) {
-  .notes-chrome {
-    grid-template-columns: 1fr auto;
-  }
-
-  .notes-chrome .case-chrome-spacer {
-    display: none;
-  }
-}

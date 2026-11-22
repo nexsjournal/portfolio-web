@@ -139,6 +139,24 @@ code { font: .84em/1.4 ui-monospace, SFMono-Regular, Consolas, monospace; overfl
 .radius-row span:nth-child(2) { border-radius: var(--portfolio-radius); }
 .radius-row span:nth-child(3) { border-radius: var(--lex-radius-pill); }
 .assets-spec { display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.5rem; align-items: center; }
+.chrome-demo {
+  display: grid; grid-template-columns: auto auto 1fr auto auto; align-items: center; gap: .7rem;
+  min-height: 76px; margin-top: 1rem; padding-inline: clamp(1rem, 3vw, 1.5rem);
+  border-block: 1px solid var(--portfolio-line); background: var(--portfolio-paper);
+}
+.chrome-demo strong { font-size: .875rem; letter-spacing: -.02em; }
+.chrome-back,
+.chrome-setting {
+  display: grid; place-items: center; width: 34px; height: 34px;
+  border: 1px solid var(--portfolio-line); border-radius: 999px;
+  background: var(--portfolio-panel); color: var(--portfolio-muted); font-size: .72rem;
+}
+.chrome-back { width: 38px; height: 38px; color: var(--portfolio-ink); }
+.chrome-spacer { min-width: 0; }
+.chrome-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .5rem; margin: 1rem 0 0; }
+.chrome-metrics > div { padding: .55rem .65rem; border: 1px solid var(--portfolio-line); border-radius: 9px; }
+.chrome-metrics dt { color: var(--portfolio-muted); font-size: .7rem; }
+.chrome-metrics dd { margin: .15rem 0 0; font-size: .82rem; font-weight: 650; }
 .icon-samples { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: .75rem; }
 .icon-samples svg { box-sizing: content-box; width: 18px; height: 18px; padding: .58rem; border: 1px solid var(--portfolio-line); border-radius: 9px; color: var(--portfolio-accent); }
 .asset-photos { display: grid; grid-template-columns: .8fr 1fr; align-items: center; gap: .65rem; }
@@ -271,7 +289,7 @@ dialog::backdrop { background: var(--lex-effect-dialog-scrim); backdrop-filter: 
 @media (max-width: 415px) {
   .masthead-inner { min-height: 62px; gap: .5rem; }
   .theme button { padding-inline: .47rem; }
-  .assets-spec, .template-grid { grid-template-columns: 1fr; }
+  .assets-spec, .template-grid, .chrome-metrics { grid-template-columns: 1fr; }
   .asset-photos { width: 84%; margin: 0 auto; }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -348,6 +348,12 @@ html:has(.portfolio-page) body {
   border-bottom: 2px solid color-mix(in srgb, var(--portfolio-ink) 25%, transparent);
 }
 
+.portfolio-intro-name-text {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
 .portfolio-intro h1 {
   font-size: 1.55rem;
   font-weight: 560;
@@ -412,7 +418,7 @@ html:has(.portfolio-page) body {
 
 .portfolio-seal {
   position: absolute;
-  left: 3.35rem;
+  left: calc(100% + 1rem);
   top: -1.25rem;
   z-index: 1;
   display: grid;
@@ -840,10 +846,6 @@ html:has(.portfolio-page) body {
 .projects-index {
   --case-chrome-h: 76px;
   --case-max: 1240px;
-}
-
-.projects-chrome-spacer {
-  grid-column: 2;
 }
 
 .projects-index-kicker {
@@ -3224,16 +3226,6 @@ html:has(.portfolio-page) body {
 
   .portfolio-polaroid-shutter::before {
     animation: none;
-  }
-}
-
-@media (max-width: 760px) {
-  .projects-index .case-chrome {
-    grid-template-columns: 1fr auto;
-  }
-
-  .projects-chrome-spacer {
-    display: none;
   }
 }
 

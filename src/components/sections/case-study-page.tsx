@@ -38,6 +38,7 @@ import { type CaseStudy, type Localized, caseStudies, getCaseStudy } from "@/con
 import { type Product, getProductBySlug, getProductIconPath } from "@/content/products";
 import { useSiteLanguage } from "@/context/site-language";
 import { ICP_BEIAN_URL, ICP_NUMBER, SITE_BRAND } from "@/lib/site-compliance";
+import { SiteChrome } from "./site-chrome";
 
 function localized(value: Localized, lang: "zh" | "en") {
   return value[lang];
@@ -146,7 +147,6 @@ export function CaseStudyPage({ study }: { study: CaseStudy }) {
   const next = getCaseStudy(study.next);
   const studyIndex = caseStudies.findIndex((item) => item.slug === study.slug);
   const previous = caseStudies[(studyIndex - 1 + caseStudies.length) % caseStudies.length];
-  const [scrolled, setScrolled] = useState(false);
   const [orbit, setOrbit] = useState<OrbitPlacement[]>([]);
   const [draggingOrbit, setDraggingOrbit] = useState<number | null>(null);
   const orbitRef = useRef<HTMLDivElement>(null);
@@ -162,13 +162,6 @@ export function CaseStudyPage({ study }: { study: CaseStudy }) {
   } | null>(null);
   const search = useSyncExternalStore(subscribeToHistory, getSearchSnapshot, getServerSearchSnapshot);
   const origin = normalizeOrigin(new URLSearchParams(search).get("from"));
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 220);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 760px)");
@@ -234,23 +227,20 @@ export function CaseStudyPage({ study }: { study: CaseStudy }) {
 
   return (
     <main id="main-content" className="case-page" data-case={study.slug} tabIndex={-1}>
-      <header className={`case-chrome ${scrolled ? "is-scrolled" : ""}`}>
-        <div className="case-chrome-left">
-          <Link href={backHref} className="case-back" aria-label={backLabel} title={backLabel}>
-            <ArrowLeft size={18} aria-hidden />
-          </Link>
-          <span className="case-brand">Lex Studio</span>
-        </div>
-        <span className="case-chrome-spacer" aria-hidden />
-        <div className="case-chrome-actions">
-          <Link href="/projects" className="case-chrome-link">{lang === "zh" ? "全部案例" : "Case studies"}</Link>
-          {appStoreUrl ? (
-            <a className="case-try" href={appStoreUrl} target="_blank" rel="noreferrer">
-              {appLinkLabel} <ArrowUpRight size={14} aria-hidden />
-            </a>
-          ) : null}
-        </div>
-      </header>
+      <SiteChrome
+        backHref={backHref}
+        backLabel={backLabel}
+        extraActions={
+          <>
+            <Link href="/projects" className="case-chrome-link">{lang === "zh" ? "全部案例" : "Case studies"}</Link>
+            {appStoreUrl ? (
+              <a className="case-try" href={appStoreUrl} target="_blank" rel="noreferrer">
+                {appLinkLabel} <ArrowUpRight size={14} aria-hidden />
+              </a>
+            ) : null}
+          </>
+        }
+      />
 
       <header className="case-hero">
         <div ref={orbitRef} className="case-orbit" aria-hidden>

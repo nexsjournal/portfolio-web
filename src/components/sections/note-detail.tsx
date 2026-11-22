@@ -9,7 +9,7 @@ import { useSiteLanguage } from "@/context/site-language";
 import { notesCopy } from "@/i18n/notes-copy";
 import { ICP_BEIAN_URL, ICP_NUMBER, SITE_BRAND } from "@/lib/site-compliance";
 
-import { NotesChrome } from "./notes-chrome";
+import { SiteChrome } from "./site-chrome";
 
 function formatDate(date: string, lang: "zh" | "en") {
   return new Intl.DateTimeFormat(lang === "zh" ? "zh-CN" : "en-US", {
@@ -33,7 +33,7 @@ export function NoteDetail({ note, previous, next, children }: NoteDetailProps) 
   return (
     <>
       <a className="portfolio-skip" href="#main-content">{lang === "zh" ? "跳到正文" : "Skip to content"}</a>
-      <NotesChrome backHref="/notes" backLabel={copy.back} />
+      <SiteChrome backHref="/notes" backLabel={copy.back} />
       <main id="main-content" className="portfolio-page notes-detail" tabIndex={-1}>
         <article className="notes-article">
           <header className="notes-article-header">
