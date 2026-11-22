@@ -307,6 +307,7 @@ export async function parseArticle(input: {
   let markdown = turndown
     .turndown(content.html() ?? fallbackText)
     .replace(/^•\s*/gm, "- ")
+    .replace(/\*\*([^*\n]+?)\*\*(?=[\p{L}\p{N}])/gu, "**$1** ")
     .replace(/\n{3,}/g, "\n\n")
     .replace(/[ \t]+\n/g, "\n")
     .trim();
