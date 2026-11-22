@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -8,6 +7,7 @@ import type { NoteSummary } from "@/content/notes";
 import { useSiteLanguage } from "@/context/site-language";
 import { notesCopy } from "@/i18n/notes-copy";
 import { ICP_BEIAN_URL, ICP_NUMBER, SITE_BRAND } from "@/lib/site-compliance";
+import { safeImageSrc } from "@/lib/media";
 
 import { SiteChrome } from "./site-chrome";
 
@@ -59,7 +59,7 @@ export function NoteDetail({ note, previous, next, children }: NoteDetailProps) 
 
           {note.cover ? (
             <div className="notes-article-cover">
-              <Image src={note.cover} alt="" fill sizes="(max-width: 760px) 100vw, 760px" priority unoptimized={note.cover.startsWith("http")} />
+              <img src={safeImageSrc(note.cover)} alt={note.title} referrerPolicy="no-referrer" decoding="async" />
             </div>
           ) : null}
 

@@ -6,6 +6,7 @@ import remarkGfm from "remark-gfm";
 import { NoteDetail } from "@/components/sections/note-detail";
 import { toNoteSummary } from "@/content/notes";
 import { getAllNotesWithRemote, getNoteWithRemoteBySlug } from "@/content/remote-notes";
+import { safeImageSrc } from "@/lib/media";
 import { createPageMetadata } from "@/lib/site-metadata";
 
 type NotePageProps = {
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: NotePageProps) {
     path: `/notes/${note.slug}`,
     title: `${note.title}｜Lex Ray`,
     description: note.excerpt || note.title,
-    ...(note.cover ? { image: { url: note.cover, alt: note.title } } : {}),
+    ...(note.cover ? { image: { url: safeImageSrc(note.cover)!, alt: note.title } } : {}),
   });
 
   return {
@@ -46,8 +47,8 @@ const mdxComponents = {
       </a>
     );
   },
-  img: (props: ComponentPropsWithoutRef<"img">) => (
-    <img {...props} referrerPolicy="no-referrer" loading="lazy" decoding="async" />
+  img: ({ src, ...props }: ComponentPropsWithoutRef<"img">) => (
+    <img {...props} src={typeof src === "string" ? safeImageSrc(src) : src} alt={props.alt ?? ""} referrerPolicy="no-referrer" loading="lazy" decoding="async" />
   ),
 };
 

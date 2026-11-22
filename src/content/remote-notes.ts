@@ -30,6 +30,7 @@ function summaryFromNote(note: StoredNote): NoteSummary {
     slug: note.slug,
     title: note.title,
     date: note.date,
+    publishedAt: note.createdAt,
     type: note.type,
     tags: note.tags,
     excerpt: note.excerpt,
@@ -54,7 +55,7 @@ const readRemoteNoteSummaries = unstable_cache(
     return notes
       .filter((note): note is StoredNote => note !== null)
       .map(summaryFromNote)
-      .sort((a, b) => b.date.localeCompare(a.date));
+      .sort((a, b) => (b.publishedAt ?? b.date).localeCompare(a.publishedAt ?? a.date));
   },
   ["remote-note-summaries"],
   { tags: [NOTES_CACHE_TAG], revalidate: 30 },
@@ -82,7 +83,7 @@ export async function getAllNotesWithRemote() {
   return [
     ...remote.map((note) => ({ ...note, content: "" })),
     ...localNotes,
-  ].sort((a, b) => b.date.localeCompare(a.date));
+  ].sort((a, b) => (b.publishedAt ?? b.date).localeCompare(a.publishedAt ?? a.date));
 }
 
 export async function getNoteWithRemoteBySlug(slug: string) {

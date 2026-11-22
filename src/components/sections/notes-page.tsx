@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowDownUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -8,10 +9,12 @@ import type { NoteSummary, NoteType } from "@/content/notes";
 import { useSiteLanguage } from "@/context/site-language";
 import { notesCopy } from "@/i18n/notes-copy";
 import { ICP_BEIAN_URL, ICP_NUMBER, SITE_BRAND } from "@/lib/site-compliance";
+import { safeImageSrc } from "@/lib/media";
 
 import { SiteChrome } from "./site-chrome";
 
 type NoteFilter = NoteType | "all";
+type NoteSort = "newest" | "oldest";
 
 const filters: NoteFilter[] = ["all", "article", "event", "video", "note"];
 
@@ -27,9 +30,16 @@ export function NotesPage({ notes }: { notes: NoteSummary[] }) {
   const { lang } = useSiteLanguage();
   const copy = notesCopy[lang];
   const [filter, setFilter] = useState<NoteFilter>("all");
+  const [sort, setSort] = useState<NoteSort>("newest");
   const visibleNotes = useMemo(
-    () => (filter === "all" ? notes : notes.filter((note) => note.type === filter)),
-    [filter, notes],
+    () => {
+      const filtered = filter === "all" ? notes : notes.filter((note) => note.type === filter);
+      return [...filtered].sort((a, b) => {
+        const order = (b.publishedAt ?? b.date).localeCompare(a.publishedAt ?? a.date);
+        return sort === "newest" ? order : -order;
+      });
+    },
+    [filter, notes, sort],
   );
 
   return (
@@ -40,7 +50,10 @@ export function NotesPage({ notes }: { notes: NoteSummary[] }) {
         <header className="notes-index-hero">
           <p className="projects-index-kicker">{copy.kicker}</p>
           <h1>{copy.title}</h1>
-          <p className="notes-index-desc">{copy.description}</p>
+          <div className="notes-index-summary">
+            <span className="notes-count-tag">{copy.count(visibleNotes.length)}</span>
+            <p className="notes-index-desc">{copy.description}</p>
+          </div>
         </header>
 
         <div className="notes-toolbar">
@@ -57,7 +70,16 @@ export function NotesPage({ notes }: { notes: NoteSummary[] }) {
               </button>
             ))}
           </div>
-          <p className="notes-count">{copy.count(visibleNotes.length)}</p>
+          <button
+            type="button"
+            className="notes-sort"
+            onClick={() => setSort((current) => current === "newest" ? "oldest" : "newest")}
+            aria-label={copy.sortLabel}
+            title={copy.sortLabel}
+          >
+            <ArrowDownUp size={14} aria-hidden />
+            {sort === "newest" ? copy.sortNewest : copy.sortOldest}
+          </button>
         </div>
 
         <section className="notes-list" aria-label={copy.title}>
@@ -68,7 +90,7 @@ export function NotesPage({ notes }: { notes: NoteSummary[] }) {
               <Link key={note.slug} href={`/notes/${note.slug}`} className="note-card">
                 {note.cover ? (
                   <div className="note-card-cover">
-                    <Image src={note.cover} alt="" fill sizes="(max-width: 720px) 100vw, 360px" priority={index === 0} unoptimized={note.cover.startsWith("http")} />
+                    <Image src={safeImageSrc(note.cover)!} alt="" fill sizes="(max-width: 720px) 100vw, 360px" priority={index === 0} unoptimized />
                   </div>
                 ) : null}
                 <div className="note-card-body">

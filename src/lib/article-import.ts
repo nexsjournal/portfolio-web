@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-import { load } from "cheerio";
+import { load, type CheerioAPI } from "cheerio";
 import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
 
@@ -8,7 +8,7 @@ import type { NoteType } from "@/content/notes";
 
 const USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0 Safari/537.36";
-const MAX_IMAGES = 30;
+const MAX_IMAGES = 60;
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const MAX_TOTAL_IMAGE_BYTES = 40 * 1024 * 1024;
 
@@ -83,6 +83,50 @@ async function fetchImage(url: string) {
 
 function cleanText(value: string) {
   return value.replace(/[\u200b-\u200d\ufeff]/g, "").replace(/\u00a0/g, " ").trim();
+}
+
+type Selection = ReturnType<CheerioAPI>;
+
+function styleNumber(style: string, property: string) {
+  const match = style.match(new RegExp(`${property}\\s*:\\s*([\\d.]+)`, "i"));
+  return match ? Number(match[1]) : 0;
+}
+
+function wechatHeadingLevel(style: string) {
+  const size = styleNumber(style, "font-size");
+  const weight = styleNumber(style, "font-weight");
+  if (weight < 650) return 0;
+  if (size >= 17.5) return 2;
+  if (size >= 16.5) return 3;
+  return 0;
+}
+
+function normalizeWechatBlocks($: CheerioAPI, content: Selection) {
+  content.find("section").each((_, element) => {
+    const section = $(element);
+    const style = section.attr("style") ?? "";
+    if (!/border\s*:\s*1px\s+solid\s+#243044/i.test(style)) return;
+    const blockquote = $("<blockquote></blockquote>");
+    blockquote.append(section.contents());
+    section.replaceWith(blockquote);
+  });
+
+  content.find("p").each((_, element) => {
+    const paragraph = $(element);
+    const text = cleanText(paragraph.text());
+    if (!text || text.length > 80 || paragraph.find("img").length) return;
+
+    const level = wechatHeadingLevel(paragraph.attr("style") ?? "");
+    if (!level) return;
+    const label = text.replace(/^(\d{2})(?=\D)/, "$1 ");
+    paragraph.replaceWith($(`<h${Math.max(level - 1, 1)}></h${Math.max(level - 1, 1)}>`).text(label));
+  });
+
+  content.find("p, span").each((_, element) => {
+    const node = $(element);
+    const text = cleanText(node.text());
+    if (/^[A-Z][A-Z0-9 &/+.-]{1,15}$/.test(text) && !/[a-z]/.test(text)) node.remove();
+  });
 }
 
 function plainTextMarkdown(value: string) {
@@ -172,7 +216,8 @@ export async function parseArticle(input: {
   );
   const account = cleanText($("#js_name").text());
   const description = cleanText($('meta[property="og:description"]').attr("content") ?? "");
-  const coverUrl = $('meta[property="og:image"]').attr("content")?.trim();
+  const coverUrl = $('meta[property="og:image"]').attr("content")?.trim()
+    || html.match(/msg_cdn_url\s*=\s*"([^"]+)"/)?.[1];
   const date = html ? dateFromWechat(html) : fallbackDate;
   const type = normalizeType(input.type);
 
@@ -189,19 +234,7 @@ export async function parseArticle(input: {
   if (!content.length) throw new Error("没有找到文章正文。");
 
   content.find("script, style, noscript, iframe, svg, video, audio, mp-common-videosnap, mpvoice, qqmusic").remove();
-  content.find("[style], [class]").removeAttr("style").removeAttr("class");
-  content.find("*").each((_, element) => {
-    const attributes = { ...element.attribs };
-    for (const name of Object.keys(attributes)) {
-      if (!["href", "src", "alt", "title"].includes(name)) $(element).removeAttr(name);
-    }
-  });
-  content.find("a").each((_, element) => {
-    const link = $(element);
-    const href = link.attr("href");
-    if (href?.startsWith("//")) link.attr("href", `https:${href}`);
-    if (!href || /^javascript:/i.test(href)) link.removeAttr("href");
-  });
+  normalizeWechatBlocks($, content);
 
   const imageMode = input.imageMode === "upload" ? "upload" : "link";
   const imageSources: Array<{ marker: string; url: string }> = [];
@@ -222,6 +255,20 @@ export async function parseArticle(input: {
     }
   });
 
+  content.find("[style], [class]").removeAttr("style").removeAttr("class");
+  content.find("*").each((_, element) => {
+    const attributes = { ...element.attribs };
+    for (const name of Object.keys(attributes)) {
+      if (!["href", "src", "alt", "title"].includes(name)) $(element).removeAttr(name);
+    }
+  });
+  content.find("a").each((_, element) => {
+    const link = $(element);
+    const href = link.attr("href");
+    if (href?.startsWith("//")) link.attr("href", `https:${href}`);
+    if (!href || /^javascript:/i.test(href)) link.removeAttr("href");
+  });
+
   const turndown = new TurndownService({
     headingStyle: "atx",
     codeBlockStyle: "fenced",
@@ -238,9 +285,14 @@ export async function parseArticle(input: {
     filter: (node) => node.nodeName === "A" && !node.textContent?.trim() && !node.querySelector("img"),
     replacement: () => "",
   });
+  turndown.addRule("wechatBullet", {
+    filter: (node) => node.nodeName === "P" && /^•/.test(node.textContent?.trim() ?? ""),
+    replacement: (content) => `\n- ${content.replace(/^\s*•\s*/, "").trim()}\n`,
+  });
 
   let markdown = turndown
     .turndown(content.html() ?? fallbackText)
+    .replace(/^•\s*/gm, "- ")
     .replace(/\n{3,}/g, "\n\n")
     .replace(/[ \t]+\n/g, "\n")
     .trim();
@@ -265,7 +317,7 @@ export async function parseArticle(input: {
   const normalizedCoverUrl = coverUrl?.startsWith("//")
     ? `https:${coverUrl}`
     : coverUrl?.replace(/^http:\/\//i, "https://");
-  if (imageMode === "upload" && normalizedCoverUrl) {
+  if (normalizedCoverUrl) {
     try {
       const image = await fetchImage(normalizedCoverUrl);
       cover = {
@@ -295,7 +347,7 @@ export async function parseArticle(input: {
     tags,
     excerpt,
     cover,
-    ...(imageMode === "link" && normalizedCoverUrl ? { coverUrl: normalizedCoverUrl } : {}),
+    ...(normalizedCoverUrl ? { coverUrl: normalizedCoverUrl } : {}),
     sourceUrl,
     ...(sourceUrl ? { sourceLabel: "查看公众号原文" } : {}),
     ...(canonical ? { canonical } : {}),

@@ -9,6 +9,7 @@ export type NoteSummary = {
   slug: string;
   title: string;
   date: string;
+  publishedAt?: string;
   type: NoteType;
   tags: string[];
   excerpt: string;

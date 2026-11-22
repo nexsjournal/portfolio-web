@@ -18,12 +18,34 @@
   letter-spacing: -0.045em;
 }
 
+.notes-index-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+}
+
 .notes-index-desc {
   max-width: 36rem;
-  margin-top: 0.9rem;
+  margin: 0;
   color: var(--portfolio-muted);
   font-size: 0.95rem;
   line-height: 1.7;
+}
+
+.notes-count-tag {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  padding: 0.18rem 0.5rem;
+  border-radius: 999px;
+  background: var(--portfolio-highlight);
+  color: var(--portfolio-accent);
+  font-size: 0.68rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
 
 .notes-toolbar {
@@ -67,10 +89,26 @@
   color: var(--portfolio-ink);
 }
 
-.notes-count {
-  color: var(--portfolio-muted);
+.notes-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  margin-left: auto;
+  padding: 0.36rem 0.7rem;
+  border: 1px solid var(--portfolio-line);
+  border-radius: 999px;
+  background: var(--portfolio-panel);
+  color: var(--portfolio-ink);
+  font: inherit;
   font-size: 0.75rem;
-  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease;
+}
+
+.notes-sort:hover {
+  border-color: color-mix(in srgb, var(--portfolio-accent) 45%, var(--portfolio-line));
+  color: var(--portfolio-accent);
 }
 
 .notes-list {
@@ -258,16 +296,18 @@
 }
 
 .notes-article-cover {
-  position: relative;
-  aspect-ratio: 16 / 9;
   margin-top: clamp(1.5rem, 3vw, 2.25rem);
   overflow: hidden;
   border: 1px solid var(--portfolio-line);
   border-radius: var(--portfolio-radius);
   background: var(--portfolio-highlight);
+  line-height: 0;
 }
 
 .notes-article-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
   object-fit: cover;
 }
 
@@ -328,9 +368,20 @@
 }
 
 .note-prose blockquote {
-  padding: 0.1em 0 0.1em 1em;
-  border-left: 2px solid var(--portfolio-line);
+  padding: 0.9rem 1.05rem;
+  border: 1px solid var(--portfolio-line);
+  border-left: 3px solid var(--portfolio-accent);
+  border-radius: var(--portfolio-radius);
+  background: var(--portfolio-panel);
   color: var(--portfolio-muted);
+}
+
+.note-prose blockquote > :first-child {
+  margin-top: 0;
+}
+
+.note-prose blockquote > :last-child {
+  margin-bottom: 0;
 }
 
 .note-prose img {
