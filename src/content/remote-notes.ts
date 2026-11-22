@@ -22,7 +22,7 @@ export type StoredNote = Note & {
   updatedAt: string;
 };
 
-let manifestUrl: string | null | undefined;
+let manifestUrl: string | undefined;
 
 export function blobConfigured() {
   return Boolean(
@@ -32,16 +32,13 @@ export function blobConfigured() {
 }
 
 async function resolveManifestUrl() {
-  if (manifestUrl !== undefined) return manifestUrl;
-  if (!blobConfigured()) {
-    manifestUrl = null;
-    return null;
-  }
+  if (manifestUrl) return manifestUrl;
+  if (!blobConfigured()) return null;
 
   try {
     manifestUrl = (await head(MANIFEST_PATH)).url;
   } catch {
-    manifestUrl = null;
+    return null;
   }
   return manifestUrl;
 }
