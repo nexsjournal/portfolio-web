@@ -47,9 +47,17 @@ const mdxComponents = {
       </a>
     );
   },
-  img: ({ src, ...props }: ComponentPropsWithoutRef<"img">) => (
-    <img {...props} src={typeof src === "string" ? safeImageSrc(src) : src} alt={props.alt ?? ""} referrerPolicy="no-referrer" loading="lazy" decoding="async" />
-  ),
+  img: ({ src, alt, ...props }: ComponentPropsWithoutRef<"img">) => {
+    const source = typeof src === "string" ? safeImageSrc(src) : src;
+    if (alt && /^\d{2}$/.test(alt.trim())) {
+      return (
+        <span className="note-sequence-mark" aria-hidden="true">
+          <img src={source} alt="" referrerPolicy="no-referrer" decoding="async" />
+        </span>
+      );
+    }
+    return <img {...props} src={source} alt={alt ?? ""} referrerPolicy="no-referrer" loading="lazy" decoding="async" />;
+  },
 };
 
 export default async function NotePage({ params }: NotePageProps) {

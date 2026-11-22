@@ -147,6 +147,10 @@
   transition: transform 500ms ease;
 }
 
+.note-card-cover[data-wechat="true"] img {
+  object-position: left center;
+}
+
 .note-card:hover .note-card-cover img {
   transform: scale(1.035);
 }
@@ -368,16 +372,27 @@
 }
 
 .note-prose blockquote {
-  padding: 0.9rem 1.05rem;
+  padding: 1rem 1.1rem;
   border: 1px solid var(--portfolio-line);
   border-left: 3px solid var(--portfolio-accent);
-  border-radius: var(--portfolio-radius);
-  background: var(--portfolio-panel);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--portfolio-highlight) 52%, var(--portfolio-panel));
   color: var(--portfolio-muted);
 }
 
 .note-prose blockquote > :first-child {
   margin-top: 0;
+}
+
+.note-prose blockquote > p:first-child {
+  color: var(--portfolio-ink);
+  font-size: 0.78em;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+}
+
+.note-prose blockquote p {
+  margin-block: 0.42em;
 }
 
 .note-prose blockquote > :last-child {
@@ -390,6 +405,33 @@
   height: auto;
   margin: 1.5em auto;
   border-radius: 12px;
+}
+
+.note-prose p:has(> .note-sequence-mark) {
+  margin-block: 1.7em;
+}
+
+.note-sequence-mark {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: clamp(0.7rem, 2vw, 1.1rem);
+  margin-inline: auto;
+}
+
+.note-sequence-mark::before,
+.note-sequence-mark::after {
+  width: clamp(2rem, 7vw, 3.75rem);
+  height: 1px;
+  background: var(--portfolio-line);
+  content: "";
+}
+
+.note-prose .note-sequence-mark img {
+  width: clamp(2.75rem, 5vw, 3.25rem);
+  height: auto;
+  margin: 0;
+  border-radius: 6px;
 }
 
 .note-prose hr {
@@ -406,8 +448,9 @@
 }
 
 .note-prose pre {
+  border: 1px solid color-mix(in srgb, var(--portfolio-line) 55%, transparent);
   overflow-x: auto;
-  padding: 1rem;
+  padding: 1rem 1.1rem;
   border-radius: 12px;
   background: #0d141a;
   color: #e8eef3;

@@ -93,7 +93,7 @@ export function NotesPage({ notes }: { notes: NoteSummary[] }) {
             visibleNotes.map((note, index) => (
               <Link key={note.slug} href={`/notes/${note.slug}`} className="note-card">
                 {note.cover ? (
-                  <div className="note-card-cover">
+                  <div className="note-card-cover" data-wechat={note.sourceUrl?.includes("mp.weixin.qq.com") ? "true" : undefined}>
                     <Image src={safeImageSrc(note.cover)!} alt="" fill sizes="(max-width: 720px) 100vw, 360px" priority={index === 0} unoptimized />
                   </div>
                 ) : null}
