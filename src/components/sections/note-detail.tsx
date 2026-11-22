@@ -59,7 +59,7 @@ export function NoteDetail({ note, previous, next, children }: NoteDetailProps) 
 
           {note.cover ? (
             <div className="notes-article-cover">
-              <Image src={note.cover} alt="" fill sizes="(max-width: 760px) 100vw, 760px" priority />
+              <Image src={note.cover} alt="" fill sizes="(max-width: 760px) 100vw, 760px" priority unoptimized={note.cover.startsWith("http")} />
             </div>
           ) : null}
 

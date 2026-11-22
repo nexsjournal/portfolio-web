@@ -1,10 +1,13 @@
 import type { MetadataRoute } from "next";
 
 import { caseStudies } from "@/content/case-studies";
-import { getAllNotes } from "@/content/notes";
+import { getAllNotesWithRemote } from "@/content/remote-notes";
 import { SITE_URL } from "@/lib/site-metadata";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return ["/", "/projects", "/notes", ...caseStudies.map((study) => `/projects/${study.slug}`), ...getAllNotes().map((note) => `/notes/${note.slug}`)]
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const notes = await getAllNotesWithRemote();
+  return ["/", "/projects", "/notes", ...caseStudies.map((study) => `/projects/${study.slug}`), ...notes.map((note) => `/notes/${note.slug}`)]
     .map((path) => ({ url: `${SITE_URL}${path}` }));
 }

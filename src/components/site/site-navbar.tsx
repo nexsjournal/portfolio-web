@@ -20,7 +20,7 @@ const sections = [
 
 export function SiteNavbar() {
   const pathname = usePathname();
-  const caseRoute = pathname.startsWith("/projects") || pathname.startsWith("/work") || pathname.startsWith("/notes");
+  const caseRoute = pathname.startsWith("/projects") || pathname.startsWith("/work") || pathname.startsWith("/notes") || pathname.startsWith("/studio");
   const home = pathname === "/";
   const { lang, toggleLang } = useSiteLanguage();
   const { theme, toggleTheme } = useTheme();

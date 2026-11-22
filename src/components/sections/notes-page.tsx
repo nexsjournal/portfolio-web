@@ -68,7 +68,7 @@ export function NotesPage({ notes }: { notes: NoteSummary[] }) {
               <Link key={note.slug} href={`/notes/${note.slug}`} className="note-card">
                 {note.cover ? (
                   <div className="note-card-cover">
-                    <Image src={note.cover} alt="" fill sizes="(max-width: 720px) 100vw, 360px" priority={index === 0} />
+                    <Image src={note.cover} alt="" fill sizes="(max-width: 720px) 100vw, 360px" priority={index === 0} unoptimized={note.cover.startsWith("http")} />
                   </div>
                 ) : null}
                 <div className="note-card-body">

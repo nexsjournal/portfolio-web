@@ -4,22 +4,19 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 
 import { NoteDetail } from "@/components/sections/note-detail";
-import { getAllNotes, getNoteBySlug, toNoteSummary } from "@/content/notes";
+import { toNoteSummary } from "@/content/notes";
+import { getAllNotesWithRemote, getNoteWithRemoteBySlug } from "@/content/remote-notes";
 import { createPageMetadata } from "@/lib/site-metadata";
 
 type NotePageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export const dynamicParams = false;
-
-export function generateStaticParams() {
-  return getAllNotes().map((note) => ({ slug: note.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: NotePageProps) {
   const { slug } = await params;
-  const note = getNoteBySlug(slug);
+  const note = await getNoteWithRemoteBySlug(slug);
   if (!note) return {};
 
   const metadata = createPageMetadata({
@@ -53,10 +50,10 @@ const mdxComponents = {
 
 export default async function NotePage({ params }: NotePageProps) {
   const { slug } = await params;
-  const note = getNoteBySlug(slug);
+  const note = await getNoteWithRemoteBySlug(slug);
   if (!note) notFound();
 
-  const notes = getAllNotes();
+  const notes = await getAllNotesWithRemote();
   const index = notes.findIndex((item) => item.slug === note.slug);
   const previous = notes[index + 1];
   const next = notes[index - 1];

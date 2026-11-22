@@ -15,6 +15,13 @@
 - [Design Tokens](public/design-system/tokens.json) · [CSS 变量](public/design-system/tokens.css) · [交互展示页](public/design-system/index.html)（开发环境路径 `/design-system/index.html`）。
 - 修改站点样式后，运行 `node scripts/design-system.mjs` 同步令牌；用 `node scripts/design-system.mjs --check` 检查是否有遗漏。
 
+## 即时发布后台
+
+- `/studio` 是单人内容发布入口，需要 `STUDIO_PASSWORD` 与 `STUDIO_SESSION_SECRET`；发布内容写入 Vercel Blob，不需要提交代码或重新部署。
+- 支持公众号链接、完整 HTML 和纯文本。公众号读取受限时，改用“完整 HTML”模式粘贴正文源码。
+- 线上需要连接一个 Public Blob Store，Vercel 会注入 `BLOB_READ_WRITE_TOKEN`。`content/notes/*.mdx` 继续作为本地内容与回退数据。
+- 本机预览时可在 `.env.local` 填入同名变量，但不要提交 Blob Token 或后台密码。
+
 ## 首页改版
 
 - 参考 [Xiaoyang Hu 的作品集](https://xiaoyanghu.com/)：通过 ego-browser 检查渲染样式和电脑屏幕的多层媒体，实测印章与联系弹层、作品悬停和退出状态。底色取实测的 `#F8FAFC`，作品卡默认白色，悬停才展开渐变、贴纸和跟随提示。
