@@ -1,4 +1,4 @@
-import { del, head, put } from "@vercel/blob";
+import { del, get, put } from "@vercel/blob";
 
 import { getAllNotes, type Note, type NoteSummary } from "@/content/notes";
 
@@ -22,8 +22,6 @@ export type StoredNote = Note & {
   updatedAt: string;
 };
 
-let manifestUrl: string | undefined;
-
 export function blobConfigured() {
   return Boolean(
     process.env.BLOB_READ_WRITE_TOKEN
@@ -31,46 +29,23 @@ export function blobConfigured() {
   );
 }
 
-async function resolveManifestUrl() {
-  if (manifestUrl) return manifestUrl;
-
-  const storeId = process.env.BLOB_STORE_ID?.trim();
-  if (storeId) {
-    const host = storeId.replace(/^store_/i, "").toLowerCase();
-    manifestUrl = `https://${host}.public.blob.vercel-storage.com/${MANIFEST_PATH}`;
-    return manifestUrl;
-  }
-
-  if (!blobConfigured()) return null;
-
-  try {
-    manifestUrl = (await head(MANIFEST_PATH)).url;
-  } catch {
-    return null;
-  }
-  return manifestUrl;
-}
-
-async function fetchJson<T>(url: string): Promise<T> {
-  const joiner = url.includes("?") ? "&" : "?";
-  const response = await fetch(`${url}${joiner}v=${Date.now()}`, { cache: "no-store" });
-  if (!response.ok) throw new Error(`Blob 读取失败：HTTP ${response.status}`);
-  return response.json() as Promise<T>;
+async function readBlobJson<T>(urlOrPathname: string): Promise<T> {
+  const result = await get(urlOrPathname, { access: "public", useCache: false });
+  if (!result || result.statusCode !== 200 || !result.stream) throw new Error("Blob 内容不可用");
+  return new Response(result.stream).json() as Promise<T>;
 }
 
 async function readManifest(): Promise<Manifest> {
-  const url = await resolveManifestUrl();
-  if (!url) return { version: 1, updatedAt: "", notes: [] };
+  if (!blobConfigured()) return { version: 1, updatedAt: "", notes: [] };
 
   try {
-    const manifest = await fetchJson<Manifest>(url);
+    const manifest = await readBlobJson<Manifest>(MANIFEST_PATH);
     return {
       version: 1,
       updatedAt: typeof manifest.updatedAt === "string" ? manifest.updatedAt : "",
       notes: Array.isArray(manifest.notes) ? manifest.notes : [],
     };
   } catch {
-    manifestUrl = undefined;
     return { version: 1, updatedAt: "", notes: [] };
   }
 }
@@ -100,7 +75,7 @@ export async function getRemoteNoteBySlug(slug: string): Promise<StoredNote | un
   if (!item) return undefined;
 
   try {
-    return await fetchJson<StoredNote>(item.url);
+    return await readBlobJson<StoredNote>(item.url);
   } catch {
     return undefined;
   }
@@ -158,14 +133,13 @@ export async function saveRemoteNote(note: StoredNote) {
     ].sort((a, b) => b.date.localeCompare(a.date)),
   };
 
-  const saved = await put(MANIFEST_PATH, JSON.stringify(nextManifest), {
+  await put(MANIFEST_PATH, JSON.stringify(nextManifest), {
     access: "public",
     allowOverwrite: true,
     addRandomSuffix: false,
     cacheControlMaxAge: 60,
     contentType: "application/json",
   });
-  manifestUrl = saved.url;
   return summary;
 }
 
@@ -183,14 +157,13 @@ export async function deleteRemoteNote(slug: string) {
     updatedAt: new Date().toISOString(),
     notes: manifest.notes.filter((note) => note.slug !== slug),
   };
-  const saved = await put(MANIFEST_PATH, JSON.stringify(nextManifest), {
+  await put(MANIFEST_PATH, JSON.stringify(nextManifest), {
     access: "public",
     allowOverwrite: true,
     addRandomSuffix: false,
     cacheControlMaxAge: 60,
     contentType: "application/json",
   });
-  manifestUrl = saved.url;
   return true;
 }
 
