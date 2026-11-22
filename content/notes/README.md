@@ -1,6 +1,6 @@
 # Notes 内容格式
 
-`/notes` 读取本目录下的 `.md` / `.mdx` 文件。文件名即 URL slug，例如 `why-lex-studio.mdx` → `/notes/why-lex-studio`。
+`/notes` 读取本目录下的 `.md` / `.mdx` 文件。文件名即 URL slug，例如 `my-note.mdx` → `/notes/my-note`。
 
 ## Frontmatter
 

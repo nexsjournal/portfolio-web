@@ -461,6 +461,61 @@
   background: transparent;
 }
 
+.note-prose blockquote:has(> pre) {
+  display: grid;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--portfolio-line);
+  border-radius: 12px;
+  background: var(--portfolio-panel);
+  color: var(--portfolio-ink);
+}
+
+.note-prose blockquote:has(> pre) > p:first-child {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--portfolio-line);
+  background: color-mix(in srgb, var(--portfolio-highlight) 62%, var(--portfolio-panel));
+  color: var(--portfolio-ink);
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
+.note-prose blockquote:has(> pre) > p:first-child::before {
+  padding: 0.14rem 0.38rem;
+  border-radius: 4px;
+  background: var(--portfolio-accent);
+  color: #fff;
+  font: 700 0.58rem / 1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.06em;
+  content: "TEXT";
+}
+
+.note-prose blockquote:has(> pre) > pre {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--portfolio-ink);
+  font-size: 0.82em;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.note-prose blockquote:has(> pre) > pre code {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
 .note-prose table {
   width: 100%;
   border-collapse: collapse;
