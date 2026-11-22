@@ -57,6 +57,8 @@
 - `cloudflare`（默认推荐）：`CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_API_TOKEN`。Workers AI 每天有 10,000 Neurons 免费额度（[定价](https://developers.cloudflare.com/workers-ai/platform/pricing/)）；FLUX.2 [klein] 9B 支持最多 4 张参考图、1024×768 输出（[模型](https://developers.cloudflare.com/workers-ai/models/flux-2-klein-9b/)），约合每天 6–7 张合影；换成 `@cf/black-forest-labs/flux-2-klein-4b` 可到约 60 张/天，但细节略弱。
 - `ark`（豆包 Seedream）：`ARK_API_KEY`。Seedream 4.0/4.5 新用户通常有一次性 200 张免费额度；4.0 支持 2–14 张参考图与 `2048x1536` 的 4:3 输出，之后按张计费。
 
+部署到 Vercel 时，除了 `.env.local`，还要在 Project → Settings → Environment Variables 为 Production / Preview 添加 `POLAROID_PROVIDER`、`CLOUDFLARE_ACCOUNT_ID`、`CLOUDFLARE_API_TOKEN`、`CLOUDFLARE_IMAGE_MODEL`；只在本地配置时，线上接口会返回 503。
+
 豆包 App 的每日免费生图额度不等于开放 API 额度；API 侧按量计费，免费额度主要用于首次接入测试。
 
 Cloudflare Token 在 Dashboard → My Profile → API Tokens 创建，权限选择 Workers AI；Account ID 在 Workers & Pages 概览页。火山方舟的 Key 在「API Key 管理」创建，并确认模型已开通。
