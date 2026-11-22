@@ -107,8 +107,10 @@ function normalizeWechatBlocks($: CheerioAPI, content: Selection) {
     const style = section.attr("style") ?? "";
     if (!/border\s*:\s*1px\s+solid\s+#243044/i.test(style)) return;
 
+    const header = section.children("section").first();
+    const copyHint = header.children("p").filter((_, element) => /复制|copy/i.test(cleanText($(element).text())));
     const codeLines = section.find('p[style*="white-space:pre-wrap"]');
-    if (codeLines.length) {
+    if (copyHint.length && codeLines.length) {
       const title = cleanText(section.find("p").first().text()) || "TEXT";
       const code = codeLines.toArray().map((line) => cleanText($(line).text())).join("\n");
       const blockquote = $("<blockquote></blockquote>");
