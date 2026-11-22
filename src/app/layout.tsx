@@ -7,6 +7,7 @@ import "./globals.css";
 import "./portfolio.css";
 import "./case-study.css";
 import "./notes.css";
+import "./polaroids.css";
 import "./not-found.css";
 
 /** 使用样式表加载字体，避免 next/font/google 在 Turbopack 下解析 @vercel/turbopack-next 内置模块失败 */

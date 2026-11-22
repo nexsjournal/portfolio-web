@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, Github, Mail } from "lucide-react";
+import { ArrowUpRight, Mail } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 
@@ -39,13 +39,33 @@ export function PortfolioHome() {
     const stack = storyStackRef.current;
     if (!stack) return;
     const cards = [...stack.querySelectorAll<HTMLElement>(".portfolio-story-card")];
+    const quote = stack.querySelector<HTMLElement>(".portfolio-story-quote");
+    const thanksCard = stack.querySelector<HTMLElement>(".portfolio-thanks-stack-card");
     if (cards.length < 2) return;
     const desktop = window.matchMedia("(min-width: 801px)");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let frame = 0;
 
+    const updateQuote = () => {
+      if (!quote || !thanksCard) return;
+
+      if (!desktop.matches || reducedMotion.matches) {
+        quote.style.setProperty("--quote-opacity", "1");
+        return;
+      }
+
+      const thanksRect = thanksCard.getBoundingClientRect();
+      const quoteRect = quote.getBoundingClientRect();
+      const footerRect = document.querySelector(".portfolio-footer")?.getBoundingClientRect();
+      const isRevealed = thanksRect.bottom <= quoteRect.top + 2
+        && (!footerRect || footerRect.top >= quoteRect.bottom);
+
+      quote.style.setProperty("--quote-opacity", isRevealed ? "1" : "0");
+    };
+
     const updateScale = () => {
       frame = 0;
+      updateQuote();
       if (!desktop.matches || reducedMotion.matches) {
         cards.forEach((card) => card.style.removeProperty("--story-scale"));
         return;
@@ -168,12 +188,25 @@ export function PortfolioHome() {
                 <a href="mailto:lextellsyou@gmail.com" className="portfolio-action">
                   <Mail size={17} aria-hidden /> lextellsyou@gmail.com
                 </a>
-                <a href="https://www.xiaohongshu.com/user/profile/5dc92e8000000000010092a6" target="_blank" rel="noreferrer">
-                  {copy.xiaohongshu} <ArrowUpRight size={16} aria-hidden />
-                </a>
-                <a href="https://github.com/nexsjournal" target="_blank" rel="noreferrer">
-                  <Github size={16} aria-hidden /> GitHub <ArrowUpRight size={16} aria-hidden />
-                </a>
+                <div className="portfolio-social-cluster">
+                  <a
+                    href="https://www.xiaohongshu.com/user/profile/5dc92e8000000000010092a6"
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={copy.xiaohongshu}
+                    title={copy.xiaohongshu}
+                  >
+                    <Image className="portfolio-contact-icon" src="/assets/contact/xiaohongshu.svg" alt="" width={20} height={20} />
+                    {copy.xiaohongshuName}
+                    <ArrowUpRight size={13} aria-hidden />
+                  </a>
+                  <span className="portfolio-social-divider" aria-hidden />
+                  <a href="https://github.com/nexsjournal" target="_blank" rel="noreferrer">
+                    <Image className="portfolio-contact-icon is-github" src="/assets/contact/github-mark.svg" alt="" width={20} height={20} />
+                    GitHub
+                    <ArrowUpRight size={13} aria-hidden />
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -181,6 +214,10 @@ export function PortfolioHome() {
         <div className="portfolio-story-card portfolio-thanks-stack-card">
           <ThankYouScroll lang={lang} />
         </div>
+        <figure className="portfolio-story-quote">
+          <blockquote>{copy.footerQuote}</blockquote>
+          <figcaption>{copy.footerQuoteSign}</figcaption>
+        </figure>
         <div className="portfolio-story-spacer" aria-hidden />
       </div>
 

@@ -44,3 +44,22 @@
 - 自定义 404 页面使用 `public/assets/404/lex-404.webp` 的 Aqua 像素风 IP 形象，配合“SIGNAL LOST”叙事、指南针与坐标标注，提供回首页、笔记和项目列表入口；明暗主题与移动端均已适配。
 - 本地预览：`npm ci` 后运行 `npm run dev`。提交前运行 `npm run lint` 和 `npm run build`。
 
+## 感谢相机 · AI 合影
+
+- 点击首页末尾相机快门会请求摄像头权限；授权后在取景器里再按一次快门，截取 4:3 自拍。
+- 服务器把自拍与 `public/assets/hero/lex-aqua-avatar-v2.webp` 的 IP 形象一起发给生图模型，统一成 Aqua 3D 卡通风格；照片以白边拍立得呈现，并带“吐出 + 显影”动效。
+- 拍摄图默认只在请求内处理，不写入存储；勾选“放进公开合影墙”后才会保存到 Vercel Blob 的 `polaroids/` 目录。服务端会先去除 EXIF、限制尺寸并做单 IP 限流。照片会发送给所选生图服务完成本次合成，上线时请在隐私说明中注明第三方处理。
+- 摄像头要求 HTTPS 或 `localhost`。没有生图 key 时可用 `POLAROID_PROVIDER=mock` 在本地预览完整动效。
+- `/polaroids` 是公开合影墙，只展示访客主动勾选公开的照片；页面设置为不参与搜索引擎索引。照片存储在 Vercel Blob（与 `/studio` 共用 `BLOB_READ_WRITE_TOKEN`），不占服务器磁盘。
+
+生图通道（`.env.local` 配置；`auto` 会优先 Cloudflare，想用豆包请显式设 `POLAROID_PROVIDER=ark`）：
+
+- `cloudflare`（默认推荐）：`CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_API_TOKEN`。Workers AI 每天有 10,000 Neurons 免费额度（[定价](https://developers.cloudflare.com/workers-ai/platform/pricing/)）；FLUX.2 [klein] 9B 支持最多 4 张参考图、1024×768 输出（[模型](https://developers.cloudflare.com/workers-ai/models/flux-2-klein-9b/)），约合每天 6–7 张合影；换成 `@cf/black-forest-labs/flux-2-klein-4b` 可到约 60 张/天，但细节略弱。
+- `ark`（豆包 Seedream）：`ARK_API_KEY`。Seedream 4.0/4.5 新用户通常有一次性 200 张免费额度；4.0 支持 2–14 张参考图与 `2048x1536` 的 4:3 输出，之后按张计费。
+
+豆包 App 的每日免费生图额度不等于开放 API 额度；API 侧按量计费，免费额度主要用于首次接入测试。
+
+Cloudflare Token 在 Dashboard → My Profile → API Tokens 创建，权限选择 Workers AI；Account ID 在 Workers & Pages 概览页。火山方舟的 Key 在「API Key 管理」创建，并确认模型已开通。
+
+Vercel Blob Hobby 包含 1GB 存储；超出后 Blob 会暂停到下一个 30 天周期，不会自动升级计费。照片量更大时建议升级 Pro，或改用 Cloudflare R2（每月 10GB 免费额度）。本地测试合影墙时需要在 `.env.local` 填入 `BLOB_READ_WRITE_TOKEN`。
+
