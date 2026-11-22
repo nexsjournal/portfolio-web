@@ -155,6 +155,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
 
       if (!response.ok) {
         const payload = await response.json().catch(() => null) as { code?: string } | null;
+        if (payload?.code === "quota_exhausted") throw new Error(copy.thanksQuotaExhausted);
         throw new Error(payload?.code === "rate_limited" ? copy.thanksRateLimited : copy.thanksDevelopError);
       }
 
@@ -191,7 +192,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
     } finally {
       window.clearTimeout(timeoutId);
     }
-  }, [copy.thanksDevelopError, copy.thanksRateLimited]);
+  }, [copy.thanksDevelopError, copy.thanksQuotaExhausted, copy.thanksRateLimited]);
 
   const openCamera = useCallback(async () => {
     setCameraError(null);

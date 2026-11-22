@@ -25,6 +25,10 @@ export class PolaroidConfigError extends Error {
   readonly code = "not_configured";
 }
 
+export class PolaroidQuotaError extends Error {
+  readonly code = "quota_exhausted";
+}
+
 const ZH_PROMPT = [
   "生成一张完整的 4:3 横版纪念合影，像一张朋友一起拍的拍立得。",
   "图一是 IP 形象参考：一个黑发、黑框眼镜、黑色内搭、半透明蓝色连帽外套的年轻男生，整体是光滑通透的 Aqua / 玻璃树脂质感的 3D 卡通风格。",
@@ -183,7 +187,11 @@ async function generateWithCloudflare(photo: Buffer, origin: string) {
   } | null;
 
   if (!response.ok || payload?.success === false) {
-    throw new Error(payload?.errors?.[0]?.message || `Cloudflare Workers AI returned ${response.status}.`);
+    const message = payload?.errors?.[0]?.message || `Cloudflare Workers AI returned ${response.status}.`;
+    if (/daily free allocation|neurons|quota/i.test(message)) {
+      throw new PolaroidQuotaError(message);
+    }
+    throw new Error(message);
   }
 
   const rawImage = typeof payload?.result === "string" ? payload.result : payload?.result?.image;

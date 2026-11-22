@@ -3,6 +3,7 @@ import sharp from "sharp";
 
 import {
   PolaroidConfigError,
+  PolaroidQuotaError,
   checkPolaroidRateLimit,
   generatePolaroidPhoto,
   resolvePolaroidProvider,
@@ -107,6 +108,16 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
+    if (error instanceof PolaroidQuotaError) {
+      const now = new Date();
+      const reset = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1);
+      const retryAfter = Math.max(60, Math.ceil((reset - now.getTime()) / 1000));
+      return NextResponse.json(
+        { error: "今天额度用完了，08:00 后再来。", code: "quota_exhausted" },
+        { status: 429, headers: { "retry-after": String(retryAfter), "cache-control": "no-store" } },
+      );
+    }
+
     if (error instanceof PolaroidConfigError) {
       return NextResponse.json(
         { error: "合影冲洗服务还没有配置。", code: "not_configured" },
