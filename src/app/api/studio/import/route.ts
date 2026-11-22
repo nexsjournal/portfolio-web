@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
     type?: unknown;
     tags?: unknown;
     canonicalSelf?: unknown;
+    imageMode?: unknown;
   } | null;
   const mode = body?.mode === "html" || body?.mode === "text" ? body.mode : "url";
   const value = typeof body?.value === "string" ? body.value : "";
@@ -48,6 +49,7 @@ export async function POST(request: NextRequest) {
       type: typeof body?.type === "string" ? body.type : undefined,
       tags,
       canonicalSelf: body?.canonicalSelf === true,
+      imageMode: body?.imageMode === "upload" ? "upload" : "link",
     });
     const assets: string[] = [];
     const imageUrls = new Map<string, string>();
@@ -62,7 +64,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    let coverUrl: string | undefined;
+    let coverUrl = parsed.coverUrl;
     if (parsed.cover) {
       try {
         const uploaded = await uploadNoteAsset(parsed.slug, parsed.cover.fileName, parsed.cover.bytes, parsed.cover.contentType);

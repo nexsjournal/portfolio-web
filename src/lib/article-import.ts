@@ -13,6 +13,7 @@ const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const MAX_TOTAL_IMAGE_BYTES = 40 * 1024 * 1024;
 
 export type ImportMode = "url" | "html" | "text";
+export type ImageMode = "link" | "upload";
 
 export type ImportedImage = {
   marker: string;
@@ -29,6 +30,7 @@ export type ParsedArticle = {
   tags: string[];
   excerpt: string;
   cover?: ImportedImage;
+  coverUrl?: string;
   sourceUrl?: string;
   sourceLabel?: string;
   canonical?: string;
@@ -115,6 +117,7 @@ export async function parseArticle(input: {
   type?: string;
   tags?: string[];
   canonicalSelf?: boolean;
+  imageMode?: ImageMode;
 }): Promise<ParsedArticle> {
   const value = input.value.trim();
   if (!value) throw new Error("请粘贴公众号链接或文章内容。");
@@ -129,15 +132,23 @@ export async function parseArticle(input: {
   if (input.mode === "url") {
     if (!/^https?:\/\//i.test(value)) throw new Error("请输入完整的公众号文章链接。");
     sourceUrl = value;
-    const response = await fetch(value, {
-      headers: {
-        "user-agent": USER_AGENT,
-        "accept-language": "zh-CN,zh;q=0.9",
-        referer: "https://mp.weixin.qq.com/",
-      },
-      redirect: "follow",
-      signal: AbortSignal.timeout(25000),
-    });
+    let response: Response;
+    try {
+      response = await fetch(value, {
+        headers: {
+          "user-agent": USER_AGENT,
+          "accept-language": "zh-CN,zh;q=0.9",
+          referer: "https://mp.weixin.qq.com/",
+        },
+        redirect: "follow",
+        signal: AbortSignal.timeout(15000),
+      });
+    } catch (error) {
+      if (error instanceof Error && error.name === "TimeoutError") {
+        throw new Error("访问公众号超时。请确认链接能在浏览器正常打开，或改用“完整 HTML”模式粘贴正文。");
+      }
+      throw new Error("无法访问公众号。请改用“完整 HTML”模式粘贴正文。");
+    }
     if (!response.ok) throw new Error(`文章请求失败：HTTP ${response.status}`);
     html = await response.text();
   } else if (input.mode === "html") {
@@ -166,6 +177,12 @@ export async function parseArticle(input: {
   const type = normalizeType(input.type);
 
   let content = $("#js_content").first();
+  if (!content.length && input.mode === "url") {
+    const wechatError = cleanText($(".weui-msg__title").text());
+    if (wechatError) {
+      throw new Error(`公众号返回「${wechatError}」。链接可能不完整、已失效或仅限微信内打开；请复制地址栏完整链接，或改用“完整 HTML”模式。`);
+    }
+  }
   if (!content.length) content = $("article").first();
   if (!content.length) content = $("main").first();
   if (!content.length) content = $("body");
@@ -186,6 +203,7 @@ export async function parseArticle(input: {
     if (!href || /^javascript:/i.test(href)) link.removeAttr("href");
   });
 
+  const imageMode = input.imageMode === "upload" ? "upload" : "link";
   const imageSources: Array<{ marker: string; url: string }> = [];
   content.find("img").each((index, element) => {
     const image = $(element);
@@ -194,10 +212,14 @@ export async function parseArticle(input: {
       image.remove();
       return;
     }
-    const marker = `lex-image-${String(index).padStart(2, "0")}`;
-    imageSources.push({ marker, url: src.startsWith("//") ? `https:${src}` : src });
-    image.attr("src", marker);
+    const normalizedUrl = src.startsWith("//") ? `https:${src}` : src.replace(/^http:\/\//i, "https://");
+    image.attr("src", normalizedUrl);
     image.attr("alt", cleanText(image.attr("alt") ?? ""));
+    if (imageMode === "upload") {
+      const marker = `lex-image-${String(index).padStart(2, "0")}`;
+      imageSources.push({ marker, url: normalizedUrl });
+      image.attr("src", marker);
+    }
   });
 
   const turndown = new TurndownService({
@@ -225,22 +247,27 @@ export async function parseArticle(input: {
 
   const images: ImportedImage[] = [];
   let totalBytes = 0;
-  for (const source of imageSources) {
-    try {
-      const image = await fetchImage(source.url);
-      if (totalBytes + image.bytes.byteLength > MAX_TOTAL_IMAGE_BYTES) break;
-      totalBytes += image.bytes.byteLength;
-      const fileName = `${source.marker}.${image.extension}`;
-      images.push({ marker: source.marker, fileName, bytes: image.bytes, contentType: image.contentType });
-    } catch {
-      markdown = markdown.replace(new RegExp(`!\\[[^\\]]*\\]\\(${source.marker}\\)`, "g"), "");
+  if (imageMode === "upload") {
+    for (const source of imageSources) {
+      try {
+        const image = await fetchImage(source.url);
+        if (totalBytes + image.bytes.byteLength > MAX_TOTAL_IMAGE_BYTES) break;
+        totalBytes += image.bytes.byteLength;
+        const fileName = `${source.marker}.${image.extension}`;
+        images.push({ marker: source.marker, fileName, bytes: image.bytes, contentType: image.contentType });
+      } catch {
+        markdown = markdown.replace(new RegExp(`!\\[[^\\]]*\\]\\(${source.marker}\\)`, "g"), "");
+      }
     }
   }
 
   let cover: ImportedImage | undefined;
-  if (coverUrl) {
+  const normalizedCoverUrl = coverUrl?.startsWith("//")
+    ? `https:${coverUrl}`
+    : coverUrl?.replace(/^http:\/\//i, "https://");
+  if (imageMode === "upload" && normalizedCoverUrl) {
     try {
-      const image = await fetchImage(coverUrl);
+      const image = await fetchImage(normalizedCoverUrl);
       cover = {
         marker: "cover",
         fileName: `cover.${image.extension}`,
@@ -268,6 +295,7 @@ export async function parseArticle(input: {
     tags,
     excerpt,
     cover,
+    ...(imageMode === "link" && normalizedCoverUrl ? { coverUrl: normalizedCoverUrl } : {}),
     sourceUrl,
     ...(sourceUrl ? { sourceLabel: "查看公众号原文" } : {}),
     ...(canonical ? { canonical } : {}),

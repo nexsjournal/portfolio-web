@@ -141,7 +141,7 @@ html:has(.studio-page) body {
 
 .studio-fields {
   display: grid;
-  grid-template-columns: minmax(9rem, 0.35fr) minmax(0, 1fr);
+  grid-template-columns: minmax(8rem, 0.35fr) minmax(0, 1fr) minmax(10rem, 0.55fr);
   gap: 1rem;
 }
 

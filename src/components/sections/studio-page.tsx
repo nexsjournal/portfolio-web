@@ -25,6 +25,7 @@ export function StudioPage() {
   const [value, setValue] = useState("");
   const [type, setType] = useState("article");
   const [tags, setTags] = useState("");
+  const [imageMode, setImageMode] = useState<"link" | "upload">("link");
   const [canonicalSelf, setCanonicalSelf] = useState(false);
   const [result, setResult] = useState<ImportResult | null>(null);
   const [notes, setNotes] = useState<NoteSummary[]>([]);
@@ -87,6 +88,7 @@ export function StudioPage() {
           type,
           tags: tags.split(",").map((tag) => tag.trim()).filter(Boolean),
           canonicalSelf,
+          imageMode,
         }),
       });
       const data = await response.json() as { error?: string; title?: string; url?: string; images?: number };
@@ -236,6 +238,13 @@ export function StudioPage() {
                   <span>标签，用逗号分隔</span>
                   <input value={tags} onChange={(event) => setTags(event.target.value)} placeholder="产品方法, 独立开发" />
                 </label>
+                <label className="studio-field">
+                  <span>正文图片</span>
+                  <select value={imageMode} onChange={(event) => setImageMode(event.target.value as "link" | "upload")}>
+                    <option value="link">保留公众号链接，更快</option>
+                    <option value="upload">转存到 Blob，更稳</option>
+                  </select>
+                </label>
               </div>
 
               {mode === "url" ? (
@@ -247,9 +256,9 @@ export function StudioPage() {
 
               <div className="studio-submit-row">
                 <button type="submit" className="studio-primary" disabled={busy}>
-                  {busy ? "正在解析并上传…" : "解析并立即发布"}
+                  {busy ? "正在解析并发布…" : "解析并立即发布"}
                 </button>
-                <span>图片多时可能需要几十秒</span>
+                <span>{imageMode === "link" ? "通常几秒完成" : "图片多时可能需要几十秒"}</span>
               </div>
             </form>
 

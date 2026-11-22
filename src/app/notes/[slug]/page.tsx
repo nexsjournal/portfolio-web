@@ -46,6 +46,9 @@ const mdxComponents = {
       </a>
     );
   },
+  img: (props: ComponentPropsWithoutRef<"img">) => (
+    <img {...props} referrerPolicy="no-referrer" loading="lazy" decoding="async" />
+  ),
 };
 
 export default async function NotePage({ params }: NotePageProps) {
