@@ -110,7 +110,7 @@ export function PortfolioProjects({ lang, products }: { lang: SiteLang; products
         </Link>
 
         <Image className="board-deco board-deco-pin" src="/assets/hero/board-pin.webp" alt="" width={340} height={460} sizes="140px" />
-        <Image className="board-deco board-deco-clips" src="/assets/hero/board-clips-v2.webp" alt="" width={480} height={420} sizes="150px" />
+        <Image className="board-deco board-deco-clips" src="/assets/hero/board-clips-v3.webp" alt="" width={480} height={364} sizes="150px" />
         <Image className="board-deco board-deco-pen" src="/assets/hero/board-highlighter.webp" alt="" width={700} height={500} sizes="260px" />
       </div>
     </section>

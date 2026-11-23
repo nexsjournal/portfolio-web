@@ -95,6 +95,14 @@ html:has(.case-page) body {
   z-index: 1;
 }
 
+.case-back-spinner {
+  animation: case-back-spin 800ms linear infinite;
+}
+
+@keyframes case-back-spin {
+  to { transform: rotate(360deg); }
+}
+
 .case-brand {
   font-size: 0.875rem;
   font-weight: 650;

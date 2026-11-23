@@ -477,6 +477,15 @@ html:has(.portfolio-page) body {
   font-size: 0.9rem;
 }
 
+.theme-dark .portfolio-intro-sticker {
+  border-color: rgb(255 255 255 / .16);
+  box-shadow: 0 2px 5px rgb(0 0 0 / .38);
+}
+
+.theme-dark .portfolio-intro-studio {
+  border-color: rgb(255 255 255 / .22);
+}
+
 .portfolio-seal:is(:hover, :focus-visible),
 .portfolio-intro-sticker:is(:hover, :focus-visible),
 .portfolio-intro-slot:is(:hover, :focus-visible) {
@@ -2087,6 +2096,11 @@ html:has(.portfolio-page) body {
   transform: scale(var(--story-scale, 1));
   transform-origin: 50% 0;
   will-change: transform;
+}
+
+.portfolio-story-card.portfolio-about-card {
+  height: auto;
+  min-height: var(--story-card-height);
 }
 
 .portfolio-story-card + .portfolio-story-card {

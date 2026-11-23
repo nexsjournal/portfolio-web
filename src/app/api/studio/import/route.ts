@@ -9,6 +9,7 @@ import {
   type StoredNote,
 } from "@/content/remote-notes";
 import { applyImageUrls, parseArticle, type ImportMode } from "@/lib/article-import";
+import { optimizeImageBytes, replaceImageExtension } from "@/lib/image-optimize";
 import { hasStudioSession } from "@/lib/studio-auth";
 
 export const runtime = "nodejs";
@@ -49,14 +50,20 @@ export async function POST(request: NextRequest) {
       type: typeof body?.type === "string" ? body.type : undefined,
       tags,
       canonicalSelf: body?.canonicalSelf === true,
-      imageMode: body?.imageMode === "upload" ? "upload" : "link",
+      imageMode: body?.imageMode === "link" ? "link" : "upload",
     });
     const assets: string[] = [];
     const imageUrls = new Map<string, string>();
 
     for (const image of parsed.images) {
       try {
-        const uploaded = await uploadNoteAsset(parsed.slug, image.fileName, image.bytes, image.contentType);
+        const optimized = await optimizeImageBytes(image.bytes, image.contentType);
+        const uploaded = await uploadNoteAsset(
+          parsed.slug,
+          replaceImageExtension(image.fileName, optimized.extension),
+          optimized.bytes,
+          optimized.contentType,
+        );
         imageUrls.set(image.marker, uploaded.url);
         assets.push(uploaded.url);
       } catch {
@@ -67,7 +74,13 @@ export async function POST(request: NextRequest) {
     let coverUrl = parsed.coverUrl;
     if (parsed.cover) {
       try {
-        const uploaded = await uploadNoteAsset(parsed.slug, parsed.cover.fileName, parsed.cover.bytes, parsed.cover.contentType);
+        const optimized = await optimizeImageBytes(parsed.cover.bytes, parsed.cover.contentType);
+        const uploaded = await uploadNoteAsset(
+          parsed.slug,
+          replaceImageExtension(parsed.cover.fileName, optimized.extension),
+          optimized.bytes,
+          optimized.contentType,
+        );
         coverUrl = uploaded.url;
         assets.push(uploaded.url);
       } catch {

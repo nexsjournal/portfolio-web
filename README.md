@@ -19,6 +19,7 @@
 
 - `/studio` 是单人内容发布入口，需要 `STUDIO_USER`、`STUDIO_PASSWORD` 与 `STUDIO_SESSION_SECRET`；发布内容写入 Vercel Blob，不需要提交代码或重新部署。
 - 支持公众号链接、完整 HTML 和纯文本。公众号读取受限时，改用“完整 HTML”模式粘贴正文源码。
+- 发布时默认把正文图片压缩成 WebP（GIF 保留动画）并转存到 Blob，避免逐张回源公众号 CDN；旧文章可在后台点“优化正文图片”一次性迁移。
 - 线上需要连接一个 Public Blob Store，Vercel 会注入 `BLOB_READ_WRITE_TOKEN`。`content/notes/*.mdx` 继续作为本地内容与回退数据。
 - 本机预览时可在 `.env.local` 填入同名变量，但不要提交 Blob Token 或后台密码。
 

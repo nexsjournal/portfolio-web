@@ -25,9 +25,11 @@ export function StudioPage() {
   const [value, setValue] = useState("");
   const [type, setType] = useState("article");
   const [tags, setTags] = useState("");
-  const [imageMode, setImageMode] = useState<"link" | "upload">("link");
+  const [imageMode, setImageMode] = useState<"link" | "upload">("upload");
   const [canonicalSelf, setCanonicalSelf] = useState(false);
   const [result, setResult] = useState<ImportResult | null>(null);
+  const [optimizing, setOptimizing] = useState(false);
+  const [mediaMessage, setMediaMessage] = useState("");
   const [notes, setNotes] = useState<NoteSummary[]>([]);
 
   const loadNotes = useCallback(async () => {
@@ -126,6 +128,39 @@ export function StudioPage() {
       setError(removeError instanceof Error ? removeError.message : "删除失败。");
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function optimizeMedia() {
+    if (!notes.length || !window.confirm("把现有文章的公众号图片压缩并转存到 Blob？只会处理公众号图片，可重复执行。")) return;
+    setOptimizing(true);
+    setError("");
+    setMediaMessage("");
+    let images = 0;
+    let failed = 0;
+    try {
+      for (const [index, note] of notes.entries()) {
+        setMediaMessage(`正在优化 ${index + 1}/${notes.length}：${note.title}`);
+        const response = await fetch("/api/studio/notes/migrate-media", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ slug: note.slug }),
+        });
+        const data = await response.json() as { error?: string; images?: number; failed?: number };
+        if (response.status === 401) {
+          setSession({ configured: true, authenticated: false });
+          throw new Error("登录已过期，请重新登录。");
+        }
+        if (!response.ok) throw new Error(data.error ?? "图片优化失败。");
+        images += data.images ?? 0;
+        failed += data.failed ?? 0;
+      }
+      setMediaMessage(`已转存 ${images} 张图片${failed ? `，${failed} 张暂时失败` : ""}。`);
+      await loadNotes();
+    } catch (optimizeError) {
+      setError(optimizeError instanceof Error ? optimizeError.message : "图片优化失败。");
+    } finally {
+      setOptimizing(false);
     }
   }
 
@@ -241,8 +276,8 @@ export function StudioPage() {
                 <label className="studio-field">
                   <span>正文图片</span>
                   <select value={imageMode} onChange={(event) => setImageMode(event.target.value as "link" | "upload")}>
-                    <option value="link">保留公众号链接，更快</option>
-                    <option value="upload">转存到 Blob，更稳</option>
+                    <option value="link">保留公众号链接，不转存</option>
+                    <option value="upload">压缩并转存到 Blob，推荐</option>
                   </select>
                 </label>
               </div>
@@ -258,7 +293,7 @@ export function StudioPage() {
                 <button type="submit" className="studio-primary" disabled={busy}>
                   {busy ? "正在解析并发布…" : "解析并立即发布"}
                 </button>
-                <span>{imageMode === "link" ? "通常几秒完成" : "图片多时可能需要几十秒"}</span>
+                <span>{imageMode === "link" ? "图片仍走公众号 CDN，弱网可能较慢" : "自动压缩图片，图片多时可能需要几十秒"}</span>
               </div>
             </form>
 
@@ -277,8 +312,14 @@ export function StudioPage() {
                 <p className="studio-kicker">PUBLISHED FROM STUDIO</p>
                 <h2>后台文章</h2>
               </div>
-              <span>{notes.length} 篇</span>
+              <div className="studio-heading-actions">
+                <span>{notes.length} 篇</span>
+                <button type="button" className="studio-inline-action" onClick={optimizeMedia} disabled={busy || optimizing || !notes.length}>
+                  {optimizing ? "正在优化…" : "优化正文图片"}
+                </button>
+              </div>
             </div>
+            {mediaMessage ? <p className="studio-message studio-success" role="status">{mediaMessage}</p> : null}
             {notes.length ? (
               <ul className="studio-note-list">
                 {notes.map((note) => (

@@ -4,6 +4,29 @@
   --case-max: 1240px;
 }
 
+.notes-loading-status {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-top: calc(var(--case-chrome-h) + clamp(2.25rem, 5vw, 4rem));
+  color: var(--portfolio-muted);
+  font-size: 0.95rem;
+}
+
+.notes-loading-status::before {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--portfolio-line);
+  border-top-color: var(--portfolio-accent);
+  border-radius: 50%;
+  animation: notes-loading-spin 800ms linear infinite;
+  content: "";
+}
+
+@keyframes notes-loading-spin {
+  to { transform: rotate(360deg); }
+}
+
 .notes-index-hero {
   max-width: 44rem;
   padding-top: calc(var(--case-chrome-h) + clamp(2.25rem, 5vw, 4rem));

@@ -1,7 +1,8 @@
 "use client";
 
-import { ArrowLeft, Moon, Sun } from "lucide-react";
+import { ArrowLeft, Loader2, Moon, Sun } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 
 import { useSiteLanguage } from "@/context/site-language";
@@ -20,6 +21,8 @@ export function SiteChrome({ backHref, backLabel, extraActions }: SiteChromeProp
   const copy = portfolioCopy[lang];
   const themeLabel = copy.theme[theme === "dark" ? "light" : "dark"];
   const [scrolled, setScrolled] = useState(false);
+  const [pending, setPending] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -28,11 +31,29 @@ export function SiteChrome({ backHref, backLabel, extraActions }: SiteChromeProp
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPending(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!pending) return;
+    const timer = window.setTimeout(() => setPending(false), 8000);
+    return () => window.clearTimeout(timer);
+  }, [pending]);
+
   return (
     <header className={`case-chrome${scrolled ? " is-scrolled" : ""}`} data-site-chrome>
       <div className="case-chrome-left">
-        <Link href={backHref} className="case-back" aria-label={backLabel} title={backLabel}>
-          <ArrowLeft size={18} aria-hidden />
+        <Link
+          href={backHref}
+          className="case-back"
+          aria-label={backLabel}
+          title={backLabel}
+          aria-busy={pending}
+          onClick={() => setPending(true)}
+        >
+          {pending ? <Loader2 size={17} className="case-back-spinner" aria-hidden /> : <ArrowLeft size={18} aria-hidden />}
         </Link>
         <span className="case-brand">Lex Studio</span>
       </div>

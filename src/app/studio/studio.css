@@ -158,6 +158,22 @@ html:has(.studio-page) body {
 .studio-submit-row span { color: var(--portfolio-muted); font-size: 0.76rem; }
 .studio-card-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
 .studio-card-heading > span { color: var(--portfolio-muted); font-size: 0.78rem; white-space: nowrap; }
+.studio-heading-actions { display: flex; align-items: center; gap: 0.65rem; }
+.studio-heading-actions > span { color: var(--portfolio-muted); font-size: 0.78rem; white-space: nowrap; }
+.studio-inline-action {
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--portfolio-line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--portfolio-ink);
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease;
+}
+.studio-inline-action:hover { border-color: var(--portfolio-accent); color: var(--portfolio-accent); background: var(--portfolio-highlight); }
+.studio-inline-action:disabled { cursor: wait; opacity: 0.55; }
+.studio-card-heading + .studio-message { margin-top: 1rem; }
 
 .studio-live {
   padding: 0.25rem 0.55rem;

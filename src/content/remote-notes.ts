@@ -49,24 +49,27 @@ function noteTimestamp(note: NoteSummary) {
 const readRemoteNoteSummaries = unstable_cache(
   async (): Promise<NoteSummary[]> => {
     if (!blobConfigured()) return [];
-    const result = await list({ prefix: `${POST_PREFIX}/`, limit: 1000 });
-    const notes = await Promise.all(
-      result.blobs
-        .filter((blob) => blob.pathname.endsWith(".json"))
-        .map((blob) => readBlobJson<StoredNote>(blob.url).catch(() => null)),
-    );
-
-    return notes
-      .filter((note): note is StoredNote => note !== null)
+    return (await getAllRemoteNotes())
       .map(summaryFromNote)
       .sort((a, b) => noteTimestamp(b) - noteTimestamp(a));
   },
   ["remote-note-summaries"],
-  { tags: [NOTES_CACHE_TAG], revalidate: 30 },
+  { tags: [NOTES_CACHE_TAG], revalidate: 300 },
 );
 
 export async function getRemoteNoteSummaries() {
   return readRemoteNoteSummaries();
+}
+
+export async function getAllRemoteNotes(): Promise<StoredNote[]> {
+  if (!blobConfigured()) return [];
+  const result = await list({ prefix: `${POST_PREFIX}/`, limit: 1000 });
+  const notes = await Promise.all(
+    result.blobs
+      .filter((blob) => blob.pathname.endsWith(".json"))
+      .map((blob) => readBlobJson<StoredNote>(blob.url).catch(() => null)),
+  );
+  return notes.filter((note): note is StoredNote => note !== null);
 }
 
 export async function getRemoteNoteBySlug(slug: string): Promise<StoredNote | undefined> {
