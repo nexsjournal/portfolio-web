@@ -35,10 +35,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
+function getTestCheckoutUrl() {
+  const environment = process.env.VERCEL_ENV ?? process.env.NODE_ENV;
+  if (environment !== "development" && environment !== "preview") return undefined;
+
+  const checkoutUrl = process.env.ARAY_STRIPE_TEST_PAYMENT_LINK?.trim();
+  if (!checkoutUrl || !/^https:\/\/buy\.stripe\.com\/test_[A-Za-z0-9]+$/.test(checkoutUrl)) {
+    return undefined;
+  }
+
+  return checkoutUrl;
+}
+
 export default async function CasePage({ params }: Props) {
   const { caseSlug } = await params;
   const study = getCaseStudy(caseSlug);
   if (!study) notFound();
 
-  return <CaseStudyPage study={study} />;
+  return (
+    <CaseStudyPage
+      study={study}
+      testCheckoutUrl={study.productSlug === "aray-studio" ? getTestCheckoutUrl() : undefined}
+    />
+  );
 }

@@ -7,6 +7,8 @@ export type Product = {
    * 若历史上曾使用 `/products/<slug>` 或 `/work/<caseSlug>`，middleware 会统一 308 到 `/projects/<caseSlug>`。
    */
   path?: string;
+  /** 无站内案例时，项目卡直接跳转的外部玩法 / 产品页 */
+  externalUrl?: string;
   name: string;
   /** 对外英文标识（如应用名、商店名） */
   nameEn?: string;
@@ -377,6 +379,58 @@ export const products: Product[] = [
     screenshotHeight: 968,
   },
   {
+    slug: "folovibe-key",
+    externalUrl: "https://ai-passport.folotoy.cn/plays/2094/",
+    name: "FoloVibe Key",
+    nameEn: "FoloVibe Key",
+    tagline:
+      "把 AI Passport 变成 Mac 上的语音指令助手：按住说话，松开输入。",
+    taglineEn:
+      "Turn AI Passport into a voice command assistant for Mac: hold to talk, release to input.",
+    summary:
+      "FoloVibe Key 把 AI Passport 变成 Mac 上的语音搭档：按住 OK 说话，App 会自动找到评论、消息或搜索框，松开后写入当前输入区。连接 Codex、Claude Code、DeepSeek、ZCode、WorkBuddy 等 Agent 后，任务完成会亮起对号并生成可翻页摘要，还支持实时字幕、中英翻译与用量额度查看。",
+    summaryEn:
+      "FoloVibe Key turns AI Passport into a voice companion for Mac. Hold OK to talk and the app finds the active comment, message, or search field; release to insert, then tap Up to send. Connect Codex, Claude Code, DeepSeek, ZCode, WorkBuddy, and other agents to get a checkmark when a task finishes, plus a paginated summary, live captions, Chinese/English translation, and usage limits on the device.",
+    category: "AI 硬件与效率",
+    categoryEn: "AI Hardware & Productivity",
+    language: "中文 / English",
+    languageEn: "Chinese / English",
+    size: "在线玩法",
+    sizeEn: "Community play",
+    platform: "AI Passport · macOS",
+    platformEn: "AI Passport · macOS",
+    platformUrl: "https://ai-passport.folotoy.cn/plays/2094/",
+    actionLabel: "查看玩法",
+    actionLabelEn: "View play",
+    features: [
+      "按住 OK 说话，松开后写入当前输入区，短按上键发送",
+      "自动定位评论、消息与搜索框，减少在应用间切换",
+      "连接 Codex、Claude Code、DeepSeek、ZCode、WorkBuddy 等 Agent",
+      "任务完成时设备亮起对号，并把结果整理成可翻页摘要",
+      "把所选应用的声音实时转成字幕，支持中英翻译",
+      "查看 Token 用量、5 小时额度、每周额度与重置时间",
+    ],
+    featuresEn: [
+      "Hold OK to talk, release to insert into the active field, then tap Up to send",
+      "Finds comments, messages, and search fields automatically so you can stay in flow",
+      "Connects to Codex, Claude Code, DeepSeek, ZCode, WorkBuddy, and other agents",
+      "Lights up a checkmark when a task finishes and turns the result into a paginated summary",
+      "Turns the selected app's audio into live captions with Chinese/English translation",
+      "Shows token usage, 5-hour limits, weekly limits, and reset times",
+    ],
+    iconSrc: "/assets/products/folovibe-key/icon.png",
+    screenshots: [
+      "/assets/products/folovibe-key/screens/01.webp",
+      "/assets/products/folovibe-key/screens/02.webp",
+      "/assets/products/folovibe-key/screens/03.webp",
+      "/assets/products/folovibe-key/screens/04.webp",
+      "/assets/products/folovibe-key/screens/05.webp",
+    ],
+    screenshotLayout: "phone",
+    screenshotWidth: 1086,
+    screenshotHeight: 1448,
+  },
+  {
     slug: "coming-soon",
     name: "敬请期待",
     tagline: "下一个产品正在打磨中，马上见。",
@@ -390,12 +444,17 @@ export const products: Product[] = [
   },
 ];
 
+export function isPublishedProduct(product: Product) {
+  return !product.comingSoon && Boolean(product.path || product.externalUrl);
+}
+
+export const publishedProducts = products.filter(isPublishedProduct);
+
 export function getProductBySlug(slug: string) {
   return products.find((item) => item.slug === slug);
 }
 
-export const featuredProductSlugs = ["travel-route", "altitudeshot", "echosnap"] as const;
-export const moreProductSlugs = ["colpix", "mycelia", "flowdo"] as const;
+export const featuredProductSlugs = ["travel-route", "altitudeshot", "mycelia", "colpix"] as const;
 
 export function getProductByPath(path: string) {
   return products.find((item) => item.path === path);

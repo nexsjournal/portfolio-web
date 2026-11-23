@@ -13,21 +13,24 @@ type FolderNoteCopy = {
   kicker: string;
   title: string;
   body: string;
-  tag: string;
 };
 
-const folderNotes: Record<"colpix" | "mycelia" | "flowdo", Record<SiteLang, FolderNoteCopy>> = {
+const folderNotes: Record<"travel-route" | "mycelia" | "colpix" | "altitudeshot", Record<SiteLang, FolderNoteCopy>> = {
+  "travel-route": {
+    zh: { kicker: "ON THE ROAD", title: "把路线变成一段视频", body: "添加地点、选择交通方式\n导出你的旅行故事。" },
+    en: { kicker: "ON THE ROAD", title: "Turn a route into a video", body: "Add stops, pick a transport mode,\nexport your travel story." },
+  },
+  altitudeshot: {
+    zh: { kicker: "HIGHER GROUND", title: "把到达这一刻留下", body: "实时海拔、坐标与气压\n合成一张登顶卡片。" },
+    en: { kicker: "HIGHER GROUND", title: "Keep the moment you arrive", body: "Live altitude, coordinates, pressure.\nOne summit card to keep." },
+  },
   colpix: {
-    zh: { kicker: "DRAG IT IN", title: "拖一下，灵感归你", body: "网页图片、截图与影音素材\n都留在自己的文件夹。", tag: "06" },
-    en: { kicker: "DRAG IT IN", title: "Drag it in, keep it yours", body: "Web images, screenshots, and media.\nAll in your own folder.", tag: "06" },
+    zh: { kicker: "DRAG IT IN", title: "拖一下，灵感归你", body: "网页图片、截图与影音素材\n都留在自己的文件夹。" },
+    en: { kicker: "DRAG IT IN", title: "Drag it in, keep it yours", body: "Web images, screenshots, and media.\nAll in your own folder." },
   },
   mycelia: {
-    zh: { kicker: "ONE LOCAL DESK", title: "九个平台，一处管理", body: "选题、创作、排期、数据\n每一步都接得上。", tag: "07" },
-    en: { kicker: "ONE LOCAL DESK", title: "Nine platforms, one desk", body: "Ideas, writing, scheduling, data.\nEvery step stays connected.", tag: "07" },
-  },
-  flowdo: {
-    zh: { kicker: "CAPTURE FIRST", title: "先记下来，再整理", body: "菜单栏、快捷键、五个标签页\n把今天过清楚一点。", tag: "04" },
-    en: { kicker: "CAPTURE FIRST", title: "Capture first, organize later", body: "Menu bar, shortcuts, five tabs.\nA clearer way through today.", tag: "04" },
+    zh: { kicker: "ONE LOCAL DESK", title: "九个平台，一处管理", body: "选题、创作、排期、数据\n每一步都接得上。" },
+    en: { kicker: "ONE LOCAL DESK", title: "Nine platforms, one desk", body: "Ideas, writing, scheduling, data.\nEvery step stays connected." },
   },
 };
 
@@ -39,35 +42,48 @@ function getProjectHref(product: Product) {
 
 export function PortfolioProjects({ lang, products }: { lang: SiteLang; products: Product[] }) {
   const copy = portfolioCopy[lang];
+  const travelRoute = products.find((product) => product.slug === "travel-route");
+  const altitude = products.find((product) => product.slug === "altitudeshot");
   const colpix = products.find((product) => product.slug === "colpix");
   const mycelia = products.find((product) => product.slug === "mycelia");
-  const flowdo = products.find((product) => product.slug === "flowdo");
 
-  if (!colpix?.screenshots || !mycelia?.screenshots || !flowdo?.screenshots) return null;
+  if (!travelRoute?.screenshots || !altitude?.screenshots || !colpix?.screenshots || !mycelia?.screenshots) return null;
 
   return (
-    <section id="projects" className="portfolio-section portfolio-projects" aria-labelledby="projects-title">
+    <section id="products" className="portfolio-section portfolio-projects" aria-labelledby="work-title">
       <div className="portfolio-heading">
-        <h2 id="projects-title">{copy.projectsTitle}</h2>
+        <h2 id="work-title">{copy.workTitle}</h2>
         <Link href="/projects" className="portfolio-projects-more">
           {copy.viewAllProjects} <ArrowUpRight size={15} aria-hidden />
         </Link>
       </div>
 
       <div className="project-board">
-        <Image className="project-board-paper" src="/assets/hero/paper-texture.webp" alt="" width={1400} height={933} sizes="(max-width: 900px) 100vw, 868px" />
+        <Image className="project-board-paper" src="/assets/hero/paper-texture.webp" alt="" width={1400} height={933} sizes="(max-width: 900px) 100vw, 900px" />
 
-        <Link href={getProjectHref(colpix)} className="board-card board-card-colpix" aria-label={`${colpix.name} · ${copy.openCase}`}>
-          <FolderShell />
-          <FolderNote copy={folderNotes.colpix[lang]} lang={lang} />
-          <span className="board-folder-face">
-            <span className="board-colpix-shot">
-              <Image src={colpix.screenshots[0]} alt="" width={1600} height={955} sizes="(max-width: 670px) 42vw, 225px" />
+        <div className="board-phone-stack">
+          <Link href={getProjectHref(travelRoute)} className="board-card board-card-travel" aria-label={`${travelRoute.name} · ${copy.openCase}`}>
+            <FolderShell />
+            <FolderNote copy={folderNotes["travel-route"][lang]} lang={lang} />
+            <span className="board-folder-face">
+              <span className="board-travel-shot">
+                <Image src={travelRoute.screenshots[0]} alt="" width={1284} height={2778} sizes="(max-width: 670px) 82vw, 200px" />
+              </span>
             </span>
-            <span className="board-colpix-swatches" aria-hidden><i /><i /><i /><i /></span>
-          </span>
-          <span className="board-open">{copy.openCase} <ArrowUpRight size={14} aria-hidden /></span>
-        </Link>
+            <span className="board-open">{copy.openCase} <ArrowUpRight size={14} aria-hidden /></span>
+          </Link>
+
+          <Link href={getProjectHref(altitude)} className="board-card board-card-altitude" aria-label={`${altitude.name} · ${copy.openCase}`}>
+            <FolderShell />
+            <FolderNote copy={folderNotes.altitudeshot[lang]} lang={lang} />
+            <span className="board-folder-face">
+              <span className="board-altitude-shot">
+                <Image src={altitude.screenshots[0]} alt="" width={1284} height={2778} sizes="(max-width: 670px) 82vw, 200px" />
+              </span>
+            </span>
+            <span className="board-open">{copy.openCase} <ArrowUpRight size={14} aria-hidden /></span>
+          </Link>
+        </div>
 
         <Link href={getProjectHref(mycelia)} className="board-card board-card-mycelia" aria-label={`${mycelia.name} · ${copy.openCase}`}>
           <FolderShell />
@@ -81,13 +97,14 @@ export function PortfolioProjects({ lang, products }: { lang: SiteLang; products
           <span className="board-open">{copy.openCase} <ArrowUpRight size={14} aria-hidden /></span>
         </Link>
 
-        <Link href={getProjectHref(flowdo)} className="board-card board-card-flowdo" aria-label={`${flowdo.name} · ${copy.openCase}`}>
+        <Link href={getProjectHref(colpix)} className="board-card board-card-colpix" aria-label={`${colpix.name} · ${copy.openCase}`}>
           <FolderShell />
-          <FolderNote copy={folderNotes.flowdo[lang]} lang={lang} />
+          <FolderNote copy={folderNotes.colpix[lang]} lang={lang} />
           <span className="board-folder-face">
-            <span className="board-flowdo-shot">
-              <Image src="/assets/products/flowdo/flowdo-01.jpg" alt="" width={2438} height={1454} sizes="(max-width: 670px) 82vw, 260px" />
+            <span className="board-colpix-shot">
+              <Image src={colpix.screenshots[0]} alt="" width={1600} height={955} sizes="(max-width: 670px) 42vw, 225px" />
             </span>
+            <span className="board-colpix-swatches" aria-hidden><i /><i /><i /><i /></span>
           </span>
           <span className="board-open">{copy.openCase} <ArrowUpRight size={14} aria-hidden /></span>
         </Link>
@@ -115,7 +132,6 @@ function FolderNote({ copy, lang }: { copy: FolderNoteCopy; lang: SiteLang }) {
       <span className="board-folder-peek-kicker">{copy.kicker}</span>
       <strong>{copy.title}</strong>
       <em>{copy.body}</em>
-      <span className="board-folder-peek-tag">{copy.tag}</span>
     </span>
   );
 }

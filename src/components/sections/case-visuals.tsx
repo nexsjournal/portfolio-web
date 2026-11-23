@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { CSSProperties } from "react";
 
 import type { CaseChapter } from "@/content/case-studies";
@@ -20,6 +21,7 @@ const accents: Record<string, string> = {
   "aray-studio": "#1e8fb3",
   colpix: "#24c98b",
   mycelia: "#ef8b3c",
+  "folovibe-key": "#24c98b",
 };
 
 const sceneTags: Record<string, Record<string, { zh: string; en: string }>> = {
@@ -65,6 +67,12 @@ const sceneTags: Record<string, Record<string, { zh: string; en: string }>> = {
     local: { zh: "准备可以自动，发布必须可见", en: "Prepare automatically, publish visibly" },
     overview: { zh: "九个平台，一处管理", en: "Nine platforms, one desk" },
   },
+  "folovibe-key": {
+    voice: { zh: "按住说话，松开输入", en: "Hold to talk, release to input" },
+    agent: { zh: "连接 Agent 会话", en: "Agent sessions" },
+    captions: { zh: "实时字幕与翻译", en: "Live captions & translation" },
+    usage: { zh: "用量与额度一目了然", en: "Usage at a glance" },
+  },
 };
 
 function text(lang: Lang, zh: string, en: string) {
@@ -92,6 +100,7 @@ export function CaseVisual({ chapter, product, lang }: { chapter: CaseChapter; p
         {product.slug === "aray-studio" ? <ARayScene chapter={chapter} lang={lang} /> : null}
         {product.slug === "colpix" ? <ColpixScene chapter={chapter} lang={lang} /> : null}
         {product.slug === "mycelia" ? <MyceliaScene chapter={chapter} lang={lang} /> : null}
+        {product.slug === "folovibe-key" ? <FoloVibeScene chapter={chapter} product={product} /> : null}
       </div>
       <span className="cs-tag">{text(lang, tag.zh, tag.en)}</span>
     </div>
@@ -1074,6 +1083,35 @@ function MyceliaOverview({ lang }: { lang: Lang }) {
         <path className="cs-my-chart-line" d="M8 97 52 92 95 82 137 87 181 66 224 71 267 54 310 60 353 33 411 24" pathLength={1} />
         <path className="cs-my-chart-fill" d="M8 97 52 92 95 82 137 87 181 66 224 71 267 54 310 60 353 33 411 24V118H8Z" />
       </svg>
+    </div>
+  );
+}
+
+function FoloVibeScene({ chapter, product }: { chapter: CaseChapter; product: Product }) {
+  const shots = product.screenshots ?? [];
+  const main = shots[chapter.shots[0] ?? 0];
+  const side = shots[chapter.shots[1] ?? 1] ?? main;
+  if (!main) return null;
+
+  const sticker = chapter.id === "agent" || chapter.id === "captions"
+    ? "/assets/hero/project-stickers/folovibe-translate.png"
+    : "/assets/hero/project-stickers/folovibe-voice.png";
+  const screenCopy: Record<string, string> = {
+    voice: "USB\n> READY_\nHOLD OK TO TALK\nTIME // 23:41",
+    agent: "SWITCH APP\nGhostty\nChrome\nXcode\nFinder\nMail",
+    captions: "LIVE\nego lite\n中文 ↔ English\nCC",
+    usage: "CODEX\nTODAY 43,051,522\n5H LEFT 63%\nWEEK LEFT 7%",
+  };
+
+  return (
+    <div className="cs-fv-scene">
+      <span className="cs-fv-glow" aria-hidden />
+      {side ? (
+        <Image className="cs-fv-poster is-side" src={side} alt="" width={1086} height={1448} sizes="(max-width: 760px) 40vw, 220px" />
+      ) : null}
+      <Image className="cs-fv-poster is-main" src={main} alt="" width={1086} height={1448} sizes="(max-width: 760px) 52vw, 280px" />
+      <Image className="cs-fv-sticker" src={sticker} alt="" width={220} height={220} />
+      <span className="cs-fv-screen" lang="en">{screenCopy[chapter.id] ?? "USB\n> READY_"}</span>
     </div>
   );
 }

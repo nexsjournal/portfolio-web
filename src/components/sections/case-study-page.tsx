@@ -64,7 +64,7 @@ function normalizeOrigin(value: string | null): CaseOrigin | null {
 
 function getBackHref(origin: CaseOrigin | null) {
   if (origin === "index") return "/projects";
-  if (origin === "projects") return "/#projects";
+  if (origin === "projects") return "/#products";
   return "/";
 }
 
@@ -102,6 +102,10 @@ const caseDecor: Record<string, { color: string; icons: KubaiIconComponent[] }> 
   mycelia: {
     color: "#ef8b3c",
     icons: [CalendarDays, NotebookPen, Bookmark, Monitor, Compass, Sparkles],
+  },
+  "folovibe-key": {
+    color: "#24c98b",
+    icons: [Record, Keyboard, Subtitles, Monitor, Sparkles],
   },
 };
 
@@ -141,7 +145,7 @@ function randomOrbit(count: number, compact = false): OrbitPlacement[] {
   });
 }
 
-export function CaseStudyPage({ study }: { study: CaseStudy }) {
+export function CaseStudyPage({ study, testCheckoutUrl }: { study: CaseStudy; testCheckoutUrl?: string }) {
   const { lang } = useSiteLanguage();
   const product = getProductBySlug(study.productSlug);
   const next = getCaseStudy(study.next);
@@ -236,6 +240,11 @@ export function CaseStudyPage({ study }: { study: CaseStudy }) {
             {appStoreUrl ? (
               <a className="case-try" href={appStoreUrl} target="_blank" rel="noreferrer">
                 {appLinkLabel} <ArrowUpRight size={14} aria-hidden />
+              </a>
+            ) : null}
+            {testCheckoutUrl ? (
+              <a className="case-try" href={testCheckoutUrl} target="_blank" rel="noreferrer">
+                {lang === "zh" ? "测试购买 · 不扣款" : "Test purchase · No charge"} <ArrowUpRight size={14} aria-hidden />
               </a>
             ) : null}
           </>

@@ -654,6 +654,97 @@ export const caseStudies: CaseStudy[] = [
     ],
     next: "rephoto",
   },
+  {
+    slug: "folovibe-key",
+    productSlug: "folovibe-key",
+    seoTitle: "AI Passport 语音指令助手",
+    title: {
+      zh: "FoloVibe Key，\n把说话变成输入",
+      en: "FoloVibe Key,\nmake talking the input",
+    },
+    subtitle: {
+      zh: "把 AI Passport 变成 Mac 的语音搭档：按住说话，松开写入当前输入区，连接 Agent、字幕、翻译与额度。",
+      en: "Turn AI Passport into a voice companion for Mac: hold to talk, release into the active field, and connect agents, captions, translation, and usage.",
+    },
+    intro: {
+      zh: "FoloVibe Key 是我为 AI Passport 设计的语音工作流，让设备成为 Mac 的输入层，而不是另一个需要切换的 App。",
+      en: "FoloVibe Key is the voice workflow I designed for AI Passport: the device becomes an input layer for Mac, not another app to switch into.",
+    },
+    meta: {
+      role: { zh: "产品、UX 与固件", en: "Product, UX & firmware" },
+      platform: "AI Passport · macOS",
+      year: "2026",
+    },
+    chapters: [
+      {
+        id: "voice",
+        no: "01",
+        title: { zh: "按住说话，松开输入", en: "Hold to talk, release to input" },
+        body: {
+          zh: "按住 OK 说话，App 会自动找到当前评论、消息或搜索框；松开后写入输入区，短按上键发送。输入这件事不再需要在键盘和窗口之间来回切换。",
+          en: "Hold OK to talk and the app finds the active comment, message, or search field; release to insert, then tap Up to send. Input no longer means jumping between keyboard and window.",
+        },
+        aside: { zh: "The input", en: "The input" },
+        tone: "mint",
+        visual: "flow",
+        shots: [0, 2],
+        steps: [
+          { zh: "按住 OK", en: "Hold OK" },
+          { zh: "定位输入框", en: "Find field" },
+          { zh: "松开写入", en: "Insert" },
+        ],
+        highlight: { zh: "说话就是输入。", en: "Talking is the input." },
+      },
+      {
+        id: "agent",
+        no: "02",
+        title: { zh: "任务完成，设备给一个对号", en: "A checkmark when the task lands" },
+        body: {
+          zh: "连接 Codex、Claude Code、DeepSeek、ZCode、WorkBuddy 等 Agent 后，任务完成时设备会亮起对号，并把结果和下一步整理成可翻页摘要。",
+          en: "Connect Codex, Claude Code, DeepSeek, ZCode, WorkBuddy, and other agents. When a task finishes, the device lights a checkmark and turns the result and next step into a paginated summary.",
+        },
+        aside: { zh: "The agents", en: "The agents" },
+        tone: "blue",
+        visual: "detail",
+        shots: [3, 1],
+        highlight: { zh: "从等待，到可翻页的结果。", en: "From waiting to a result you can page through." },
+      },
+      {
+        id: "captions",
+        no: "03",
+        title: { zh: "听见什么，就显示什么", en: "Hear it, see it" },
+        body: {
+          zh: "把所选应用的声音实时转成字幕，可在设备上切换中英翻译。开会、看视频或听播客时，字幕跟着声音走。",
+          en: "Turn the selected app's audio into live captions, with Chinese/English translation switchable on the device. In meetings, videos, or podcasts, captions follow the sound.",
+        },
+        aside: { zh: "The captions", en: "The captions" },
+        tone: "cream",
+        visual: "cards",
+        shots: [4, 2],
+        highlight: { zh: "中英双语，实时呈现。", en: "Chinese and English, live." },
+      },
+      {
+        id: "usage",
+        no: "04",
+        title: { zh: "额度和用量，不藏在设置里", en: "Usage and limits, not buried in settings" },
+        body: {
+          zh: "今日、本周、累计 Token 用量，5 小时额度、每周额度与重置时间都在设备上直接看到。开始任务之前，就知道今天还剩多少。",
+          en: "Today's, this week's, and total token usage, plus 5-hour limits, weekly limits, and reset times are visible on the device. You know what's left before you start.",
+        },
+        aside: { zh: "The limits", en: "The limits" },
+        tone: "pink",
+        visual: "shots",
+        shots: [1, 0],
+        highlight: { zh: "今天还剩多少，一眼看到。", en: "See what's left, at a glance." },
+      },
+    ],
+    principles: [
+      { title: { zh: "语音是输入层", en: "Voice is an input layer" }, body: { zh: "它应该进入现有工作流，而不是再开一个 App。", en: "It should enter the existing workflow, not open another app." } },
+      { title: { zh: "先让设备可用", en: "Make the device useful first" }, body: { zh: "输入、字幕、额度先做好，再谈更复杂的 Agent。", en: "Input, captions, and limits first; complex agents after." } },
+      { title: { zh: "状态在设备，结果在 Mac", en: "State on device, results on Mac" }, body: { zh: "设备负责即时反馈，长内容留在电脑上继续处理。", en: "The device gives instant feedback; long-form work stays on the Mac." } },
+    ],
+    next: "rephoto",
+  },
 ];
 
 export function getCaseStudyByProductSlug(slug: string) {

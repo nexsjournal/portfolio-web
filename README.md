@@ -28,6 +28,8 @@
 - 采用 [clone-website](https://github.com/JCodesMore/ai-website-cloner-template/blob/master/.agents/skills/clone-website/SKILL.md) 的「观察 → 重建 → 验证」流程，在原 Next.js 工程实现。对比了以资源镜像为主的 [Remake](https://github.com/rubenhassid1/remake) 和以设计令牌为主的 [Design Extract](https://github.com/Manavarya09/design-extract)，均未引入额外运行时。电脑外观和像素贴纸为生成素材；头像、产品截图、文案和链接来自 Lex Studio。
 - 首屏真人头像使用内置 imagegen 转为 Aqua 风格 3D 卡通素材，保留真人面部、眼镜和服装特征；Projects 卡片采用连续轮廓的文件夹框，鼠标悬停时纸片笔记从封面后抽出，移开后收回，内层内容统一裁切在文件夹范围内。
 - 首页 `/` 集中展示个人介绍、3 个精选作品、Projects 纸板区、About 相机卡和两段叠放式内容卡片；更多项目区展示可图、小菌丝和 FlowDo，入口分别进入 `/projects/*`。产品数据仍维护在 `src/content/products.ts`，案例文案维护在 `src/content/case-studies.ts`。
+- 首屏「我做的 App」标签与 CRT 屏幕产品切换都由 `src/content/products.ts` 的 `publishedProducts` 自动生成；产品只要有 `path` 或 `externalUrl`，新增后无需再修改组件列表。当前已包含 FoloVibe Key。
+- 首页末尾每日金句来自 `src/content/daily-quotes.ts` 的 366 条中英文文案，按上海日期每天轮换、同一年内不重复，不显示署名；桌面位置在感谢卡下方，移动端回到自然文档流。
 - Projects 纸板区的项目截图直接满铺在文件夹封面内，不再叠加项目名、平台等小字；FlowDo 与其他项目使用同样的满铺裁切。首页与 `/projects` 共用同一套拼贴尺寸和下移规则：手机 5 图/4 图分别约 20%/23%，截图整体下移并由卡片底边裁切。
 - 「关于我」「我怎么做产品」「联系我」合并为一组 `26rem` 等高圆角卡片，桌面端滚动时通过 sticky 依次向上叠放，上一张只露出 `14px` 顶边；卡片不添加外层投影，移动端和 `prefers-reduced-motion` 下恢复普通纵向排列。
 - 案例详情底部提供「上一件 / 下一件」双向浏览；桌面 App 预览使用 5px 深色外框，与手机预览保持一致的设备感。
@@ -38,7 +40,7 @@
 - 案例 Hero 使用 [Kubai Icons](https://icons.kubai.design/) 产品装饰图标，每页随机分布在文字安全区外，并支持鼠标拖拽后保持位置；真实界面预览使用循环轮播。
 - 标题、产品名与手写卡片使用本地字体「乐米春序晚星体 Light」，正文保留无衬线字体保证可读性；字体来源与版权说明见 `public/fonts/LICENSE-LemiChunXuWanXing.txt`。
 - 主要按钮参考 [michi-onl/aqua](https://github.com/michi-onl/aqua) 的 macOS Aqua 分层渐变与高光处理，用纯 CSS 实现蓝色凝胶按钮和银色胶囊按钮。
-- 案例返回按入口区分：首页精选回首页、更多项目回 `#projects`、全部项目回 `/projects`；案例顶部的「全部案例」统一进入 `/projects`。蓝色 Aqua 按钮使用白字和轻微投影，实时海拔计案例使用青绿色点缀与多组浅色章节底色。
+- 案例返回按入口区分：首页精选回首页、更多项目回 `#projects`、全部项目回 `/projects`；案例顶部的「全部案例」统一进入 `/projects`。蓝色 Aqua 按钮使用白字和轻微投影，实时海拔计案例使用青绿色点缀。
 - 新增 `/notes` 文章与记录区，内容来自 `content/notes/*.mdx`；支持文章、活动、视频、短记四种类型与标签筛选，详情页包含封面、原文链接和上一篇/下一篇。内容格式与公众号导入方式见 `content/notes/README.md`。
 - 公众号文章可通过 `npm run import:wechat -- "<文章链接>"` 导入：自动抓取标题、正文、发布时间与封面，下载正文图片，生成带 frontmatter 的 MDX，不需要在网站上二次排版。
 - 自定义 404 页面使用 `public/assets/404/lex-404.webp` 的 Aqua 像素风 IP 形象，配合“SIGNAL LOST”叙事、指南针与坐标标注，提供回首页、笔记和项目列表入口；明暗主题与移动端均已适配。

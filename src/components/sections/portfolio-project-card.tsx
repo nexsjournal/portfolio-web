@@ -18,6 +18,7 @@ const projectHighlights: Partial<Record<string, { zh: string; en: string; badge:
   "aray-studio": { zh: "录屏、剪辑、字幕与导出，在一个 Mac App 里做完。", en: "Record, edit, caption, and export in one Mac app.", badge: "One take, one app" },
   colpix: { zh: "网页图片、截图与影音素材，收进一个本地图库。", en: "Web images, screenshots, and media references in one local library.", badge: "Drag it in" },
   mycelia: { zh: "把九个平台的内容运营，收进一个本地工作台。", en: "Run nine-platform content operations from one local workspace.", badge: "One local desk" },
+  "folovibe-key": { zh: "按住说话，松开输入，把 AI Passport 变成 Mac 的语音助手。", en: "Hold to talk, release to input—AI Passport as a voice assistant for Mac.", badge: "Just talk" },
 };
 
 const projectStickers: Partial<Record<string, { left: string; right: string }>> = {
@@ -36,6 +37,10 @@ const projectStickers: Partial<Record<string, { left: string; right: string }>> 
   mycelia: {
     left: "/assets/hero/project-stickers/mycelia-left.png",
     right: "/assets/hero/project-stickers/mycelia-right.png",
+  },
+  "folovibe-key": {
+    left: "/assets/hero/project-stickers/folovibe-voice.png",
+    right: "/assets/hero/project-stickers/folovibe-translate.png",
   },
 };
 
@@ -161,14 +166,29 @@ export function PortfolioProjectCard({
   const imageHeight = product.screenshotHeight ?? 2778;
   const screenshots = product.screenshots ?? [];
   const cardShots = screenshots.filter((src): src is string => Boolean(src));
-  const collage = buildCollage(cardShots, screenshotLayout, product.slug);
+  const orderedShots = product.slug === "colpix" && cardShots.length > 1
+    ? [cardShots[1], cardShots[0], ...cardShots.slice(2)]
+    : cardShots;
+  const collage = buildCollage(orderedShots, screenshotLayout, product.slug);
+  const externalUrl = caseStudy ? undefined : product.externalUrl;
   const href = caseStudy
     ? `/projects/${caseStudy.slug}?from=${origin === "index" ? "index" : "home"}`
-    : "/projects";
+    : externalUrl ?? (product.path ? `/${product.path}` : "/projects");
+  const cursorLabel = externalUrl
+    ? (english ? product.actionLabelEn ?? product.actionLabel ?? portfolioCopy[lang].openCase : product.actionLabel ?? portfolioCopy[lang].openCase)
+    : portfolioCopy[lang].viewProject;
 
   return (
     <article className="portfolio-project" data-project={product.slug} data-layout={screenshotLayout} data-origin={origin} data-count={cardShots.length}>
-      <Link href={href} aria-labelledby={titleId} className="portfolio-project-link" onPointerEnter={trackProjectPointer} onPointerMove={trackProjectPointer}>
+      <Link
+        href={href}
+        aria-labelledby={titleId}
+        className="portfolio-project-link"
+        target={externalUrl ? "_blank" : undefined}
+        rel={externalUrl ? "noreferrer" : undefined}
+        onPointerEnter={trackProjectPointer}
+        onPointerMove={trackProjectPointer}
+      >
         <div className="portfolio-project-copy">
           <span className="portfolio-project-arrow" aria-hidden><ArrowUpRight size={21} /></span>
           <h3 id={titleId}>{title}</h3>
@@ -209,7 +229,7 @@ export function PortfolioProjectCard({
             </>
           ) : null}
         </div>
-        <span className="portfolio-project-cursor" aria-hidden>{portfolioCopy[lang].viewProject}</span>
+        <span className="portfolio-project-cursor" aria-hidden>{cursorLabel}</span>
       </Link>
     </article>
   );

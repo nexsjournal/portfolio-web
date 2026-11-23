@@ -34,7 +34,6 @@ export function PortfolioIntro({ lang, products }: { lang: SiteLang; products: P
           {lang === "zh" ? "，" : ". "}
           {copy.introBio}
         </p>
-        <p className="portfolio-intro-line"><span className="portfolio-intro-shine">{copy.motto}</span></p>
         <div className="portfolio-intro-line portfolio-intro-link-row">
           <span>{copy.introWork}</span>
           <ul className="portfolio-intro-apps">

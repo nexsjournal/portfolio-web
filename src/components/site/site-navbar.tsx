@@ -2,21 +2,26 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeft, Briefcase, House, Layers, Mail, Moon, NotebookPen, Sun, UserRound } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowLeft, House, Layers, Mail, Moon, NotebookPen, Sun, UserRound } from "lucide-react";
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 
 import { useSiteLanguage } from "@/context/site-language";
 import { useTheme } from "@/context/theme";
 import { portfolioCopy } from "@/i18n/portfolio-copy";
 
 const sections = [
-  { id: "top", href: "#top", label: "home", Icon: House },
-  { id: "products", href: "#products", label: "products", Icon: Briefcase },
-  { id: "projects", href: "/projects", label: "projects", Icon: Layers },
-  { id: "notes", href: "/notes", label: "notes", Icon: NotebookPen },
-  { id: "about", href: "#about", label: "about", Icon: UserRound },
-  { id: "contact", href: "#contact", label: "contact", Icon: Mail },
+  { id: "home", target: "top", href: "#top", label: "home", Icon: House },
+  { id: "projects", target: "products", href: "/projects", label: "projects", Icon: Layers },
+  { id: "notes", target: "notes-preview", href: "/notes", label: "notes", Icon: NotebookPen },
+  { id: "about", target: "about", href: "#about", label: "about", Icon: UserRound },
+  { id: "contact", target: "contact", href: "#contact", label: "contact", Icon: Mail },
 ] as const;
+
+function easeOutBack(t: number) {
+  const c1 = 1.15;
+  const c3 = c1 + 1;
+  return 1 + c3 * (t - 1) ** 3 + c1 * (t - 1) ** 2;
+}
 
 export function SiteNavbar() {
   const pathname = usePathname();
@@ -24,26 +29,55 @@ export function SiteNavbar() {
   const home = pathname === "/";
   const { lang, toggleLang } = useSiteLanguage();
   const { theme, toggleTheme } = useTheme();
-  const [activeSection, setActiveSection] = useState<string>("top");
+  const [activeSection, setActiveSection] = useState<string>("home");
+  const scrollFrame = useRef<number | null>(null);
   const copy = portfolioCopy[lang];
   const themeLabel = copy.theme[theme === "dark" ? "light" : "dark"];
 
   useEffect(() => {
     if (!home) return;
-    const targets = sections.map(({ id }) => document.getElementById(id));
+    const targets = sections.map((item) => ({ ...item, el: document.getElementById(item.target) }));
     const observer = new IntersectionObserver(() => {
       const cutoff = window.innerHeight * 0.45;
-      const contact = targets.at(-1)?.getBoundingClientRect();
-      const current = targets.findLast((section) => section && section.getBoundingClientRect().top <= cutoff);
-      setActiveSection(contact && contact.bottom <= window.innerHeight ? "contact" : current?.id ?? "top");
+      const contact = targets.find((item) => item.id === "contact")?.el;
+      const contactRect = contact?.getBoundingClientRect();
+      const current = targets.findLast((item) => item.el && item.el.getBoundingClientRect().top <= cutoff);
+      setActiveSection(contactRect && contactRect.bottom <= window.innerHeight ? "contact" : current?.id ?? "home");
     }, { threshold: [0, 0.25, 0.5, 0.75, 1] });
 
-    for (const section of targets) {
-      if (section) observer.observe(section);
+    for (const item of targets) {
+      if (item.el) observer.observe(item.el);
     }
 
     return () => observer.disconnect();
   }, [home]);
+
+  useEffect(() => () => {
+    if (scrollFrame.current) cancelAnimationFrame(scrollFrame.current);
+  }, []);
+
+  function scrollToSection(event: ReactMouseEvent<HTMLAnchorElement>, id: string, target: string) {
+    event.preventDefault();
+    setActiveSection(id);
+    const element = document.getElementById(target);
+    if (!element) return;
+
+    const start = window.scrollY;
+    const targetY = Math.max(0, element.getBoundingClientRect().top + start - 28);
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    if (scrollFrame.current) cancelAnimationFrame(scrollFrame.current);
+
+    let startedAt = 0;
+    const step = (now: number) => {
+      if (!startedAt) startedAt = now;
+      const progress = Math.min(1, (now - startedAt) / 1000);
+      const y = start + (targetY - start) * easeOutBack(progress);
+      window.scrollTo(0, Math.min(maxScroll, Math.max(0, y)));
+      scrollFrame.current = progress < 1 ? requestAnimationFrame(step) : null;
+    };
+
+    scrollFrame.current = requestAnimationFrame(step);
+  }
 
   if (caseRoute) return null;
 
@@ -51,7 +85,7 @@ export function SiteNavbar() {
     <>
       {pathname !== "/offer" ? <a className="portfolio-skip" href="#main-content">{copy.skip}</a> : null}
       <nav className={`portfolio-nav ${home ? "portfolio-dock" : "portfolio-bar"}`} aria-label={copy.navigation}>
-        {home ? sections.map(({ id, href, label, Icon }) => {
+        {home ? sections.map(({ id, target, href, label, Icon }) => {
           const content = (
             <>
               <span className="portfolio-nav-icon"><Icon size={20} aria-hidden /></span>
@@ -59,9 +93,9 @@ export function SiteNavbar() {
             </>
           );
           return href.startsWith("/") ? (
-            <Link key={id} href={href} aria-label={copy[label]}>{content}</Link>
+            <Link key={id} href={href} aria-label={copy[label]} aria-current={activeSection === id ? "location" : undefined} onClick={() => setActiveSection(id)}>{content}</Link>
           ) : (
-            <a key={id} href={href} onClick={() => setActiveSection(id)} aria-label={copy[label]} aria-current={activeSection === id ? "location" : undefined}>
+            <a key={id} href={href} onClick={(event) => scrollToSection(event, id, target)} aria-label={copy[label]} aria-current={activeSection === id ? "location" : undefined}>
               {content}
             </a>
           );

@@ -388,29 +388,6 @@ html:has(.portfolio-page) body {
   color: var(--portfolio-ink);
 }
 
-.portfolio-intro-shine {
-  position: relative;
-  overflow: clip;
-}
-
-.portfolio-intro-shine::after {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 2.75rem;
-  transform: translateX(-100%) skewX(-19deg);
-  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.7), transparent);
-  pointer-events: none;
-  content: "";
-}
-
-.portfolio-intro-shine:hover::after {
-  animation: portfolio-shine 760ms ease-out;
-}
-
-@keyframes portfolio-shine {
-  to { left: 100%; transform: translateX(100%) skewX(-19deg); }
-}
-
 .portfolio-intro-link-row {
   flex-wrap: wrap;
   gap: 0.25rem 0.5rem;
@@ -843,6 +820,28 @@ html:has(.portfolio-page) body {
 .portfolio-works {
   display: grid;
   gap: 1.25rem;
+}
+
+.portfolio-notes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+.portfolio-notes-grid .note-card {
+  height: 100%;
+}
+
+.portfolio-notes-grid .note-card h2 {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: clamp(1rem, 1.4vw, 1.12rem);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.portfolio-notes-grid .note-card p {
+  -webkit-line-clamp: 2;
 }
 
 .projects-index-hero {
@@ -1280,7 +1279,7 @@ html:has(.portfolio-page) body {
   position: relative;
   z-index: 2;
   isolation: isolate;
-  width: min(100%, 54.25rem);
+  width: 100%;
   aspect-ratio: 868 / 500;
   margin-inline: auto;
   border-radius: 24px;
@@ -1319,13 +1318,22 @@ html:has(.portfolio-page) body {
   transition: transform 420ms cubic-bezier(.2, .85, .3, 1.08);
 }
 
+.board-phone-stack {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.board-phone-stack .board-card {
+  pointer-events: auto;
+}
+
 .board-folder-back {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  filter: drop-shadow(0 15px 15px rgb(12 19 27 / .13)) drop-shadow(0 2px 3px rgb(12 19 27 / .08));
-  transition: filter 300ms ease;
 }
 
 .board-folder-body,
@@ -1358,9 +1366,7 @@ html:has(.portfolio-page) body {
   flex-direction: column;
   overflow: hidden;
   border-radius: 11px;
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / .42),
-    0 2px 5px rgb(31 56 72 / .12);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .42);
 }
 
 .board-folder-peek {
@@ -1422,30 +1428,16 @@ html:has(.portfolio-page) body {
   white-space: pre-line;
 }
 
-.board-folder-peek-tag {
-  position: absolute;
-  right: 12px;
-  bottom: 10px;
-  display: grid;
-  width: 27px;
-  height: 27px;
-  place-items: center;
-  transform: rotate(7deg);
-  border-radius: 50%;
-  background: #c8ef49;
-  box-shadow: 0 2px 5px rgb(12 19 27 / .14);
-  color: #263123;
-  font: 700 .55rem / 1 var(--portfolio-font);
-}
-
 .board-card:hover,
 .board-card:focus-visible {
   z-index: 7;
 }
 
-.board-card:hover .board-folder-back,
-.board-card:focus-visible .board-folder-back {
-  filter: drop-shadow(0 25px 23px rgb(12 19 27 / .18)) drop-shadow(0 3px 5px rgb(12 19 27 / .09));
+.board-card-travel:hover,
+.board-card-travel:focus-visible,
+.board-card-altitude:hover,
+.board-card-altitude:focus-visible {
+  z-index: auto;
 }
 
 .board-card-rephoto {
@@ -1486,18 +1478,37 @@ html:has(.portfolio-page) body {
 }
 
 .board-card-travel {
-  top: 8%;
-  right: 3%;
-  width: 40%;
-  height: 43%;
-  transform: rotate(4deg);
+  top: 9%;
+  left: 5.5%;
+  width: 19.5%;
+  height: 74%;
+  transform: rotate(-5deg);
 }
 
 .board-card-travel .board-folder-face {
-  background: #fff;
+  padding: 0;
+  background: #0b66e4;
 }
 
-.board-card-travel .board-folder-peek { --peek-rotate: 2.5deg; }
+.board-card-travel .board-folder-peek { --peek-rotate: -2deg; }
+
+.board-travel-shot {
+  display: block;
+  flex: 1;
+  padding: 0;
+  overflow: hidden;
+  background: #0b66e4;
+}
+
+.board-travel-shot img {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  object-fit: contain;
+  object-position: center;
+}
 
 .board-browser-bar {
   display: flex;
@@ -1571,21 +1582,43 @@ html:has(.portfolio-page) body {
 }
 
 .board-card-altitude {
-  bottom: 4%;
-  left: 20%;
-  width: 29%;
-  height: 44%;
-  transform: rotate(6deg);
+  top: 16%;
+  left: 20.5%;
+  width: 19.5%;
+  height: 68%;
+  transform: rotate(4deg);
 }
 
 .board-card-altitude .board-folder-face {
-  padding: 12px 12px 0;
-  background:
-    radial-gradient(circle at 20% 12%, rgb(255 255 255 / .8), transparent 40%),
-    #efe4d5;
+  padding: 0;
+  background: #bc98e0;
 }
 
-.board-card-altitude .board-folder-peek { --peek-rotate: -1.5deg; }
+.board-card-altitude .board-folder-peek { --peek-rotate: 2deg; }
+
+.board-card-travel .board-folder-peek,
+.board-card-altitude .board-folder-peek {
+  left: 10%;
+  width: 80%;
+}
+
+.board-altitude-shot {
+  display: block;
+  flex: 1;
+  padding: 0;
+  overflow: hidden;
+  background: #bc98e0;
+}
+
+.board-altitude-shot img {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  object-fit: cover;
+  object-position: top center;
+}
 
 .board-altitude-label {
   display: flex;
@@ -1601,21 +1634,6 @@ html:has(.portfolio-page) body {
   font-size: .86em;
   font-style: normal;
   letter-spacing: .02em;
-}
-
-.board-altitude-shot {
-  display: flex;
-  flex: 1;
-  align-items: flex-end;
-  justify-content: flex-end;
-  margin-top: 4%;
-}
-
-.board-altitude-shot img {
-  width: 54%;
-  height: auto;
-  border-radius: 10px 10px 0 0;
-  box-shadow: 0 4px 12px rgb(92 72 52 / .23);
 }
 
 .board-card-flowdo {
@@ -1852,7 +1870,7 @@ html:has(.portfolio-page) body {
 
 .board-deco {
   position: absolute;
-  z-index: 6;
+  z-index: 20;
   pointer-events: none;
   height: auto;
 }
@@ -1891,6 +1909,22 @@ html:has(.portfolio-page) body {
 
   .board-card-rephoto:is(:hover, :focus-visible) .board-folder-peek {
     transform: translate(10px, -96%) rotate(var(--peek-rotate));
+  }
+
+  .board-phone-stack:is(:hover, :focus-within) .board-card-travel {
+    transform: translate(-14px, -6px) rotate(-8deg);
+  }
+
+  .board-phone-stack:is(:hover, :focus-within) .board-card-altitude {
+    transform: translate(18px, 6px) rotate(8deg);
+  }
+
+  .board-card-travel:is(:hover, :focus-visible) .board-folder-peek {
+    transform: translate(-98%, 2%) rotate(-5deg);
+  }
+
+  .board-card-altitude:is(:hover, :focus-visible) .board-folder-peek {
+    transform: translate(98%, 2%) rotate(5deg);
   }
 
   .board-card:hover .board-open,
@@ -2100,14 +2134,14 @@ html:has(.portfolio-page) body {
 
 .portfolio-story-quote {
   position: fixed;
-  top: calc(100vh - 23rem);
+  top: calc(100vh - 21rem);
   left: 50%;
   z-index: 0;
   display: grid;
   justify-items: center;
   align-content: center;
   gap: 0.55rem;
-  width: min(calc(100vw - 4rem), 38rem);
+  width: min(calc(100vw - 4rem), 44rem);
   min-height: 7rem;
   margin: 0;
   padding: 0.75rem 1rem;
@@ -2133,11 +2167,6 @@ html:has(.portfolio-page) body {
     0 4px 7px rgb(52 43 30 / .14);
   -webkit-text-stroke: 0.6px rgb(84 72 54 / .38);
   text-wrap: balance;
-}
-
-.portfolio-story-quote figcaption {
-  color: var(--portfolio-muted);
-  font: 300 0.95rem / 1 var(--portfolio-hand);
 }
 
 .theme-dark .portfolio-story-quote blockquote {
@@ -2254,24 +2283,39 @@ html:has(.portfolio-page) body {
 .portfolio-contact-scenes {
   position: absolute;
   inset: 0;
+  z-index: 2;
   overflow: hidden;
   pointer-events: none;
 }
 
 .portfolio-contact-scene {
   position: absolute;
+  z-index: 1;
   width: var(--scene-width, 23%);
   aspect-ratio: var(--scene-ratio, 1.65);
   overflow: hidden;
   border: 4px solid color-mix(in srgb, var(--portfolio-panel) 94%, var(--portfolio-line));
   border-radius: 15px;
   box-shadow: 0 8px 18px rgb(12 19 27 / .17), 0 0 0 1px var(--portfolio-line);
-  transform: rotate(var(--scene-angle));
+  cursor: grab;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  will-change: transform;
+  transform: translate3d(var(--drag-x, 0px), var(--drag-y, 0px), 0) rotate(var(--scene-angle));
+  transition: box-shadow 180ms ease;
+}
+
+.portfolio-contact-scene.is-dragging {
+  z-index: 12;
+  cursor: grabbing;
+  box-shadow: 0 20px 36px rgb(12 19 27 / .28), 0 0 0 1px var(--portfolio-line);
 }
 
 .portfolio-contact-scene img {
   object-fit: cover;
   object-position: var(--scene-focus, center);
+  -webkit-user-drag: none;
 }
 
 .portfolio-contact-scene:nth-child(1) {
@@ -2331,45 +2375,48 @@ html:has(.portfolio-page) body {
   margin-top: 0.5rem;
 }
 
-.portfolio-social-cluster {
-  display: inline-flex;
+.portfolio-contact-socials {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  padding: 0.2rem;
-  border: 1px solid color-mix(in srgb, var(--portfolio-line) 82%, transparent);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--portfolio-ink) 3.5%, transparent);
+  gap: 0.4rem;
 }
 
-.portfolio-social-cluster > a {
+.portfolio-contact-socials > a {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  min-height: 36px;
-  padding: 0 0.6rem;
+  min-height: 40px;
+  padding: 0 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--portfolio-line) 82%, transparent);
   border-radius: 999px;
-  color: var(--portfolio-muted);
+  background: color-mix(in srgb, var(--portfolio-ink) 3.5%, transparent);
+  color: var(--portfolio-ink);
   font-size: 0.8rem;
+  font-weight: 560;
   white-space: nowrap;
   transition:
     background-color 180ms ease,
-    color 180ms ease;
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
 }
 
-.portfolio-social-cluster > a:hover {
+.portfolio-contact-socials > a:hover {
+  border-color: color-mix(in srgb, var(--portfolio-accent) 38%, var(--portfolio-line));
   background: color-mix(in srgb, var(--portfolio-ink) 6%, transparent);
-  color: var(--portfolio-ink);
+  color: var(--portfolio-accent);
+  transform: translateY(-1px);
   text-decoration: none;
 }
 
-.portfolio-social-cluster .portfolio-contact-icon {
-  width: 18px;
-  height: 18px;
+.portfolio-contact-socials > a svg {
+  color: color-mix(in srgb, var(--portfolio-ink) 35%, transparent);
 }
 
-.portfolio-social-divider {
-  width: 1px;
-  height: 1rem;
-  background: color-mix(in srgb, var(--portfolio-line) 88%, transparent);
+.portfolio-contact-socials .portfolio-contact-icon {
+  width: 17px;
+  height: 17px;
 }
 
 .portfolio-contact-links > a:not(.portfolio-action),
@@ -2397,8 +2444,12 @@ html:has(.portfolio-page) body {
   object-fit: contain;
 }
 
-.theme-dark .portfolio-contact-icon.is-github {
+.theme-dark .portfolio-contact-icon.is-mono {
   filter: invert(1);
+}
+
+.theme-dark .portfolio-contact-icon.is-douyin {
+  filter: brightness(0) invert(1);
 }
 
 .portfolio-thanks-card {
@@ -3643,7 +3694,7 @@ body.portfolio-camera-open {
     left: auto;
     width: auto;
     height: auto;
-    margin: 2rem auto 0;
+    margin: 2.75rem auto 0;
     padding: 1rem;
     opacity: 1;
     transform: none;
@@ -3759,11 +3810,11 @@ body.portfolio-camera-open {
 }
 
 .board-card-colpix {
-  top: 6%;
-  left: 4%;
-  width: 42%;
-  height: 44%;
-  transform: rotate(-5deg);
+  right: 16%;
+  bottom: 3.5%;
+  width: 41%;
+  height: 43%;
+  transform: rotate(-2deg);
 }
 
 .board-card-colpix .board-folder-face {
@@ -3814,10 +3865,10 @@ body.portfolio-camera-open {
 .board-colpix-swatches i:nth-child(4) { background: #6d8cff; }
 
 .board-card-mycelia {
-  top: 7%;
-  right: 3%;
-  width: 47%;
-  height: 45%;
+  top: 3.5%;
+  right: 12%;
+  width: 41%;
+  height: 43%;
   transform: rotate(3deg);
 }
 
@@ -3871,15 +3922,6 @@ body.portfolio-camera-open {
 
 .board-mycelia-metrics i:nth-child(2) { background: #d26c4c; }
 .board-mycelia-metrics i:nth-child(3) { background: #5b4a77; }
-
-.board-card-flowdo {
-  top: auto;
-  bottom: 4%;
-  left: 13%;
-  width: 38%;
-  height: 39%;
-  transform: rotate(-2deg);
-}
 
 @media (max-width: 670px) {
   .portfolio-intro {
@@ -3945,6 +3987,10 @@ body.portfolio-camera-open {
     gap: 0.75rem;
   }
 
+  .portfolio-notes-grid {
+    grid-template-columns: 1fr;
+  }
+
   .project-board {
     display: grid;
     gap: 14px;
@@ -3955,6 +4001,15 @@ body.portfolio-camera-open {
 
   .project-board-paper {
     border-radius: 20px;
+  }
+
+  .board-phone-stack {
+    position: relative;
+    inset: auto;
+    z-index: auto;
+    display: grid;
+    gap: 14px;
+    pointer-events: auto;
   }
 
   .board-card {
@@ -4217,6 +4272,21 @@ body.portfolio-camera-open {
     display: none;
   }
 
+  .board-card-travel {
+    min-height: 340px;
+    transform: rotate(-1.5deg);
+  }
+
+  .board-card-altitude {
+    min-height: 320px;
+    transform: rotate(1deg);
+  }
+
+  .board-travel-shot img {
+    object-fit: cover;
+    object-position: top center;
+  }
+
   .board-card-colpix {
     min-height: 230px;
     transform: rotate(-1.5deg);
@@ -4227,8 +4297,4 @@ body.portfolio-camera-open {
     transform: rotate(1deg);
   }
 
-  .board-card-flowdo {
-    min-height: 245px;
-    transform: rotate(-1deg);
-  }
 }

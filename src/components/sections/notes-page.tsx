@@ -49,7 +49,7 @@ export function NotesPage({ notes }: { notes: NoteSummary[] }) {
   return (
     <>
       <a className="portfolio-skip" href="#main-content">{lang === "zh" ? "跳到正文" : "Skip to content"}</a>
-      <SiteChrome backHref="/#projects" backLabel={lang === "zh" ? "返回首页" : "Back home"} />
+      <SiteChrome backHref="/#products" backLabel={lang === "zh" ? "返回首页" : "Back home"} />
       <main id="main-content" className="portfolio-page portfolio-wrap notes-index" tabIndex={-1}>
         <header className="notes-index-hero">
           <p className="projects-index-kicker">{copy.kicker}</p>
