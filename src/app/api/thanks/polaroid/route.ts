@@ -8,6 +8,7 @@ import {
   generatePolaroidPhoto,
   resolvePolaroidProvider,
 } from "@/lib/polaroid";
+import { getWorkersAiQuotaResetAt } from "@/lib/cloudflare-usage";
 import { savePolaroidPhoto, savePolaroidQuotaStatus } from "@/lib/polaroid-gallery";
 
 export const runtime = "nodejs";
@@ -109,12 +110,15 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     if (error instanceof PolaroidQuotaError) {
-      const now = new Date();
-      const reset = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1);
-      const retryAfter = Math.max(60, Math.ceil((reset - now.getTime()) / 1000));
+      const now = Date.now();
+      const analyticsResetAt = await getWorkersAiQuotaResetAt(now).catch(() => null);
+      const reset = analyticsResetAt && analyticsResetAt > now
+        ? analyticsResetAt
+        : Date.UTC(new Date(now).getUTCFullYear(), new Date(now).getUTCMonth(), new Date(now).getUTCDate() + 1);
+      const retryAfter = Math.max(60, Math.ceil((reset - now) / 1000));
       await savePolaroidQuotaStatus(reset).catch(() => undefined);
       return NextResponse.json(
-        { error: "今天额度用完了，08:00 后再来。", code: "quota_exhausted", resetAt: reset },
+        { error: "今天额度用完了，请稍后再来。", code: "quota_exhausted", resetAt: reset },
         { status: 429, headers: { "retry-after": String(retryAfter), "cache-control": "no-store" } },
       );
     }

@@ -3192,12 +3192,74 @@ html:has(.portfolio-page) body {
   display: flex;
   align-items: flex-start;
   gap: .65rem;
-  margin-top: .8rem;
+  margin-top: 0;
   padding: .65rem .75rem;
   border: 1px solid color-mix(in srgb, var(--portfolio-line) 76%, transparent);
   border-radius: 12px;
   background: rgb(255 255 255 / .55);
   cursor: pointer;
+}
+
+.portfolio-camera-source-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, .85fr);
+  align-items: stretch;
+  gap: .6rem;
+  margin-top: .8rem;
+}
+
+.portfolio-camera-upload {
+  display: flex;
+  align-items: flex-start;
+  gap: .55rem;
+  padding: .65rem .75rem;
+  border: 1px dashed color-mix(in srgb, var(--portfolio-line) 88%, transparent);
+  border-radius: 12px;
+  background: rgb(255 255 255 / .4);
+  color: var(--portfolio-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease;
+}
+
+.portfolio-camera-upload:hover {
+  border-color: var(--portfolio-accent);
+  background: rgb(255 255 255 / .7);
+}
+
+.portfolio-camera-upload:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.portfolio-camera-upload > svg {
+  flex: none;
+  margin-top: .08rem;
+  color: var(--portfolio-muted);
+}
+
+.portfolio-camera-upload > span {
+  display: grid;
+  gap: .12rem;
+}
+
+.portfolio-camera-upload strong {
+  font-size: .78rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.portfolio-camera-upload small {
+  color: var(--portfolio-muted);
+  font-size: .68rem;
+  line-height: 1.4;
+}
+
+.portfolio-camera-file {
+  display: none;
 }
 
 .portfolio-camera-consent input {
@@ -3228,6 +3290,16 @@ html:has(.portfolio-page) body {
 .theme-dark .portfolio-camera-consent {
   border-color: color-mix(in srgb, var(--portfolio-line) 84%, transparent);
   background: rgb(255 255 255 / .05);
+}
+
+.theme-dark .portfolio-camera-upload {
+  border-color: color-mix(in srgb, var(--portfolio-line) 84%, transparent);
+  background: rgb(255 255 255 / .04);
+}
+
+.theme-dark .portfolio-camera-upload:hover {
+  border-color: var(--portfolio-accent);
+  background: rgb(255 255 255 / .09);
 }
 
 .portfolio-camera-actions {
@@ -4109,6 +4181,26 @@ body.portfolio-camera-open {
 
   .portfolio-camera-actions {
     gap: .5rem;
+  }
+
+  .portfolio-camera-source-row {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, .85fr);
+    gap: .5rem;
+  }
+
+  .portfolio-camera-consent,
+  .portfolio-camera-upload {
+    padding: .55rem .6rem;
+  }
+
+  .portfolio-camera-consent strong,
+  .portfolio-camera-upload strong {
+    font-size: .72rem;
+  }
+
+  .portfolio-camera-consent small,
+  .portfolio-camera-upload small {
+    font-size: .62rem;
   }
 
   .portfolio-camera-shutter {

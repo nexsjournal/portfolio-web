@@ -1,9 +1,9 @@
 "use client";
 
-import { X } from "lucide-react";
+import { ImagePlus, X } from "lucide-react";
 import NextImage from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type MouseEvent, type PointerEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type ChangeEvent, type CSSProperties, type MouseEvent, type PointerEvent } from "react";
 
 import type { SiteLang } from "@/context/site-language";
 import { portfolioCopy } from "@/i18n/portfolio-copy";
@@ -100,6 +100,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
   const [quotaNow, setQuotaNow] = useState(() => Date.now());
 
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const dragSession = useRef<DragSession | null>(null);
@@ -356,6 +357,49 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
     void developPhoto(blob, rawUrl, saveToGallery);
   }, [cameraState, closeCamera, copy.thanksCameraFailed, developPhoto, saveToGallery]);
 
+  const uploadPhoto = useCallback(async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      stopStream();
+      setCameraState("error");
+      setCameraError(copy.thanksUploadInvalid);
+      return;
+    }
+
+    if (file.size > 6 * 1024 * 1024) {
+      stopStream();
+      setCameraState("error");
+      setCameraError(copy.thanksUploadTooLarge);
+      return;
+    }
+
+    closeCamera();
+    abortRef.current?.abort();
+    if (rawUrlRef.current) URL.revokeObjectURL(rawUrlRef.current);
+    if (generatedUrlRef.current) {
+      URL.revokeObjectURL(generatedUrlRef.current);
+      generatedUrlRef.current = null;
+    }
+
+    const rawUrl = URL.createObjectURL(file);
+    rawUrlRef.current = rawUrl;
+    setPosition({ x: 0, y: 0 });
+    setShot({ id: ++shotId.current, rawUrl, phase: "developing", galleryRequested: saveToGallery });
+    void developPhoto(file, rawUrl, saveToGallery);
+  }, [
+    closeCamera,
+    copy.thanksUploadInvalid,
+    copy.thanksUploadTooLarge,
+    developPhoto,
+    saveToGallery,
+    stopStream,
+  ]);
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (file) void uploadPhoto(file);
+  };
+
   const shutter = () => {
     if (quotaActive || shot?.phase === "developing" || cameraState === "requesting" || cameraState === "capturing") return;
     void openCamera();
@@ -581,17 +625,38 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
             {cameraState === "ready" ? copy.thanksCameraReady : copy.thanksCameraHint}
           </p>
 
-          <label className="portfolio-camera-consent">
+          <div className="portfolio-camera-source-row">
+            <label className="portfolio-camera-consent">
+              <input
+                type="checkbox"
+                checked={saveToGallery}
+                onChange={(event) => setSaveToGallery(event.target.checked)}
+              />
+              <span>
+                <strong>{copy.thanksSaveToGallery}</strong>
+                <small>{copy.thanksSaveToGalleryHint}</small>
+              </span>
+            </label>
+            <button
+              type="button"
+              className="portfolio-camera-upload"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={cameraState === "capturing"}
+            >
+              <ImagePlus size={18} aria-hidden />
+              <span>
+                <strong>{copy.thanksUploadTitle}</strong>
+                <small>{copy.thanksUploadHint}</small>
+              </span>
+            </button>
             <input
-              type="checkbox"
-              checked={saveToGallery}
-              onChange={(event) => setSaveToGallery(event.target.checked)}
+              ref={fileInputRef}
+              className="portfolio-camera-file"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
             />
-            <span>
-              <strong>{copy.thanksSaveToGallery}</strong>
-              <small>{copy.thanksSaveToGalleryHint}</small>
-            </span>
-          </label>
+          </div>
 
           <div className="portfolio-camera-actions">
             <button type="button" className="portfolio-camera-cancel" onClick={closeCamera}>

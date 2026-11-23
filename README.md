@@ -61,7 +61,7 @@
 
 豆包 App 的每日免费生图额度不等于开放 API 额度；API 侧按量计费，免费额度主要用于首次接入测试。
 
-Cloudflare Token 在 Dashboard → My Profile → API Tokens 创建，权限选择 Workers AI；Account ID 在 Workers & Pages 概览页。火山方舟的 Key 在「API Key 管理」创建，并确认模型已开通。
+Cloudflare Token 在 Dashboard → My Profile → API Tokens 创建，权限选择 Workers AI Read/Edit + Account Analytics Read（后者用于读取 24 小时 Neuron 用量并计算准确的额度恢复时间）；Account ID 在 Workers & Pages 概览页。火山方舟的 Key 在「API Key 管理」创建，并确认模型已开通。
 
 Vercel Blob Hobby 包含 1GB 存储；超出后 Blob 会暂停到下一个 30 天周期，不会自动升级计费。照片量更大时建议升级 Pro，或改用 Cloudflare R2（每月 10GB 免费额度）。本地测试合影墙时需要在 `.env.local` 填入 `BLOB_READ_WRITE_TOKEN`。
 
