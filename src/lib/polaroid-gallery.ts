@@ -96,6 +96,7 @@ export async function savePolaroidQuotaStatus(resetAt: number) {
 
   await put(QUOTA_PATH, JSON.stringify({ resetAt } satisfies PolaroidQuotaStatus), {
     access: "public",
+    allowOverwrite: true,
     addRandomSuffix: false,
     contentType: "application/json",
     cacheControlMaxAge: 0,

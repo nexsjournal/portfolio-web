@@ -116,7 +116,12 @@ export async function POST(request: NextRequest) {
         ? analyticsResetAt
         : Date.UTC(new Date(now).getUTCFullYear(), new Date(now).getUTCMonth(), new Date(now).getUTCDate() + 1);
       const retryAfter = Math.max(60, Math.ceil((reset - now) / 1000));
-      await savePolaroidQuotaStatus(reset).catch(() => undefined);
+      await savePolaroidQuotaStatus(reset).catch((saveError) => {
+        console.error(
+          "[polaroid-quota]",
+          saveError instanceof Error ? saveError.message : "Unknown quota status error",
+        );
+      });
       return NextResponse.json(
         { error: "今天额度用完了，请稍后再来。", code: "quota_exhausted", resetAt: reset },
         { status: 429, headers: { "retry-after": String(retryAfter), "cache-control": "no-store" } },
