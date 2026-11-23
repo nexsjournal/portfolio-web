@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
     "/api/thanks/polaroid": ["./public/assets/hero/lex-aqua-avatar-v2.webp"],
   },
   images: {
+    qualities: [75, 90],
     remotePatterns: [
       { protocol: "https", hostname: "**.public.blob.vercel-storage.com" },
       { protocol: "https", hostname: "mmbiz.qpic.cn" },

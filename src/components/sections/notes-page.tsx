@@ -88,7 +88,20 @@ export function NotesPage({ notes }: { notes: NoteSummary[] }) {
 
         <section className="notes-list" aria-label={copy.title}>
           {visibleNotes.length === 0 ? (
-            <p className="notes-empty">{copy.empty}</p>
+            <div className="notes-empty">
+              <div className="notes-empty-art" aria-hidden="true">
+                <Image
+                  src="/assets/notes/empty-notes-v1.webp"
+                  alt=""
+                  width={900}
+                  height={900}
+                  sizes="(max-width: 720px) 64vw, 280px"
+                  quality={90}
+                  priority
+                />
+              </div>
+              <p>{copy.empty}</p>
+            </div>
           ) : (
             visibleNotes.map((note, index) => (
               <Link key={note.slug} href={`/notes/${note.slug}`} className="note-card">

@@ -4,27 +4,27 @@
   --case-max: 1240px;
 }
 
-.notes-loading-status {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding-top: calc(var(--case-chrome-h) + clamp(2.25rem, 5vw, 4rem));
+.route-loading {
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  padding: calc(var(--case-chrome-h) + 2rem) var(--portfolio-gutter) 4rem;
+}
+
+.site-loader {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
   color: var(--portfolio-muted);
-  font-size: 0.95rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
 }
 
-.notes-loading-status::before {
-  width: 14px;
-  height: 14px;
-  border: 2px solid var(--portfolio-line);
-  border-top-color: var(--portfolio-accent);
-  border-radius: 50%;
-  animation: notes-loading-spin 800ms linear infinite;
-  content: "";
-}
-
-@keyframes notes-loading-spin {
-  to { transform: rotate(360deg); }
+.site-loader l-helix {
+  display: block;
+  width: 52px;
+  height: 52px;
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--portfolio-accent) 26%, transparent));
 }
 
 .notes-index-hero {
@@ -274,8 +274,43 @@
 
 .notes-empty {
   grid-column: 1 / -1;
-  padding-block: 3rem;
+  display: grid;
+  min-height: clamp(20rem, 42vh, 30rem);
+  align-content: center;
+  justify-items: center;
+  padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 7vw, 5rem);
+  text-align: center;
+}
+
+.notes-empty-art {
+  position: relative;
+  display: grid;
+  width: clamp(15rem, 30vw, 20rem);
+  aspect-ratio: 1;
+  place-items: center;
+}
+
+.notes-empty-art::before {
+  position: absolute;
+  inset: 6%;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--portfolio-accent) 18%, transparent), transparent 68%);
+  filter: blur(12px);
+  content: "";
+}
+
+.notes-empty-art img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 20px color-mix(in srgb, var(--portfolio-accent) 12%, transparent));
+}
+
+.notes-empty p {
+  margin-top: 0.35rem;
   color: var(--portfolio-muted);
+  font-size: 0.9rem;
 }
 
 .notes-article {
