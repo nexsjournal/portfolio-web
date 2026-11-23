@@ -3,7 +3,7 @@ import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const GALLERY_PREFIX = "polaroids/";
-const QUOTA_PATH = "polaroids/.quota.json";
+const QUOTA_PATH = "polaroids/quota-status.json";
 const LOCAL_GALLERY_ROOT = path.join(process.cwd(), ".data", "polaroids");
 const LOCAL_GALLERY_URL = "/api/polaroids";
 
@@ -88,7 +88,7 @@ export async function savePolaroidQuotaStatus(resetAt: number) {
     if (!localGalleryEnabled()) return;
     await mkdir(LOCAL_GALLERY_ROOT, { recursive: true });
     await writeFile(
-      path.join(LOCAL_GALLERY_ROOT, ".quota.json"),
+      path.join(LOCAL_GALLERY_ROOT, "quota-status.json"),
       JSON.stringify({ resetAt } satisfies PolaroidQuotaStatus),
     );
     return;
@@ -107,7 +107,7 @@ export async function getPolaroidQuotaStatus(): Promise<PolaroidQuotaStatus | nu
   if (!blobConfigured()) {
     if (!localGalleryEnabled()) return null;
     try {
-      const raw = await readFile(path.join(LOCAL_GALLERY_ROOT, ".quota.json"), "utf8");
+      const raw = await readFile(path.join(LOCAL_GALLERY_ROOT, "quota-status.json"), "utf8");
       const parsed = JSON.parse(raw) as Partial<PolaroidQuotaStatus>;
       return typeof parsed.resetAt === "number" ? { resetAt: parsed.resetAt } : null;
     } catch {
