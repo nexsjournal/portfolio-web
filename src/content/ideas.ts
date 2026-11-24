@@ -24,13 +24,13 @@ export const ideas: Idea[] = [
     href: "https://github.com/nexsjournal/switchelp-macapp",
     zh: {
       title: "Switchelp",
-      category: "开源工具",
+      category: "开源工具 · macOS",
       summary: "在 Mac 版 Codex 里接入并切换第三方模型。",
       features: ["第三方模型", "Codex 原生切换"],
     },
     en: {
       title: "Switchelp",
-      category: "Open-source tool",
+      category: "Open-source tool · macOS",
       summary: "Switch third-party models in Codex.",
       features: ["Model providers", "Native picker"],
     },
