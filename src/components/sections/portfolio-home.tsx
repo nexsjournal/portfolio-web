@@ -13,6 +13,7 @@ import { notesCopy } from "@/i18n/notes-copy";
 import { portfolioCopy } from "@/i18n/portfolio-copy";
 import { ICP_BEIAN_URL, ICP_NUMBER, SITE_BRAND } from "@/lib/site-compliance";
 import { safeImageSrc } from "@/lib/media";
+import { PortfolioIdeas } from "./portfolio-ideas";
 import { PortfolioIntro } from "./portfolio-intro";
 import { PortfolioProjects } from "./portfolio-projects";
 import { ThankYouScroll } from "./thank-you-scroll";
@@ -245,6 +246,8 @@ export function PortfolioHome({ featuredNotes, dailyQuote }: { featuredNotes: Ho
           ))}
         </div>
       </section>
+
+      <PortfolioIdeas lang={lang} />
 
       <section id="about" className="portfolio-section portfolio-about-intro" aria-labelledby="about-title">
         <div className="portfolio-heading"><h2 id="about-title">{copy.aboutTitle}</h2></div>

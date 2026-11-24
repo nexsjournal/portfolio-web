@@ -2,17 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeft, House, Layers, Mail, Moon, NotebookPen, Sun, UserRound } from "lucide-react";
+import { ArrowLeft, FolderCode, House, Layers, Mail, Moon, NotebookPen, Sun, UserRound } from "lucide-react";
 import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 
 import { useSiteLanguage } from "@/context/site-language";
 import { useTheme } from "@/context/theme";
+import { ideasCopy } from "@/i18n/ideas-copy";
 import { portfolioCopy } from "@/i18n/portfolio-copy";
 
 const sections = [
   { id: "home", target: "top", href: "#top", label: "home", Icon: House },
   { id: "projects", target: "products", href: "/projects", label: "projects", Icon: Layers },
   { id: "notes", target: "notes-preview", href: "/notes", label: "notes", Icon: NotebookPen },
+  { id: "ideas", target: "ideas", href: "/ideas", label: "ideas", Icon: FolderCode },
   { id: "about", target: "about", href: "#about", label: "about", Icon: UserRound },
   { id: "contact", target: "contact", href: "#contact", label: "contact", Icon: Mail },
 ] as const;
@@ -25,7 +27,7 @@ function easeOutBack(t: number) {
 
 export function SiteNavbar() {
   const pathname = usePathname();
-  const caseRoute = pathname.startsWith("/projects") || pathname.startsWith("/work") || pathname.startsWith("/notes") || pathname.startsWith("/polaroids") || pathname.startsWith("/studio");
+  const caseRoute = pathname.startsWith("/projects") || pathname.startsWith("/work") || pathname.startsWith("/notes") || pathname.startsWith("/polaroids") || pathname.startsWith("/studio") || pathname === "/ideas";
   const home = pathname === "/";
   const { lang, toggleLang } = useSiteLanguage();
   const { theme, toggleTheme } = useTheme();
@@ -37,19 +39,27 @@ export function SiteNavbar() {
   useEffect(() => {
     if (!home) return;
     const targets = sections.map((item) => ({ ...item, el: document.getElementById(item.target) }));
-    const observer = new IntersectionObserver(() => {
+    let frame: number | null = null;
+    const updateActiveSection = () => {
+      frame = null;
       const cutoff = window.innerHeight * 0.45;
       const contact = targets.find((item) => item.id === "contact")?.el;
       const contactRect = contact?.getBoundingClientRect();
       const current = targets.findLast((item) => item.el && item.el.getBoundingClientRect().top <= cutoff);
       setActiveSection(contactRect && contactRect.bottom <= window.innerHeight ? "contact" : current?.id ?? "home");
-    }, { threshold: [0, 0.25, 0.5, 0.75, 1] });
+    };
+    const scheduleUpdate = () => {
+      if (frame === null) frame = requestAnimationFrame(updateActiveSection);
+    };
 
-    for (const item of targets) {
-      if (item.el) observer.observe(item.el);
-    }
-
-    return () => observer.disconnect();
+    scheduleUpdate();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
+    return () => {
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+      if (frame !== null) cancelAnimationFrame(frame);
+    };
   }, [home]);
 
   useEffect(() => () => {
@@ -86,16 +96,17 @@ export function SiteNavbar() {
       {pathname !== "/offer" ? <a className="portfolio-skip" href="#main-content">{copy.skip}</a> : null}
       <nav className={`portfolio-nav ${home ? "portfolio-dock" : "portfolio-bar"}`} aria-label={copy.navigation}>
         {home ? sections.map(({ id, target, href, label, Icon }) => {
+          const sectionLabel = label === "ideas" ? ideasCopy[lang].navTitle : copy[label];
           const content = (
             <>
               <span className="portfolio-nav-icon"><Icon size={20} aria-hidden /></span>
-              <span className="portfolio-nav-label" aria-hidden>{copy[label]}</span>
+              <span className="portfolio-nav-label" aria-hidden>{sectionLabel}</span>
             </>
           );
           return href.startsWith("/") ? (
-            <Link key={id} href={href} aria-label={copy[label]} aria-current={activeSection === id ? "location" : undefined} onClick={() => setActiveSection(id)}>{content}</Link>
+            <Link key={id} href={href} aria-label={sectionLabel} aria-current={activeSection === id ? "location" : undefined} onClick={() => setActiveSection(id)}>{content}</Link>
           ) : (
-            <a key={id} href={href} onClick={(event) => scrollToSection(event, id, target)} aria-label={copy[label]} aria-current={activeSection === id ? "location" : undefined}>
+            <a key={id} href={href} onClick={(event) => scrollToSection(event, id, target)} aria-label={sectionLabel} aria-current={activeSection === id ? "location" : undefined}>
               {content}
             </a>
           );

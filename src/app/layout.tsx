@@ -7,6 +7,7 @@ import "./globals.css";
 import "./portfolio.css";
 import "./case-study.css";
 import "./notes.css";
+import "./ideas.css";
 import "./polaroids.css";
 import "./not-found.css";
 

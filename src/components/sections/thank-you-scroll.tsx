@@ -361,10 +361,10 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
   }, [activateQuota]);
 
   useEffect(() => {
-    if (!quotaResetAt) return;
+    if (!dialogOpen || !quotaResetAt) return;
     const timer = window.setInterval(() => setQuotaNow(Date.now()), 1000);
     return () => window.clearInterval(timer);
-  }, [quotaResetAt]);
+  }, [dialogOpen, quotaResetAt]);
 
   useEffect(() => {
     if (!quotaResetAt || quotaResetAt > quotaNow) return;
@@ -464,6 +464,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
     setCameraDeviceId(deviceId);
     setActiveCameraLabel("");
     setCameraState("requesting");
+    setQuotaNow(Date.now());
     setDialogOpen(true);
     if (dialogRef.current && !dialogRef.current.open) dialogRef.current.showModal();
 
@@ -504,7 +505,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
 
   const capture = useCallback(async () => {
     const video = videoRef.current;
-    if (cameraState !== "ready" || !video) return;
+    if (quotaActive || cameraState !== "ready" || !video) return;
 
     if (video.readyState < 2 || !video.videoWidth || !video.videoHeight) {
       await waitForVideoFrame(video);
@@ -555,9 +556,11 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
     setPosition({ x: 0, y: 0 });
     setShot({ id: ++shotId.current, rawUrl, phase: "developing", galleryRequested: saveToGallery });
     void developPhoto(blob, rawUrl, saveToGallery);
-  }, [cameraState, closeCamera, copy.thanksCameraFailed, developPhoto, saveToGallery]);
+  }, [cameraState, closeCamera, copy.thanksCameraFailed, developPhoto, quotaActive, saveToGallery]);
 
   const uploadPhoto = useCallback(async (file: File) => {
+    if (quotaActive) return;
+
     if (!file.type.startsWith("image/")) {
       stopStream();
       setCameraState("error");
@@ -590,6 +593,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
     copy.thanksUploadInvalid,
     copy.thanksUploadTooLarge,
     developPhoto,
+    quotaActive,
     saveToGallery,
     stopStream,
   ]);
@@ -600,8 +604,10 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
     if (file) void uploadPhoto(file);
   };
 
+  const shutterBusy = cameraState === "requesting" || cameraState === "capturing" || shot?.phase === "developing";
+
   const shutter = () => {
-    if (quotaActive || shot?.phase === "developing" || cameraState === "requesting" || cameraState === "capturing") return;
+    if (shutterBusy) return;
     void openCamera();
   };
 
@@ -642,14 +648,8 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
     dragSession.current = null;
   };
 
-  const shutterBusy = quotaActive || cameraState === "requesting" || cameraState === "capturing" || shot?.phase === "developing";
-  const shutterLabel = quotaActive
-    ? `${copy.thanksQuotaCountdown} ${quotaCountdown}`
-    : shutterBusy
-      ? copy.thanksShutterBusy
-      : shot
-        ? copy.thanksShutterAgain
-        : copy.thanksShutter;
+  const shutterLabel = shutterBusy ? copy.thanksShutterBusy : shot ? copy.thanksShutterAgain : copy.thanksShutter;
+  const cameraReadyHint = quotaActive ? copy.thanksCameraPreviewReady : copy.thanksCameraReady;
   return (
     <section className="portfolio-section portfolio-thanks" aria-labelledby="thanks-title">
       <div className="portfolio-thanks-card">
@@ -752,16 +752,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
 
           {flash ? <span className="portfolio-thanks-flash" aria-hidden /> : null}
 
-          {quotaActive ? (
-            <p
-              className="portfolio-thanks-hint is-quota"
-              role="timer"
-              aria-label={`${copy.thanksQuotaExhausted}，${copy.thanksQuotaCountdown} ${quotaCountdown}`}
-            >
-              <span>{copy.thanksQuotaCountdown}</span>
-              <strong>{quotaCountdown}</strong>
-            </p>
-          ) : !shot && cameraState === "idle" ? (
+          {!shot && cameraState === "idle" ? (
             <p className="portfolio-thanks-hint" aria-live="polite">{copy.thanksShutterTry}</p>
           ) : null}
           <Link className="portfolio-action portfolio-action-silver portfolio-thanks-gallery-button" href="/polaroids">
@@ -781,7 +772,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
           <header className="portfolio-camera-heading">
             <div>
               <span>{copy.thanksCameraEyebrow}</span>
-              <h2 id="camera-title">{copy.thanksCameraTitle}</h2>
+              <h2 id="camera-title">{quotaActive ? copy.thanksCameraPreview : copy.thanksCameraTitle}</h2>
             </div>
             <button type="button" className="portfolio-camera-close" onClick={closeCamera} aria-label={copy.thanksCameraClose}>
               <X size={18} aria-hidden />
@@ -811,7 +802,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
                   <button type="button" className="portfolio-camera-retry" onClick={() => void openCamera(cameraDeviceId)}>
                     {copy.thanksCameraRetry}
                   </button>
-                  <button type="button" className="portfolio-camera-fallback" onClick={() => fileInputRef.current?.click()}>
+                  <button type="button" className="portfolio-camera-fallback" onClick={() => fileInputRef.current?.click()} disabled={quotaActive}>
                     {copy.thanksCameraUploadCta}
                   </button>
                 </div>
@@ -827,7 +818,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
             {cameraState === "error" && cameraHint
               ? cameraHint
               : cameraState === "ready"
-                ? copy.thanksCameraReady
+                ? cameraReadyHint
                 : cameraState === "requesting" && cameraHint
                   ? cameraHint
                   : copy.thanksCameraHint}
@@ -871,7 +862,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
               type="button"
               className="portfolio-camera-upload"
               onClick={() => fileInputRef.current?.click()}
-              disabled={cameraState === "capturing"}
+              disabled={quotaActive || cameraState === "capturing"}
             >
               <ImagePlus size={18} aria-hidden />
               <span>
@@ -885,8 +876,19 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
               type="file"
               accept="image/*"
               onChange={handleFileChange}
+              disabled={quotaActive || cameraState === "capturing"}
             />
           </div>
+
+          {quotaActive ? (
+            <div className="portfolio-camera-quota" id="camera-quota">
+              <p>{copy.thanksCameraQuotaHint}</p>
+              <p className="portfolio-camera-quota-timer" role="timer">
+                <span>{copy.thanksQuotaCountdown}</span>
+                <strong>{quotaCountdown}</strong>
+              </p>
+            </div>
+          ) : null}
 
           <div className="portfolio-camera-actions">
             <button type="button" className="portfolio-camera-cancel" onClick={closeCamera}>
@@ -896,8 +898,9 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
               type="button"
               className="portfolio-camera-shutter"
               onClick={() => void capture()}
-              disabled={cameraState !== "ready"}
+              disabled={quotaActive || cameraState !== "ready"}
               aria-label={copy.thanksCapture}
+              aria-describedby={quotaActive ? "camera-quota" : undefined}
             >
               <span aria-hidden />
             </button>

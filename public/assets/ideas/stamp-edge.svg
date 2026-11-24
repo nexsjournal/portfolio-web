@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 144">
+  <defs>
+    <pattern id="across" width="15" height="12" patternUnits="userSpaceOnUse">
+      <path d="M4 0a3.5 3.5 0 0 0 7 0ZM4 12a3.5 3.5 0 0 1 7 0Z"/>
+    </pattern>
+    <pattern id="down" width="12" height="16" patternUnits="userSpaceOnUse">
+      <path d="M0 4.5a3.5 3.5 0 0 1 0 7ZM12 4.5a3.5 3.5 0 0 0 0 7Z"/>
+    </pattern>
+    <mask id="edge">
+      <rect width="120" height="144" fill="white"/>
+      <path d="M0 0h120v4H0zM0 140h120v4H0z" fill="url(#across)"/>
+      <path d="M0 0h4v144H0zM116 0h4v144h-4z" fill="url(#down)"/>
+    </mask>
+  </defs>
+  <rect width="120" height="144" fill="white" mask="url(#edge)"/>
+</svg>
