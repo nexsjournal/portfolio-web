@@ -49,6 +49,7 @@ function cameraErrorMessage(error: unknown, copy: (typeof portfolioCopy)[SiteLan
   if (name === "NotFoundError" || name === "OverconstrainedError") return copy.thanksCameraMissing;
   if (name === "NotReadableError") return copy.thanksCameraBusy;
   if (error instanceof Error && error.message === "unsupported") return copy.thanksCameraUnsupported;
+  if (error instanceof Error && error.message === "preview") return copy.thanksCameraNoPreview;
   return copy.thanksCameraFailed;
 }
 
@@ -82,6 +83,9 @@ function cameraErrorHint(error: unknown, copy: (typeof portfolioCopy)[SiteLang])
   if (name === "NotReadableError") {
     return [copy.thanksCameraBusyHint, environmentHint].filter(Boolean).join(" ");
   }
+  if (error instanceof Error && error.message === "preview") {
+    return [copy.thanksCameraBusyHint, platformHint, environmentHint].filter(Boolean).join(" ");
+  }
   return [environmentHint, platformHint].filter(Boolean).join(" ");
 }
 
@@ -90,7 +94,6 @@ async function applyPreferredCameraConstraints(stream: MediaStream) {
   if (!track?.applyConstraints) return;
   try {
     await track.applyConstraints({
-      facingMode: { ideal: "user" },
       width: { ideal: 1280 },
       height: { ideal: 960 },
     });
@@ -99,65 +102,161 @@ async function applyPreferredCameraConstraints(stream: MediaStream) {
   }
 }
 
-async function requestCameraStream() {
-  if (!navigator.mediaDevices?.getUserMedia) throw new Error("unsupported");
+async function listCameras(mediaDevices: MediaDevices) {
+  try {
+    const devices = await mediaDevices.enumerateDevices();
+    return devices.filter((device) => device.kind === "videoinput" && device.deviceId);
+  } catch {
+    return [];
+  }
+}
+
+function isMobileCameraDevice() {
+  const { userAgent, maxTouchPoints, userAgentData } = navigator as Navigator & {
+    userAgentData?: { mobile?: boolean };
+  };
+  return userAgentData?.mobile === true || /Android|iPhone|iPad|iPod|Windows Phone/i.test(userAgent)
+    || (/Macintosh/i.test(userAgent) && maxTouchPoints > 1);
+}
+
+function isBuiltInCamera(camera: MediaDeviceInfo) {
+  const { label } = camera;
+  if (/iPhone|Android|Continuity|Desk View|接续相机|連續互通|Camo|DroidCam|Virtual|虚拟|虛擬|External|外接/i.test(label)) return false;
+  return /FaceTime(?: HD)? Camera|\b(?:built[- ]?in|integrated|internal)\b|内置|內置|内建|內建|内蔵|내장/i.test(label);
+}
+
+async function requestCameraStream(deviceId: string, {
+  isCurrent,
+  showPreview,
+  releaseStream,
+  setDevices,
+}: {
+  isCurrent: () => boolean;
+  showPreview: (stream: MediaStream) => Promise<boolean>;
+  releaseStream: () => void;
+  setDevices: (devices: MediaDeviceInfo[]) => void;
+}) {
+  const mediaDevices = navigator.mediaDevices;
+  if (!mediaDevices?.getUserMedia) throw new Error("unsupported");
+
+  const assertCurrent = () => {
+    if (!isCurrent()) throw new DOMException("Camera request cancelled", "AbortError");
+  };
+
+  let cameras: MediaDeviceInfo[] = [];
+  let listedWithStream = false;
+  const attemptedIds = new Set<string>();
+  const scanCameras = async () => {
+    const devices = await listCameras(mediaDevices);
+    assertCurrent();
+    if (devices.length) {
+      cameras = devices;
+      setDevices(devices);
+    }
+  };
+
+  const open = async (video: true | MediaTrackConstraints, exactId = "") => {
+    assertCurrent();
+    if (exactId) attemptedIds.add(exactId);
+    const stream = await mediaDevices.getUserMedia({ audio: false, video });
+    if (!isCurrent()) {
+      stream.getTracks().forEach((track) => track.stop());
+      assertCurrent();
+    }
+    const track = stream.getVideoTracks()[0];
+    const [hasFrame] = await Promise.all([
+      showPreview(stream),
+      listedWithStream ? undefined : scanCameras(),
+    ]);
+    listedWithStream = true;
+    assertCurrent();
+
+    const trackId = track?.getSettings?.().deviceId;
+    const label = track?.label;
+    const camera = cameras.find((camera) => camera.deviceId === (trackId || exactId))
+      ?? (label ? cameras.find((camera) => camera.label === label) : undefined);
+    const activeId = camera?.deviceId || trackId || exactId;
+    if (activeId) attemptedIds.add(activeId);
+    if (!hasFrame || track?.readyState !== "live") throw new Error("preview");
+    return { stream, activeId, label: camera?.label || label };
+  };
+
+  const exactCamera = (id: string) => ({ deviceId: { exact: id } });
+  if (deviceId) return open(exactCamera(deviceId), deviceId);
 
   let firstError: unknown;
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: false,
-      video: { facingMode: { ideal: "user" } },
-    });
-    await applyPreferredCameraConstraints(stream);
-    return stream;
-  } catch (error) {
-    firstError = error;
-  }
-
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
-    await applyPreferredCameraConstraints(stream);
-    return stream;
-  } catch (error) {
-    firstError ??= error;
-  }
-
-  try {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const cameras = devices
-      .filter((device) => device.kind === "videoinput" && device.deviceId)
-      .slice(0, 4);
-    for (const camera of cameras) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: false,
-          video: { deviceId: { exact: camera.deviceId } },
-        });
-        await applyPreferredCameraConstraints(stream);
-        return stream;
-      } catch (error) {
-        firstError ??= error;
-      }
+  const tryCamera = async (video: true | MediaTrackConstraints, exactId = "", afterUsablePreview = false) => {
+    try {
+      return await open(video, exactId);
+    } catch (error) {
+      assertCurrent();
+      releaseStream();
+      if (!afterUsablePreview && error instanceof DOMException &&
+        (error.name === "NotAllowedError" || error.name === "SecurityError")) throw error;
+      firstError ??= error;
+      return null;
     }
-  } catch {
-    // Device enumeration is unavailable in some embedded browsers.
+  };
+  const tryExactCamera = (id: string, afterUsablePreview = false) => tryCamera(exactCamera(id), id, afterUsablePreview);
+  const availableBuiltIn = () => cameras.find((camera) => isBuiltInCamera(camera) && !attemptedIds.has(camera.deviceId));
+
+  const mobile = isMobileCameraDevice();
+  if (mobile) {
+    const frontCamera = await tryCamera({ facingMode: { ideal: "user" } });
+    if (frontCamera) return frontCamera;
+  } else {
+    await scanCameras();
+    const knownBuiltIn = availableBuiltIn();
+    if (knownBuiltIn) {
+      const builtIn = await tryExactCamera(knownBuiltIn.deviceId);
+      if (builtIn) return builtIn;
+    }
+  }
+
+  const defaultCamera = await tryCamera(true);
+  const builtIn = mobile ? undefined : availableBuiltIn();
+  if (defaultCamera) {
+    if (!builtIn || defaultCamera.label === builtIn.label) return defaultCamera;
+    releaseStream();
+    const preferred = await tryExactCamera(builtIn.deviceId, true);
+    if (preferred) return preferred;
+
+    if (defaultCamera.activeId) {
+      const previous = await tryExactCamera(defaultCamera.activeId, true);
+      if (previous) return previous;
+    }
+    const restored = await tryCamera(true, "", true);
+    if (restored) return restored;
+  }
+
+  if (!listedWithStream) await scanCameras();
+  const fallbackCameras = cameras.filter((camera) => !attemptedIds.has(camera.deviceId));
+  if (!mobile) fallbackCameras.sort((left, right) => Number(isBuiltInCamera(right)) - Number(isBuiltInCamera(left)));
+  for (const camera of fallbackCameras.slice(0, 4)) {
+    const fallback = await tryExactCamera(camera.deviceId, Boolean(defaultCamera));
+    if (fallback) return fallback;
   }
 
   throw firstError ?? new Error("camera");
 }
 
 function waitForVideoFrame(video: HTMLVideoElement) {
-  if (video.readyState >= 2 && video.videoWidth > 0) return Promise.resolve();
+  const hasFrame = () => video.readyState >= 2 && video.videoWidth > 0 && video.videoHeight > 0;
+  if (hasFrame()) return Promise.resolve(true);
 
-  return new Promise<void>((resolve) => {
+  return new Promise<boolean>((resolve) => {
     const finish = () => {
-      video.removeEventListener("loadeddata", finish);
-      video.removeEventListener("canplay", finish);
-      resolve();
+      window.clearTimeout(timeout);
+      video.removeEventListener("loadeddata", checkFrame);
+      video.removeEventListener("canplay", checkFrame);
+      resolve(hasFrame());
     };
-    video.addEventListener("loadeddata", finish);
-    video.addEventListener("canplay", finish);
-    window.setTimeout(finish, 1500);
+    const checkFrame = () => {
+      if (hasFrame()) finish();
+    };
+    video.addEventListener("loadeddata", checkFrame);
+    video.addEventListener("canplay", checkFrame);
+    const timeout = window.setTimeout(finish, 4000);
   });
 }
 
@@ -166,6 +265,9 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
   const [cameraState, setCameraState] = useState<CameraState>("idle");
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [cameraHint, setCameraHint] = useState<string | null>(null);
+  const [cameraDevices, setCameraDevices] = useState<MediaDeviceInfo[]>([]);
+  const [cameraDeviceId, setCameraDeviceId] = useState("");
+  const [activeCameraLabel, setActiveCameraLabel] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [shot, setShot] = useState<Shot | null>(null);
   const [saveToGallery, setSaveToGallery] = useState(true);
@@ -178,6 +280,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const cameraRequestId = useRef(0);
   const dragSession = useRef<DragSession | null>(null);
   const shotId = useRef(0);
   const rawUrlRef = useRef<string | null>(null);
@@ -195,17 +298,25 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
     }
   }, []);
 
-  const stopStream = useCallback(() => {
+  const releaseStream = useCallback(() => {
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
     if (videoRef.current) videoRef.current.srcObject = null;
   }, []);
+
+  const stopStream = useCallback(() => {
+    cameraRequestId.current += 1;
+    releaseStream();
+  }, [releaseStream]);
 
   const closeCamera = useCallback(() => {
     stopStream();
     setCameraState("idle");
     setCameraError(null);
     setCameraHint(null);
+    setCameraDevices([]);
+    setCameraDeviceId("");
+    setActiveCameraLabel("");
     setDialogOpen(false);
     if (dialogRef.current?.open) dialogRef.current.close();
   }, [stopStream]);
@@ -217,13 +328,13 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
 
   useEffect(() => {
     return () => {
-      streamRef.current?.getTracks().forEach((track) => track.stop());
+      stopStream();
       abortRef.current?.abort();
       if (flashTimer.current) window.clearTimeout(flashTimer.current);
       if (rawUrlRef.current) URL.revokeObjectURL(rawUrlRef.current);
       if (generatedUrlRef.current) URL.revokeObjectURL(generatedUrlRef.current);
     };
-  }, []);
+  }, [stopStream]);
 
   useEffect(() => {
     let cancelled = false;
@@ -344,9 +455,14 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
     }
   }, [activateQuota, copy.thanksDevelopError, copy.thanksQuotaExhausted, copy.thanksRateLimited]);
 
-  const openCamera = useCallback(async () => {
+  const openCamera = useCallback(async (deviceId = "") => {
+    stopStream();
+    const requestId = cameraRequestId.current;
+    const isCurrent = () => requestId === cameraRequestId.current && Boolean(dialogRef.current?.open);
     setCameraError(null);
     setCameraHint(cameraEnvironmentHint(copy) || null);
+    setCameraDeviceId(deviceId);
+    setActiveCameraLabel("");
     setCameraState("requesting");
     setDialogOpen(true);
     if (dialogRef.current && !dialogRef.current.open) dialogRef.current.showModal();
@@ -358,29 +474,33 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
     }
 
     try {
-      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-      const stream = await requestCameraStream();
-      if (!dialogRef.current?.open) {
-        stream.getTracks().forEach((track) => track.stop());
-        return;
-      }
+      const { stream, label } = await requestCameraStream(deviceId, {
+        isCurrent,
+        releaseStream,
+        setDevices: setCameraDevices,
+        showPreview: (stream) => {
+          streamRef.current = stream;
+          const video = videoRef.current;
+          if (!video || !stream.getVideoTracks().length) return Promise.resolve(false);
+          video.srcObject = stream;
+          void video.play().catch(() => undefined);
+          return waitForVideoFrame(video);
+        },
+      });
+      if (!isCurrent()) return;
 
-      streamRef.current = stream;
-      const video = videoRef.current;
-      if (video) {
-        video.srcObject = stream;
-        await video.play().catch(() => undefined);
-        await waitForVideoFrame(video);
-      }
+      setActiveCameraLabel(label ?? "");
       setCameraState("ready");
       setCameraHint(null);
+      void applyPreferredCameraConstraints(stream);
     } catch (error) {
-      if (!dialogRef.current?.open) return;
+      if (!isCurrent()) return;
+      releaseStream();
       setCameraState("error");
       setCameraError(cameraErrorMessage(error, copy));
       setCameraHint(cameraErrorHint(error, copy) || null);
     }
-  }, [copy]);
+  }, [copy, releaseStream, stopStream]);
 
   const capture = useCallback(async () => {
     const video = videoRef.current;
@@ -486,11 +606,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
   };
 
   const handleDialogClose = () => {
-    stopStream();
-    setCameraState("idle");
-    setCameraError(null);
-    setCameraHint(null);
-    setDialogOpen(false);
+    if (!dialogRef.current?.open) closeCamera();
   };
 
   const handleDialogClick = (event: MouseEvent<HTMLDialogElement>) => {
@@ -685,14 +801,14 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
             {cameraState === "requesting" ? (
               <div className="portfolio-camera-overlay">
                 <span className="portfolio-camera-spinner" aria-hidden />
-                <p>{copy.thanksCameraRequesting}</p>
+                <p>{cameraDeviceId ? copy.thanksCameraSwitching : copy.thanksCameraRequesting}</p>
               </div>
             ) : null}
             {cameraState === "error" ? (
               <div className="portfolio-camera-overlay is-error">
                 <p>{cameraError}</p>
                 <div className="portfolio-camera-error-actions">
-                  <button type="button" className="portfolio-camera-retry" onClick={() => void openCamera()}>
+                  <button type="button" className="portfolio-camera-retry" onClick={() => void openCamera(cameraDeviceId)}>
                     {copy.thanksCameraRetry}
                   </button>
                   <button type="button" className="portfolio-camera-fallback" onClick={() => fileInputRef.current?.click()}>
@@ -716,6 +832,28 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
                   ? cameraHint
                   : copy.thanksCameraHint}
           </p>
+
+          {cameraDevices.length ? (
+            <label className="portfolio-camera-device">
+              <span>{copy.thanksCameraDevice}</span>
+              <select
+                value={cameraDeviceId}
+                onChange={(event) => void openCamera(event.target.value)}
+                disabled={cameraState === "requesting" || cameraState === "capturing"}
+              >
+                <option value="">
+                  {!cameraDeviceId && activeCameraLabel
+                    ? `${copy.thanksCameraAutomatic} · ${activeCameraLabel}`
+                    : copy.thanksCameraAutomatic}
+                </option>
+                {cameraDevices.map((camera, index) => (
+                  <option key={camera.deviceId} value={camera.deviceId}>
+                    {camera.label || `${copy.thanksCameraDevice} ${index + 1}`}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
 
           <div className="portfolio-camera-source-row">
             <label className="portfolio-camera-consent">

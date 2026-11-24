@@ -3281,6 +3281,26 @@ html:has(.portfolio-page) body {
   color: var(--portfolio-ink);
 }
 
+.portfolio-camera-device {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  margin-top: .8rem;
+  color: var(--portfolio-muted);
+  font-size: .8rem;
+}
+
+.portfolio-camera-device select {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding-inline: .65rem;
+  border: 1px solid var(--portfolio-line);
+  border-radius: 12px;
+  background: var(--portfolio-panel);
+  color: var(--portfolio-ink);
+}
+
 .portfolio-camera-consent {
   display: flex;
   align-items: flex-start;
