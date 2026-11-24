@@ -52,24 +52,98 @@ function cameraErrorMessage(error: unknown, copy: (typeof portfolioCopy)[SiteLan
   return copy.thanksCameraFailed;
 }
 
+function cameraEnvironmentHint(copy: (typeof portfolioCopy)[SiteLang]) {
+  if (typeof window === "undefined") return "";
+  if (window.self !== window.top) return copy.thanksCameraFrameHint;
+
+  const ua = navigator.userAgent;
+  if (/MicroMessenger|QQ\/|DingTalk|Lark|Feishu|aweme|xhsdiscover/i.test(ua)) {
+    return copy.thanksCameraEmbeddedHint;
+  }
+  return "";
+}
+
+function cameraErrorHint(error: unknown, copy: (typeof portfolioCopy)[SiteLang]) {
+  const name = error instanceof DOMException ? error.name : "";
+  const ua = typeof navigator === "undefined" ? "" : navigator.userAgent;
+  const platformHint = /Macintosh|Mac OS X/i.test(ua)
+    ? copy.thanksCameraMacHint
+    : /Windows/i.test(ua)
+      ? copy.thanksCameraWindowsHint
+      : "";
+  const environmentHint = cameraEnvironmentHint(copy);
+
+  if (name === "NotAllowedError" || name === "SecurityError") {
+    return [copy.thanksCameraDeniedHint, platformHint, environmentHint].filter(Boolean).join(" ");
+  }
+  if (name === "NotFoundError" || name === "OverconstrainedError") {
+    return [copy.thanksCameraMissingHint, platformHint, environmentHint].filter(Boolean).join(" ");
+  }
+  if (name === "NotReadableError") {
+    return [copy.thanksCameraBusyHint, environmentHint].filter(Boolean).join(" ");
+  }
+  return [environmentHint, platformHint].filter(Boolean).join(" ");
+}
+
+async function applyPreferredCameraConstraints(stream: MediaStream) {
+  const track = stream.getVideoTracks()[0];
+  if (!track?.applyConstraints) return;
+  try {
+    await track.applyConstraints({
+      facingMode: { ideal: "user" },
+      width: { ideal: 1280 },
+      height: { ideal: 960 },
+    });
+  } catch {
+    // The stream is already usable; ignore browsers that reject post-constraints.
+  }
+}
+
 async function requestCameraStream() {
   if (!navigator.mediaDevices?.getUserMedia) throw new Error("unsupported");
 
+  let firstError: unknown;
   try {
-    return await navigator.mediaDevices.getUserMedia({
+    const stream = await navigator.mediaDevices.getUserMedia({
       audio: false,
-      video: {
-        facingMode: "user",
-        width: { ideal: 1280 },
-        height: { ideal: 960 },
-      },
+      video: { facingMode: { ideal: "user" } },
     });
+    await applyPreferredCameraConstraints(stream);
+    return stream;
   } catch (error) {
-    if (error instanceof DOMException && (error.name === "OverconstrainedError" || error.name === "NotFoundError")) {
-      return navigator.mediaDevices.getUserMedia({ audio: false, video: true });
-    }
-    throw error;
+    firstError = error;
   }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
+    await applyPreferredCameraConstraints(stream);
+    return stream;
+  } catch (error) {
+    firstError ??= error;
+  }
+
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const cameras = devices
+      .filter((device) => device.kind === "videoinput" && device.deviceId)
+      .slice(0, 4);
+    for (const camera of cameras) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: { deviceId: { exact: camera.deviceId } },
+        });
+        await applyPreferredCameraConstraints(stream);
+        return stream;
+      } catch (error) {
+        firstError ??= error;
+      }
+    }
+  } catch {
+    // Device enumeration is unavailable in some embedded browsers.
+  }
+
+  throw firstError ?? new Error("camera");
 }
 
 function waitForVideoFrame(video: HTMLVideoElement) {
@@ -91,6 +165,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
   const copy = portfolioCopy[lang];
   const [cameraState, setCameraState] = useState<CameraState>("idle");
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [cameraHint, setCameraHint] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [shot, setShot] = useState<Shot | null>(null);
   const [saveToGallery, setSaveToGallery] = useState(true);
@@ -130,6 +205,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
     stopStream();
     setCameraState("idle");
     setCameraError(null);
+    setCameraHint(null);
     setDialogOpen(false);
     if (dialogRef.current?.open) dialogRef.current.close();
   }, [stopStream]);
@@ -270,6 +346,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
 
   const openCamera = useCallback(async () => {
     setCameraError(null);
+    setCameraHint(cameraEnvironmentHint(copy) || null);
     setCameraState("requesting");
     setDialogOpen(true);
     if (dialogRef.current && !dialogRef.current.open) dialogRef.current.showModal();
@@ -281,6 +358,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
     }
 
     try {
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
       const stream = await requestCameraStream();
       if (!dialogRef.current?.open) {
         stream.getTracks().forEach((track) => track.stop());
@@ -295,10 +373,12 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
         await waitForVideoFrame(video);
       }
       setCameraState("ready");
+      setCameraHint(null);
     } catch (error) {
       if (!dialogRef.current?.open) return;
       setCameraState("error");
       setCameraError(cameraErrorMessage(error, copy));
+      setCameraHint(cameraErrorHint(error, copy) || null);
     }
   }, [copy]);
 
@@ -409,6 +489,7 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
     stopStream();
     setCameraState("idle");
     setCameraError(null);
+    setCameraHint(null);
     setDialogOpen(false);
   };
 
@@ -610,9 +691,14 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
             {cameraState === "error" ? (
               <div className="portfolio-camera-overlay is-error">
                 <p>{cameraError}</p>
-                <button type="button" className="portfolio-camera-retry" onClick={() => void openCamera()}>
-                  {copy.thanksCameraRetry}
-                </button>
+                <div className="portfolio-camera-error-actions">
+                  <button type="button" className="portfolio-camera-retry" onClick={() => void openCamera()}>
+                    {copy.thanksCameraRetry}
+                  </button>
+                  <button type="button" className="portfolio-camera-fallback" onClick={() => fileInputRef.current?.click()}>
+                    {copy.thanksCameraUploadCta}
+                  </button>
+                </div>
               </div>
             ) : null}
             {cameraState === "ready" ? (
@@ -621,8 +707,14 @@ export function ThankYouScroll({ lang }: { lang: SiteLang }) {
             {flash ? <span className="portfolio-camera-flash" aria-hidden /> : null}
           </div>
 
-          <p className="portfolio-camera-hint">
-            {cameraState === "ready" ? copy.thanksCameraReady : copy.thanksCameraHint}
+          <p className={`portfolio-camera-hint${cameraState === "error" ? " is-error" : ""}`} aria-live="polite">
+            {cameraState === "error" && cameraHint
+              ? cameraHint
+              : cameraState === "ready"
+                ? copy.thanksCameraReady
+                : cameraState === "requesting" && cameraHint
+                  ? cameraHint
+                  : copy.thanksCameraHint}
           </p>
 
           <div className="portfolio-camera-source-row">
