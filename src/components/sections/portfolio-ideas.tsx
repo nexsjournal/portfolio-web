@@ -59,12 +59,6 @@ function IdeasCard({ idea, lang }: { idea: Idea; lang: SiteLang }) {
         <span className="ideas-card-visual">
           {cover ? (
             <Image className="ideas-card-image" src={cover} alt="" fill sizes="(max-width: 600px) 90vw, 340px" />
-          ) : idea.artwork === "notes" ? (
-            <span className="portfolio-build-notebook ideas-card-notebook">
-              <small>LEX STUDIO</small>
-              <strong>{title}</strong>
-              <span>No. 01</span>
-            </span>
           ) : null}
         </span>
       </span>
@@ -98,7 +92,7 @@ function StampPrint({ idea, lang, index }: { idea: Idea; lang: SiteLang; index: 
       )}
       <span className="ideas-stamp-legend">
         <span>LEX STUDIO</span>
-        <strong>{idea[lang].title}</strong>
+        <strong>{idea.stampTitle ?? idea[lang].title}</strong>
       </span>
       <span className="ideas-stamp-issue">{String(index + 1).padStart(2, "0")}</span>
     </span>
