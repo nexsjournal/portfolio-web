@@ -7,7 +7,7 @@ type IdeaCopy = {
 
 export type Idea = {
   slug: string;
-  artwork: "switchelp" | "catgame" | "storyframe" | "framyriad" | "duoblur" | "blanket";
+  artwork: "switchelp" | "catgame" | "storyframe" | "framyriad" | "duoblur" | "blanket" | "miaosuan";
   cover?: string;
   galleryCover?: string;
   stampTitle?: string;
@@ -132,7 +132,26 @@ export const ideas: Idea[] = [
       features: ["3D cloth", "Click-through"],
     },
   },
+  {
+    slug: "miaosuan",
+    artwork: "miaosuan",
+    cover: "/assets/ideas/miaosuan-stamp.webp",
+    galleryCover: "/assets/ideas/miaosuan-hero.webp",
+    href: "https://miaosuan.site/",
+    zh: {
+      title: "妙算星机",
+      category: "八字排盘 · 流年推演",
+      summary: "用生辰起四柱，先核旧年再推来年。",
+      features: ["四柱排盘", "流年推演"],
+    },
+    en: {
+      title: "Miaosuan",
+      category: "Four Pillars · Yearly reading",
+      summary: "Read the past and coming years from a birth chart.",
+      features: ["Four pillars", "Yearly cycles"],
+    },
+  },
 ];
 
-export const featuredIdeaCount = 6;
+export const featuredIdeaCount = 7;
 export const displayedIdeas = ideas;

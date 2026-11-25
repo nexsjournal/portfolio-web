@@ -88,6 +88,14 @@
   --stamp-depth: 1;
 }
 
+.ideas-stamp:nth-child(7) {
+  --stamp-tilt: -14deg;
+  --stamp-x: 9%;
+  --stamp-y: 28%;
+  --stamp-width: 13%;
+  --stamp-depth: 1;
+}
+
 .ideas-stamp[data-artwork="catgame"] {
   --stamp-field: #7fb4ad;
   --stamp-ink: #17302c;
@@ -118,6 +126,13 @@
   --stamp-ink: #fff6e8;
   --stamp-photo-treatment: grayscale(.4) sepia(.12) brightness(1.32) contrast(.94);
   --stamp-legend-shade: rgb(30 10 8 / .58);
+}
+
+.ideas-stamp[data-artwork="miaosuan"] {
+  --stamp-field: #d8b36a;
+  --stamp-ink: #241708;
+  --stamp-photo-treatment: grayscale(.4) sepia(.35) brightness(1.9) contrast(1.02);
+  --stamp-legend-shade: rgb(255 238 200 / .55);
 }
 
 .ideas-stamp-target {
@@ -279,8 +294,12 @@ img.ideas-stamp-art {
   transform-origin: center bottom;
 }
 
-.ideas-stamp:last-child:nth-child(6) {
-  --note-offset: clamp(0px, 4vw, 2rem);
+.ideas-stamp:nth-child(7) .ideas-stamp-note {
+  --note-offset: 4rem;
+  top: calc(100% - .15rem);
+  bottom: auto;
+  padding-block: 1rem .8rem;
+  transform-origin: center top;
 }
 
 .ideas-stamp-category {
@@ -381,6 +400,7 @@ img.ideas-stamp-art {
 .ideas-card[data-artwork="framyriad"] { --project-color: #b54134; }
 .ideas-card[data-artwork="duoblur"] { --project-color: #455a70; }
 .ideas-card[data-artwork="blanket"] { --project-color: #9c3a32; }
+.ideas-card[data-artwork="miaosuan"] { --project-color: #b8863f; }
 
 .ideas-card:focus-visible {
   outline: 2px solid var(--portfolio-accent);
@@ -541,6 +561,20 @@ img.ideas-stamp-art {
   object-fit: cover;
 }
 
+.ideas-card[data-artwork="miaosuan"] .ideas-card-visual {
+  --idea-preview-angle: 1.5deg;
+  overflow: hidden;
+  aspect-ratio: 3 / 2;
+  border: 4px solid color-mix(in srgb, var(--portfolio-panel) 90%, var(--portfolio-line));
+  border-radius: .5rem;
+  background: #0b0906;
+  box-shadow: 1px 10px 22px rgb(12 19 27 / .24), 0 0 0 1px var(--portfolio-line);
+}
+
+.ideas-card[data-artwork="miaosuan"] .ideas-card-image {
+  object-fit: cover;
+}
+
 .ideas-card[data-artwork="switchelp"] .ideas-card-visual {
   --idea-preview-angle: -3deg;
   overflow: hidden;
@@ -594,9 +628,9 @@ img.ideas-stamp-art {
   }
 
   .ideas-stamp:first-child {
-    --stamp-x: 26%;
-    --stamp-y: 35%;
-    --stamp-width: 30%;
+    --stamp-x: 34%;
+    --stamp-y: 42%;
+    --stamp-width: 24%;
   }
 
   .ideas-stamp:nth-child(2) {
@@ -624,11 +658,19 @@ img.ideas-stamp-art {
     --note-offset: -2rem;
   }
 
-  .ideas-stamp:nth-child(6):last-child {
+  .ideas-stamp:nth-child(6) {
     --stamp-x: 20%;
     --stamp-y: 75%;
     --stamp-width: 20%;
     --note-offset: 2rem;
+  }
+
+  .ideas-stamp:nth-child(7) {
+    --stamp-x: 11%;
+    --stamp-y: 32%;
+    --stamp-width: 18%;
+    --stamp-tilt: -10deg;
+    --stamp-depth: 3;
   }
 }
 
