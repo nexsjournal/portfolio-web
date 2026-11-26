@@ -227,10 +227,11 @@ export const products: Product[] = [
       "/assets/products/flowdo/screens/02.webp",
       "/assets/products/flowdo/screens/03.webp",
       "/assets/products/flowdo/screens/04.webp",
+      "/assets/products/flowdo/screens/05.webp",
     ],
     screenshotLayout: "phone",
-    screenshotWidth: 900,
-    screenshotHeight: 1957,
+    screenshotWidth: 1320,
+    screenshotHeight: 2868,
   },
   {
     slug: "aray-studio",

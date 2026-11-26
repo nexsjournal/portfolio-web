@@ -266,7 +266,7 @@ export function PortfolioHome({ featuredNotes, dailyQuote }: { featuredNotes: Ho
             />
             <span className="portfolio-name-tag" aria-label={copy.nameTag}>
               <span className="portfolio-name-tag-head">Less is more</span>
-              <span className="portfolio-name-tag-body"><strong>{lang === "en" ? "Lei" : "阿雷"}</strong><em>Lex</em></span>
+              <span className="portfolio-name-tag-body"><strong>{lang === "en" ? "Lex" : "阿雷"}</strong><em>Lex</em></span>
             </span>
           </div>
           <div className="portfolio-about-copy">

@@ -103,7 +103,7 @@ export function AboutSection() {
 
   const enParagraphs = [
     <>
-      Hey, I&apos;m Lei.
+      Hey, I&apos;m Lex.
       <br />
       I&apos;m not trying to be the “can-do-everything” developer. I would rather
       be a creator who can truly feel. Tiny details either steal a user&apos;s
