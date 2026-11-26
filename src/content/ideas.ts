@@ -39,7 +39,7 @@ export const ideas: Idea[] = [
   {
     slug: "changan-cat-chronicles",
     artwork: "catgame",
-    cover: "/assets/ideas/catgame-stamp.webp",
+    cover: "/assets/ideas/catgame-stamp-v2.webp",
     galleryCover: "/assets/ideas/catgame-cover.webp",
     href: "https://ai-passport.folotoy.cn/plays/2675/",
     zh: {
@@ -59,8 +59,8 @@ export const ideas: Idea[] = [
     slug: "storyframe",
     artwork: "storyframe",
     stampTitle: "Storyframe",
-    cover: "/assets/ideas/storyframe-stamp.webp",
-    galleryCover: "/assets/ideas/storyframe-cover.webp",
+    cover: "/assets/ideas/storyframe-stamp-v4.webp",
+    galleryCover: "/assets/ideas/storyframe-card.webp",
     href: "https://github.com/nexsjournal/storyframe-video",
     zh: {
       title: "Storyframe Video",
@@ -78,7 +78,7 @@ export const ideas: Idea[] = [
   {
     slug: "framyriad",
     artwork: "framyriad",
-    cover: "/assets/ideas/framyriad-stamp.webp",
+    cover: "/assets/ideas/framyriad-stamp-v2.webp",
     galleryCover: "/assets/ideas/framyriad-hero.webp",
     href: "https://oneframe.space/",
     zh: {
@@ -98,7 +98,7 @@ export const ideas: Idea[] = [
     slug: "duoblur",
     artwork: "duoblur",
     cover: "/assets/ideas/duoblur-stamp.webp",
-    galleryCover: "/assets/ideas/duoblur-cover.webp",
+    galleryCover: "/assets/ideas/duoblur-card.webp",
     href: "https://github.com/nexsjournal/duoblur-macapp",
     zh: {
       title: "DuoBlur",
@@ -135,7 +135,7 @@ export const ideas: Idea[] = [
   {
     slug: "miaosuan",
     artwork: "miaosuan",
-    cover: "/assets/ideas/miaosuan-stamp.webp",
+    cover: "/assets/ideas/miaosuan-stamp-v2.webp",
     galleryCover: "/assets/ideas/miaosuan-hero.webp",
     href: "https://miaosuan.site/",
     zh: {

@@ -90,29 +90,31 @@
 
 .ideas-stamp:nth-child(7) {
   --stamp-tilt: -14deg;
-  --stamp-x: 9%;
+  --stamp-x: 13%;
   --stamp-y: 28%;
   --stamp-width: 13%;
   --stamp-depth: 1;
 }
 
 .ideas-stamp[data-artwork="catgame"] {
-  --stamp-field: #7fb4ad;
-  --stamp-ink: #17302c;
-  --stamp-photo-treatment: grayscale(.9) sepia(.16) contrast(1.02);
-  --stamp-legend-shade: rgb(255 250 232 / .62);
+  --stamp-field: #6f9c94;
+  --stamp-ink: #fff6e2;
+  --stamp-photo-treatment: grayscale(.45) sepia(.12) contrast(1.02);
+  --stamp-legend-shade: rgb(12 45 45 / .62);
 }
 
 .ideas-stamp[data-artwork="storyframe"] {
-  --stamp-field: #d3ad3e;
-  --stamp-ink: #20242a;
-  --stamp-legend-shade: rgb(255 247 221 / .45);
+  --stamp-field: #2a2326;
+  --stamp-ink: #fff4e6;
+  --stamp-photo-treatment: grayscale(.7) sepia(.1) contrast(1.05);
+  --stamp-legend-shade: rgb(12 8 10 / .6);
 }
 
 .ideas-stamp[data-artwork="framyriad"] {
-  --stamp-field: #2a2422;
-  --stamp-ink: #fff3dc;
-  --stamp-legend-shade: rgb(20 16 14 / .55);
+  --stamp-field: #8e3a2c;
+  --stamp-ink: #fff6e8;
+  --stamp-photo-treatment: grayscale(.2) sepia(.12) contrast(1.02);
+  --stamp-legend-shade: rgb(30 8 6 / .6);
 }
 
 .ideas-stamp[data-artwork="duoblur"] {
@@ -129,10 +131,10 @@
 }
 
 .ideas-stamp[data-artwork="miaosuan"] {
-  --stamp-field: #d8b36a;
+  --stamp-field: #dcb96e;
   --stamp-ink: #241708;
-  --stamp-photo-treatment: grayscale(.4) sepia(.35) brightness(1.9) contrast(1.02);
-  --stamp-legend-shade: rgb(255 238 200 / .55);
+  --stamp-photo-treatment: grayscale(.1) sepia(.45) contrast(2.1);
+  --stamp-legend-shade: rgb(255 248 230 / .55);
 }
 
 .ideas-stamp-target {
