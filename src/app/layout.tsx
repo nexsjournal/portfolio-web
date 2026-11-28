@@ -1,3 +1,5 @@
+import Script from "next/script";
+
 import { SiteNavbar } from "@/components/site/site-navbar";
 import { siteMetadata } from "@/lib/site-metadata";
 import { themeInitScript } from "@/lib/theme-settings";
@@ -14,6 +16,8 @@ import "./not-found.css";
 /** 使用样式表加载字体，避免 next/font/google 在 Turbopack 下解析 @vercel/turbopack-next 内置模块失败 */
 const googleFontsHref =
   "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400..700&family=Lexend:wght@300;400;500;600;700&family=Ma+Shan+Zheng&family=Montserrat:wght@600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@500;600;700;900&family=Outfit:wght@500;600;700;800&display=swap";
+
+const cloudflareAnalyticsToken = "933423e72b994c9dad3d64e893c64306";
 
 export const metadata = siteMetadata;
 
@@ -35,6 +39,12 @@ export default function RootLayout({
           <SiteNavbar />
           {children}
         </Providers>
+        <Script
+          id="cloudflare-web-analytics"
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          strategy="afterInteractive"
+          data-cf-beacon={JSON.stringify({ token: cloudflareAnalyticsToken })}
+        />
       </body>
     </html>
   );
